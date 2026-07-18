@@ -11,14 +11,14 @@ import re
 import secrets
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
 from .scoring import compute_leaderboard
-from .storage import get_storage, load_config
+from .storage import WriteConflictError, get_storage, load_config
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 BITS_ID_RE = re.compile(r"^[A-Z0-9]{8,16}$")
@@ -156,12 +156,15 @@ def _check_pin(student: dict[str, Any], pin: str) -> bool:
 
 
 @app.get("/api/student")
-def api_student(term: str, bits_id: str, pin: str = "") -> dict[str, Any]:
+def api_student(
+    term: str, bits_id: str, x_pin: Annotated[str, Header(alias="X-Pin")] = ""
+) -> dict[str, Any]:
     """Existing marks for one student — used by the form to pre-fill values.
 
     PIN salt/hash are never returned. For anonymous records the correct PIN is
     required — otherwise this endpoint would let anyone link a BITS ID to an
-    anonymous row's marks.
+    anonymous row's marks. The PIN travels in the X-Pin header, not the query
+    string, so it never lands in access logs.
     """
     _term_config(term)
     normalized = _normalize_bits_id(bits_id)
@@ -169,7 +172,7 @@ def api_student(term: str, bits_id: str, pin: str = "") -> dict[str, Any]:
     if student is None:
         return {"found": False, "has_pin": False, "anon": False, "student": None}
     anon = bool(student.get("anon"))
-    if anon and not _check_pin(student, pin):
+    if anon and not _check_pin(student, x_pin):
         # Indistinguishable from "not registered" — no linkage oracle.
         return {"found": False, "has_pin": False, "anon": False, "student": None}
     public = {
@@ -208,59 +211,71 @@ def api_submit(submission: Submission) -> dict[str, Any]:
                 )
 
     storage = get_storage()
-    marks_doc = storage.read_marks(submission.term)
-    students: list[dict[str, Any]] = marks_doc.setdefault("students", [])
-    student = _find_student(students, bits_id)
-    if student is None:
-        student = {"marks": {}}
-        students.append(student)
-
-    # PIN check: first submission (or legacy record without a PIN) claims the ID;
-    # every later edit must present the same PIN.
-    if student.get("pin_hash"):
-        if not _check_pin(student, submission.pin):
-            raise HTTPException(
-                status_code=403,
-                detail="Wrong PIN for this BITS ID. Forgot it? Contact the admin for a reset.",
-            )
-    else:
-        salt = secrets.token_hex(8)
-        student["pin_salt"] = salt
-        student["pin_hash"] = _hash_pin(submission.pin, salt)
-
-    # Identity: anonymous rows store ONLY the keyed hash + alias — never the
-    # BITS ID or name. Toggling back to public restores them.
     id_hash = _id_hash(bits_id)
     alias = _alias(id_hash)
-    if submission.anonymous:
-        student.pop("bits_id", None)
-        student.pop("name", None)
-        student["anon"] = True
-        student["id_hash"] = id_hash
-        student["alias"] = alias
+
+    # Read-modify-write with retry: if someone else's submission lands between
+    # our read and our write, redo the whole thing on fresh data so their
+    # change is never overwritten.
+    for attempt in range(3):
+        marks_doc = storage.read_marks(submission.term, fresh=attempt > 0)
+        students: list[dict[str, Any]] = marks_doc.setdefault("students", [])
+        student = _find_student(students, bits_id)
+        if student is None:
+            student = {"marks": {}}
+            students.append(student)
+
+        # PIN check: first submission (or legacy record without a PIN) claims the
+        # ID; every later edit must present the same PIN.
+        if student.get("pin_hash"):
+            if not _check_pin(student, submission.pin):
+                raise HTTPException(
+                    status_code=403,
+                    detail="Wrong PIN for this BITS ID. Forgot it? Contact the admin for a reset.",
+                )
+        else:
+            salt = secrets.token_hex(8)
+            student["pin_salt"] = salt
+            student["pin_hash"] = _hash_pin(submission.pin, salt)
+
+        # Identity: anonymous rows store ONLY the keyed hash + alias — never the
+        # BITS ID or name. Toggling back to public restores them.
+        if submission.anonymous:
+            student.pop("bits_id", None)
+            student.pop("name", None)
+            student["anon"] = True
+            student["id_hash"] = id_hash
+            student["alias"] = alias
+        else:
+            student.pop("anon", None)
+            student.pop("id_hash", None)
+            student.pop("alias", None)
+            student["bits_id"] = bits_id
+            student["name"] = name
+
+        for code, comps in submission.marks.items():
+            subject_marks: dict[str, float | None] = student["marks"].setdefault(code, {})
+            for key, value in comps.items():
+                if value is None:
+                    subject_marks.pop(key, None)
+                else:
+                    subject_marks[key] = value
+        student["updated_at"] = datetime.now(timezone.utc).isoformat(  # noqa: UP017
+            timespec="seconds"
+        )
+
+        # Never leak the BITS ID of an anonymous student into commit messages.
+        who = alias if submission.anonymous else bits_id
+        try:
+            storage.write_marks(
+                submission.term, marks_doc, message=f"marks: update {who} ({submission.term})"
+            )
+            break
+        except WriteConflictError:
+            continue
     else:
-        student.pop("anon", None)
-        student.pop("id_hash", None)
-        student.pop("alias", None)
-        student["bits_id"] = bits_id
-        student["name"] = name
+        raise HTTPException(status_code=503, detail="Server is busy — please try again.")
 
-    for code, comps in submission.marks.items():
-        subject_marks: dict[str, float | None] = student["marks"].setdefault(code, {})
-        for key, value in comps.items():
-            if value is None:
-                subject_marks.pop(key, None)
-            else:
-                subject_marks[key] = value
-    student["updated_at"] = datetime.now(timezone.utc).isoformat(  # noqa: UP017
-        timespec="seconds"
-    )
-
-    # Never leak the BITS ID of an anonymous student into commit messages.
-    who = alias if submission.anonymous else bits_id
-    storage.write_marks(
-        submission.term, marks_doc, message=f"marks: update {who} ({submission.term})"
-    )
     return {
         "ok": True,
         "bits_id": bits_id,
@@ -287,8 +302,15 @@ def api_export_csv(term: str) -> PlainTextResponse:
     header += ["overall_total", "overall_pct", "percentile", "updated_at"]
     writer.writerow(header)
 
+    def safe(value: Any) -> Any:
+        # Neutralize CSV formula injection: Excel executes cells starting
+        # with = + - @ — student-controlled names must never run as formulas.
+        if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+            return "'" + value
+        return value
+
     for entry in result["students"]:
-        row: list[Any] = [entry["rank"], entry["bits_id"], entry["name"]]
+        row: list[Any] = [entry["rank"], entry["bits_id"], safe(entry["name"])]
         for subject in term_config["subjects"]:
             subject_entry = entry["subjects"][subject["code"]]
             row += [subject_entry["components"].get(key) for key in component_keys]

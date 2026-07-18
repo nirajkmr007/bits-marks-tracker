@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import bits_marks_tracker.app as app_module
-from bits_marks_tracker.storage import LocalStorage
+from bits_marks_tracker.storage import LocalStorage, WriteConflictError
 
 TERM = "2026-S1"
 
@@ -124,11 +124,11 @@ def test_anon_lookup_requires_pin(client: TestClient) -> None:
     no_pin = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
     assert no_pin["found"] is False
     bad = client.get(
-        "/api/student", params={"term": TERM, "bits_id": "2025AA05123", "pin": "0000"}
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "0000"}
     ).json()
     assert bad["found"] is False
     good = client.get(
-        "/api/student", params={"term": TERM, "bits_id": "2025AA05123", "pin": "1234"}
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "1234"}
     ).json()
     assert good["found"] is True and good["anon"] is True
     assert "bits_id" not in good["student"] and "name" not in good["student"]
@@ -168,6 +168,27 @@ def test_csv_export(client: TestClient) -> None:
     assert len(lines) == 2
     assert "MFML_quiz1" in lines[0]
     assert "2025AA05123" in lines[1]
+
+
+def test_submit_retries_on_write_conflict(
+    client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A concurrent-commit conflict must trigger a fresh read-modify-write, not data loss."""
+    conflicts = {"raised": 0}
+
+    class FlakyStorage(LocalStorage):
+        def write_marks(self, term: str, data: dict[str, Any], message: str) -> None:
+            if conflicts["raised"] == 0:
+                conflicts["raised"] += 1
+                raise WriteConflictError(term)
+            super().write_marks(term, data, message)
+
+    storage = FlakyStorage(data_dir=tmp_path)
+    monkeypatch.setattr(app_module, "get_storage", lambda: storage)
+    assert _submit(client).status_code == 200
+    assert conflicts["raised"] == 1
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["stats"]["total_students"] == 1
 
 
 def test_index_served(client: TestClient) -> None:

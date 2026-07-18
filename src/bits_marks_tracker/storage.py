@@ -25,7 +25,15 @@ import httpx
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
 
-_READ_CACHE_TTL_SECONDS = 20.0
+_READ_CACHE_TTL_SECONDS = 5.0
+
+
+class WriteConflictError(Exception):
+    """Someone else committed between our read and write.
+
+    The caller must re-read the data, re-apply its change, and write again —
+    retrying with the stale document would silently overwrite the other write.
+    """
 
 
 def load_config() -> dict[str, Any]:
@@ -42,8 +50,11 @@ def _empty_marks() -> dict[str, Any]:
 class Storage(Protocol):
     """Minimal interface every storage backend implements."""
 
-    def read_marks(self, term: str) -> dict[str, Any]:
-        """Return the marks document for a term (``{"students": [...]}``)."""
+    def read_marks(self, term: str, fresh: bool = False) -> dict[str, Any]:
+        """Return the marks document for a term (``{"students": [...]}``).
+
+        ``fresh=True`` bypasses any read cache (used when retrying a write).
+        """
         ...
 
     def write_marks(self, term: str, data: dict[str, Any], message: str) -> None:
@@ -60,7 +71,7 @@ class LocalStorage:
     def _path(self, term: str) -> Path:
         return self.data_dir / "marks" / f"{term}.json"
 
-    def read_marks(self, term: str) -> dict[str, Any]:
+    def read_marks(self, term: str, fresh: bool = False) -> dict[str, Any]:
         path = self._path(term)
         if not path.exists():
             return _empty_marks()
@@ -111,10 +122,11 @@ class GitHubStorage:
         self._cache[term] = (time.monotonic(), data, sha)
         return data, sha
 
-    def read_marks(self, term: str) -> dict[str, Any]:
-        cached = self._cache.get(term)
-        if cached is not None and time.monotonic() - cached[0] < _READ_CACHE_TTL_SECONDS:
-            return cached[1]
+    def read_marks(self, term: str, fresh: bool = False) -> dict[str, Any]:
+        if not fresh:
+            cached = self._cache.get(term)
+            if cached is not None and time.monotonic() - cached[0] < _READ_CACHE_TTL_SECONDS:
+                return cached[1]
         data, _sha = self._fetch(term)
         return data
 
@@ -132,13 +144,13 @@ class GitHubStorage:
             body["sha"] = sha
         with httpx.Client(timeout=15.0) as client:
             resp = client.put(self._url(term), headers=self._headers(), json=body)
-            if resp.status_code in (409, 422):
-                # Someone committed in between — refresh the sha and retry once.
-                _stale, fresh_sha = self._fetch(term)
-                if fresh_sha is not None:
-                    body["sha"] = fresh_sha
-                resp = client.put(self._url(term), headers=self._headers(), json=body)
-            resp.raise_for_status()
+        if resp.status_code in (409, 422):
+            # Someone committed between our read and this write. Do NOT retry with
+            # our (now stale) document — that would erase their change. Invalidate
+            # the cache and let the caller redo the whole read-modify-write.
+            self._cache.pop(term, None)
+            raise WriteConflictError(term)
+        resp.raise_for_status()
         new_sha = resp.json().get("content", {}).get("sha")
         self._cache[term] = (time.monotonic(), data, new_sha)
 

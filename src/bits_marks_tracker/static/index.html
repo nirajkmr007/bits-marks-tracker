@@ -544,7 +544,7 @@ function buildForm() {
         <span class="st" id="st_${sub.code}"></span><span class="arrow">›</span></summary>
       <div class="f-comps">${cfg.components.map((c) => `
         <div><label for="m_${sub.code}_${c.key}">${esc(c.label)} /${c.max}</label>
-        <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="0.5" placeholder="—"></div>`).join("")}
+        <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="any" placeholder="—"></div>`).join("")}
       </div>
     </details>`).join("");
 }
@@ -577,7 +577,8 @@ async function prefill() {
   if (id.length < 8) return;
   try {
     const pin = $("pin").value.trim();
-    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}&pin=${encodeURIComponent(pin)}`)).json();
+    const opts = /^\d{4}$/.test(pin) ? { headers: { "X-Pin": pin } } : undefined;
+    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`, opts)).json();
     if (res.found) $("pinLabel").textContent = res.has_pin ? "Enter your PIN" : "Create a 4-digit PIN";
     if (!res.found) return;
     $("anonChk").checked = !!res.anon;
