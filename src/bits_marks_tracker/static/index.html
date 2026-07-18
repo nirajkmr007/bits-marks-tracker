@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BITS Marks Tracker — Unofficial Leaderboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<style>
+  :root {
+    --bg: #f6f7fb; --card: #ffffff; --ink: #1c2333; --muted: #6b7280;
+    --accent: #1d4ed8; --accent-soft: #e8edfb; --gold: #b45309; --line: #e5e7eb;
+    --danger: #b91c1c; --ok: #047857;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--ink); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 8px 0 16px; }
+  h1 { font-size: 1.35rem; margin: 0; }
+  h1 small { display: block; font-size: .78rem; font-weight: 400; color: var(--muted); }
+  .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  select, input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 16px; }
+  .btn-primary { background: var(--accent); color: #fff; font-weight: 600; }
+  .btn-ghost { background: transparent; color: var(--accent); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .card .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .card .v { font-size: 1.35rem; font-weight: 700; margin-top: 2px; }
+  .card .s { font-size: .75rem; color: var(--muted); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tabs button { background: var(--card); border: 1px solid var(--line); color: var(--ink); padding: 7px 14px; }
+  .tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .tablewrap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
+  th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); position: sticky; top: 0; background: var(--card); }
+  th:nth-child(-n+3), td:nth-child(-n+3) { text-align: left; }
+  tr:last-child td { border-bottom: 0; }
+  td.rank { font-weight: 700; color: var(--gold); }
+  td.pct { font-weight: 600; }
+  .empty { padding: 32px; text-align: center; color: var(--muted); }
+  .me { background: var(--accent-soft); }
+  dialog { border: 0; border-radius: 14px; padding: 0; width: min(680px, 94vw); max-height: 90vh; }
+  dialog::backdrop { background: rgba(15, 23, 42, .45); }
+  .form-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0; }
+  .form-body { padding: 8px 20px 20px; overflow-y: auto; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  label { display: block; font-size: .8rem; font-weight: 600; margin: 10px 0 4px; }
+  .hint { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+  fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 14px 0 0; padding: 10px 12px 12px; }
+  legend { font-size: .85rem; font-weight: 700; padding: 0 6px; }
+  .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+  .comp-grid label { margin: 0 0 3px; font-weight: 500; font-size: .72rem; color: var(--muted); }
+  .comp-grid input { width: 100%; padding: 7px 8px; }
+  .form-foot { display: flex; gap: 10px; justify-content: flex-end; align-items: center; padding: 14px 20px; border-top: 1px solid var(--line); }
+  .msg { font-size: .82rem; margin-right: auto; }
+  .msg.err { color: var(--danger); } .msg.ok { color: var(--ok); }
+  footer { margin: 22px 0 14px; font-size: .78rem; color: var(--muted); line-height: 1.5; }
+  footer strong { color: var(--danger); }
+  @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } h1 { font-size: 1.1rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🏆 BITS Marks Tracker <small>Unofficial leaderboard · MTech AI/ML · BITS Pilani WILP</small></h1>
+    <div class="controls">
+      <select id="termSelect" aria-label="Semester"></select>
+      <button class="btn-ghost" id="exportBtn">⬇ CSV</button>
+      <button class="btn-primary" id="openFormBtn">＋ Add my marks</button>
+    </div>
+  </header>
+
+  <section class="cards" id="statsCards"></section>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <div class="tablewrap"><div id="tableHost"><div class="empty">Loading…</div></div></div>
+
+  <footer>
+    <strong>Disclaimer:</strong> This is an <em>unofficial</em>, student-run site with no affiliation
+    to BITS Pilani. Marks are self-reported and unverified. Anything you submit —
+    your BITS ID, name and marks — is stored in a <a id="repoLink" href="#">public open-source
+    repository</a> and visible to everyone. Submit only if you are comfortable with that.
+  </footer>
+</div>
+
+<dialog id="formDialog">
+  <div class="form-head">
+    <h2 style="margin:0;font-size:1.05rem">Add / update your marks</h2>
+    <button class="btn-ghost" id="closeFormBtn" aria-label="Close">✕</button>
+  </div>
+  <div class="form-body">
+    <div class="row2">
+      <div>
+        <label for="bitsId">BITS ID</label>
+        <input id="bitsId" placeholder="2025AA05123" autocomplete="off" maxlength="16">
+        <div class="hint" id="prefillHint">Already submitted before? Your saved marks load automatically.</div>
+      </div>
+      <div>
+        <label for="studentName">Name</label>
+        <input id="studentName" placeholder="Your name" maxlength="60">
+      </div>
+    </div>
+    <div id="subjectFields"></div>
+    <div class="hint" style="margin-top:10px">Leave blank anything not announced yet — you can come back and fill it later. Only filled components count toward your percentage.</div>
+  </div>
+  <div class="form-foot">
+    <span class="msg" id="formMsg"></span>
+    <button class="btn-ghost" id="cancelBtn">Cancel</button>
+    <button class="btn-primary" id="submitBtn">Submit</button>
+  </div>
+</dialog>
+
+<script>
+const REPO_URL = "https://github.com/nirajkmr007/bits-marks-tracker";
+document.getElementById("repoLink").href = REPO_URL;
+
+let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", MY_ID = localStorage.getItem("bits_id") || "";
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (v) => v == null ? "—" : (Number.isInteger(v) ? v : v.toFixed(2).replace(/\.?0+$/, ""));
+
+async function init() {
+  CONFIG = await (await fetch("/api/config")).json();
+  TERM = CONFIG.current_term;
+  const sel = $("termSelect");
+  sel.innerHTML = Object.entries(CONFIG.terms)
+    .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(t.label)}</option>`).join("");
+  sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; refresh(); };
+  $("openFormBtn").onclick = openForm;
+  $("closeFormBtn").onclick = $("cancelBtn").onclick = () => $("formDialog").close();
+  $("submitBtn").onclick = submit;
+  $("exportBtn").onclick = () => location.href = `/api/export.csv?term=${encodeURIComponent(TERM)}`;
+  $("bitsId").addEventListener("change", prefill);
+  refresh();
+}
+
+function termCfg() { return CONFIG.terms[TERM]; }
+
+async function refresh() {
+  BOARD = await (await fetch(`/api/leaderboard?term=${encodeURIComponent(TERM)}`)).json();
+  renderStats(); renderTabs(); renderTable();
+}
+
+function renderStats() {
+  const s = BOARD.stats, cfg = termCfg();
+  const cards = [
+    { k: "Students", v: s.total_students, s: "submitted marks" },
+    { k: "Topper", v: fmt(s.overall.top_pct) + (s.overall.top_pct != null ? "%" : ""), s: "best overall %" },
+    { k: "Class average", v: fmt(s.overall.avg_pct) + (s.overall.avg_pct != null ? "%" : ""), s: "overall %" },
+    ...cfg.subjects.map((sub) => ({
+      k: sub.code, v: fmt(s.subjects[sub.code].top_pct) + (s.subjects[sub.code].top_pct != null ? "%" : ""),
+      s: `top · avg ${fmt(s.subjects[sub.code].avg_pct)}${s.subjects[sub.code].avg_pct != null ? "%" : ""}`
+    })),
+  ];
+  $("statsCards").innerHTML = cards.map((c) =>
+    `<div class="card"><div class="k">${esc(c.k)}</div><div class="v">${esc(c.v)}</div><div class="s">${esc(c.s)}</div></div>`).join("");
+}
+
+function renderTabs() {
+  const tabs = [{ id: "OVERALL", label: "Overall" }, ...termCfg().subjects.map((s) => ({ id: s.code, label: s.code }))];
+  $("tabs").innerHTML = tabs.map((t) =>
+    `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}" title="${esc(t.label)}">${esc(t.label)}</button>`).join("");
+  [...$("tabs").children].forEach((b) => b.onclick = () => { TAB = b.dataset.tab; renderTabs(); renderTable(); });
+}
+
+function renderTable() {
+  const students = BOARD.students;
+  if (!students.length) {
+    $("tableHost").innerHTML = `<div class="empty">No marks yet — be the first! Hit “＋ Add my marks”.</div>`;
+    return;
+  }
+  const cfg = termCfg();
+  let head, rows;
+  if (TAB === "OVERALL") {
+    head = ["#", "Name", "BITS ID", ...cfg.subjects.map((s) => s.code + " %"), "Total", "Overall %", "Percentile"];
+    rows = students.map((e) => [
+      { c: "rank", v: fmt(e.rank) }, { v: esc(e.name) }, { v: esc(e.bits_id) },
+      ...cfg.subjects.map((s) => ({ v: fmt(e.subjects[s.code].pct) })),
+      { v: fmt(e.overall.total) + "/" + fmt(e.overall.max_entered) },
+      { c: "pct", v: fmt(e.overall.pct) }, { v: fmt(e.percentile) },
+    ].map((x) => ({ ...x, me: e.bits_id === MY_ID })));
+  } else {
+    const sorted = [...students].sort((a, b) => (b.subjects[TAB].pct ?? -1) - (a.subjects[TAB].pct ?? -1));
+    head = ["#", "Name", "BITS ID", ...cfg.components.map((c) => `${c.label} /${c.max}`), "Total", "%"];
+    rows = sorted.map((e, i) => [
+      { c: "rank", v: e.subjects[TAB].pct == null ? "—" : i + 1 }, { v: esc(e.name) }, { v: esc(e.bits_id) },
+      ...cfg.components.map((c) => ({ v: fmt(e.subjects[TAB].components[c.key]) })),
+      { v: fmt(e.subjects[TAB].total) + "/" + fmt(e.subjects[TAB].max_entered) },
+      { c: "pct", v: fmt(e.subjects[TAB].pct) },
+    ].map((x) => ({ ...x, me: e.bits_id === MY_ID })));
+  }
+  $("tableHost").innerHTML = `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>` +
+    `<tbody>${rows.map((r) => `<tr${r[0].me ? ' class="me"' : ""}>${r.map((c) => `<td class="${c.c || ""}">${c.v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+function openForm() {
+  const cfg = termCfg();
+  $("subjectFields").innerHTML = cfg.subjects.map((sub) => `
+    <fieldset><legend>${esc(sub.code)} — ${esc(sub.name)}</legend>
+      <div class="comp-grid">${cfg.components.map((c) => `
+        <div><label for="m_${sub.code}_${c.key}">${esc(c.label)} /${c.max}</label>
+        <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="0.5" placeholder="—"></div>`).join("")}
+      </div></fieldset>`).join("");
+  $("formMsg").textContent = "";
+  if (MY_ID) { $("bitsId").value = MY_ID; prefill(); }
+  $("formDialog").showModal();
+}
+
+async function prefill() {
+  const id = $("bitsId").value.trim();
+  if (id.length < 8) return;
+  try {
+    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`)).json();
+    if (!res.found) return;
+    $("studentName").value = res.student.name;
+    for (const [code, comps] of Object.entries(res.student.marks || {}))
+      for (const [key, val] of Object.entries(comps)) {
+        const input = $(`m_${code}_${key}`);
+        if (input) input.value = val;
+      }
+    $("formMsg").className = "msg ok";
+    $("formMsg").textContent = "Loaded your saved marks — edit and resubmit.";
+  } catch { /* prefill is best-effort */ }
+}
+
+async function submit() {
+  const cfg = termCfg(), marks = {};
+  for (const sub of cfg.subjects) {
+    const entry = {};
+    for (const c of cfg.components) {
+      const raw = $(`m_${sub.code}_${c.key}`).value.trim();
+      if (raw !== "") entry[c.key] = Number(raw);
+    }
+    if (Object.keys(entry).length) marks[sub.code] = entry;
+  }
+  const body = { term: TERM, bits_id: $("bitsId").value.trim(), name: $("studentName").value.trim(), marks };
+  const msg = $("formMsg");
+  if (body.bits_id.length < 8 || body.name.length < 2) {
+    msg.className = "msg err"; msg.textContent = "Enter your BITS ID and name."; return;
+  }
+  $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+  try {
+    const res = await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Submission failed");
+    MY_ID = data.bits_id; localStorage.setItem("bits_id", MY_ID);
+    msg.className = "msg ok"; msg.textContent = "Saved! 🎉";
+    setTimeout(() => { $("formDialog").close(); refresh(); }, 700);
+  } catch (err) {
+    msg.className = "msg err"; msg.textContent = err.message;
+  } finally { $("submitBtn").disabled = false; }
+}
+
+init();
+</script>
+</body>
+</html>

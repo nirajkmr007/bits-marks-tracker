@@ -1,0 +1,77 @@
+# 🏆 BITS Marks Tracker
+
+**Unofficial**, student-run marks leaderboard for the BITS Pilani WILP MTech AI/ML batch.
+Students self-report marks per subject; the dashboard shows totals, percentages,
+ranks and percentiles — per subject and overall.
+
+> **Disclaimer:** This site has no affiliation with BITS Pilani. All marks are
+> self-reported and unverified. Everything submitted (BITS ID, name, marks) is
+> stored in this public repository under `data/` — submit only if you're
+> comfortable with that.
+
+## How it works
+
+No database. The GitHub repo **is** the database:
+
+- `data/config.json` — semesters, subjects, and mark components (open this to add a new semester).
+- `data/marks/<term>.json` — one JSON file per semester with every student's marks.
+- The FastAPI backend reads/writes those files through the GitHub Contents API,
+  so every submission is a commit and the dataset is open source by construction.
+- Locally (no `GITHUB_TOKEN` set) it just reads/writes the files on disk.
+
+Marks per subject: Quiz 1 (5) + Assignment 1 (10) + Midsem (30) + Quiz 2 (5) +
+Assignment 2 (10) + End-sem (40) = **100**. Partial entry is fine — percentages
+are computed against the max of the components you've filled in, so mid-semester
+comparisons stay fair. Percentile = % of students strictly below you overall.
+
+## Local development
+
+Requires [uv](https://docs.astral.sh/uv/) and [just](https://github.com/casey/just).
+
+```bash
+just bootstrap                      # venv + deps + git hooks
+just check                          # ruff + mypy + pytest
+uv run uvicorn bits_marks_tracker.app:app --reload
+# open http://127.0.0.1:8000
+```
+
+## API
+
+| Method | Path                        | Purpose                              |
+| ------ | --------------------------- | ------------------------------------ |
+| GET    | `/`                         | Dashboard UI                         |
+| GET    | `/api/config`               | Semesters/subjects/components        |
+| GET    | `/api/leaderboard?term=`    | Ranked leaderboard + stats           |
+| GET    | `/api/student?term=&bits_id=` | One student's saved marks (form pre-fill) |
+| POST   | `/api/submit`               | Upsert marks (merge per component)   |
+| GET    | `/api/export.csv?term=`     | Full dataset as CSV                  |
+
+## Deploy (Vercel, free)
+
+1. Push this repo to GitHub.
+2. Generate `requirements.txt` (Vercel doesn't read `uv.lock`):
+   `uv export --no-dev --no-hashes --no-emit-project -o requirements.txt`
+3. Import the repo at [vercel.com/new](https://vercel.com/new) — `vercel.json`
+   routes everything to the FastAPI app.
+4. Set environment variables in the Vercel project:
+   - `GITHUB_TOKEN` — fine-grained PAT, **Contents: read & write**, scoped to this repo only
+   - `GITHUB_DATA_REPO` — e.g. `nirajkmr007/bits-marks-tracker`
+   - `GITHUB_DATA_BRANCH` — `main`
+
+Submissions then land as commits like `marks: update 2025AA05123 (2026-S1)`.
+
+## Adding a new semester
+
+Add a term to `data/config.json` (subjects + components), create an empty
+`data/marks/<term>.json` (`{"students": []}`), set `current_term`, redeploy.
+
+## Roadmap
+
+- **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,
+  so only the owner of a BITS ID can edit their row. Until then, edits are
+  open and trust-based (every change is a commit, so history is auditable).
+- Charts (score distribution per subject), previous-semester archive views.
+
+## License
+
+MIT — see [LICENSE](LICENSE). The collected data in `data/` is public domain.

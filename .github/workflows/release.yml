@@ -1,0 +1,105 @@
+name: Release
+
+# Runs whenever a feature branch is merged (pushed) to main.
+# It picks the next version, bumps the project files, tags the release,
+# and publishes a GitHub Release.
+#
+# Choosing the version:
+#   * Explicit  - set it on your feature branch with `just set-version X.Y.Z`
+#                 (or run this workflow manually and type a version), OR
+#   * Automatic - if you don't, the minor version is bumped by 1 from the
+#                 last released tag (e.g. v1.4.2 -> v1.5.0).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 1.4.0). Leave blank to auto-bump the minor version."
+        required: false
+        default: ""
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # Skip the auto-generated release commit to avoid loops.
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    outputs:
+      released: ${{ steps.ver.outputs.released }}
+      tag: ${{ steps.ver.outputs.tag }}
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Determine next version
+        id: ver
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git fetch --tags --force
+          LAST_TAG="$(git tag --list 'v*' --sort=-v:refname | head -n1)"
+          LAST_VER="${LAST_TAG#v}"; [ -z "$LAST_VER" ] && LAST_VER="0.0.0"
+          PROJECT_VER="$(uv version --short)"
+          NEXT="$(python3 - "$LAST_VER" "$PROJECT_VER" "$INPUT_VERSION" <<'PY'
+          import sys
+          def parse(v):
+              parts = [int(x) for x in v.strip().lstrip('v').split('.')[:3]]
+              return tuple(parts + [0] * (3 - len(parts)))
+          last, proj, inp = sys.argv[1], sys.argv[2], sys.argv[3].strip()
+          if inp:                       # explicit version (manual dispatch)
+              nxt = inp.lstrip('v')
+          elif parse(proj) > parse(last):  # version provided via pyproject bump
+              nxt = proj
+          else:                         # auto: bump minor from last release
+              major, minor, _ = parse(last)
+              nxt = f"{major}.{minor + 1}.0"
+          print(nxt)
+          PY
+          )"
+          echo "last=${LAST_VER}  pyproject=${PROJECT_VER}  ->  next=${NEXT}"
+          echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${NEXT}" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v${NEXT}" >/dev/null; then
+            echo "Tag v${NEXT} already exists - nothing to release."
+            echo "released=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "released=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply version to project files
+        if: steps.ver.outputs.released == 'true'
+        run: |
+          uv version "${{ steps.ver.outputs.version }}" --frozen
+          sed -i -E 's/^__version__ = .*/__version__ = "'"${{ steps.ver.outputs.version }}"'"/' \
+            src/bits_marks_tracker/__init__.py
+
+      - name: Commit, tag and push
+        if: steps.ver.outputs.released == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml uv.lock src/bits_marks_tracker/__init__.py
+          git commit -m "chore(release): ${{ steps.ver.outputs.tag }} [skip ci]"
+          git tag -a "${{ steps.ver.outputs.tag }}" -m "Release ${{ steps.ver.outputs.tag }}"
+          git push origin HEAD:main
+          git push origin "${{ steps.ver.outputs.tag }}"
+
+      - name: Create GitHub Release
+        if: steps.ver.outputs.released == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: ${{ steps.ver.outputs.tag }}
+          generate_release_notes: true
