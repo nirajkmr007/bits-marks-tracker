@@ -228,6 +228,8 @@
   @media (max-width: 400px) { .f-comps { grid-template-columns: repeat(2, 1fr); } }
   .f-comps label { margin: 0 0 3px; font-size: .58rem; }
   .hint { font-size: .7rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  .req { color: var(--err); }
+  label .opt { font-weight: 400; text-transform: none; letter-spacing: 0; }
   .sheet-foot { display: flex; gap: 10px; align-items: center; padding: 12px 20px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
   .msg { flex: 1; font-size: .76rem; color: var(--muted); }
   .msg.err { color: var(--err); } .msg.ok { color: var(--ok); }
@@ -304,24 +306,25 @@
     <button class="xbtn" onclick="formDialog.close()">✕</button></div>
   <div class="sheet-body">
     <div class="f-grid">
-      <div><label for="bitsNum">BITS ID</label>
+      <div><label for="bitsNum">BITS ID <span class="req">*</span></label>
         <div style="display:flex; gap:6px">
           <input id="bitsPrefix" autocomplete="off" maxlength="8" style="flex:0 0 44%; text-transform:uppercase">
-          <input id="bitsNum" placeholder="05239" inputmode="numeric" autocomplete="off" maxlength="8">
+          <input id="bitsNum" placeholder="05123" inputmode="numeric" autocomplete="off" maxlength="8">
         </div></div>
-      <div><label for="studentName">Name</label>
-        <input id="studentName" placeholder="Your name" maxlength="60"></div>
+      <div><label for="studentName">Name <span class="opt">(optional)</span></label>
+        <input id="studentName" placeholder="Blank = no name shown" maxlength="60"></div>
     </div>
     <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:.78rem; font-weight:500; color:var(--ink); text-transform:none; letter-spacing:0; cursor:pointer">
       <input type="checkbox" id="anonChk" style="width:auto; accent-color:#a855f7">
-      🕶️ Hide my name &amp; BITS ID — show me as an anonymous alias
+      🙈 Hide my BITS ID on the leaderboard
     </label>
     <div class="hint" id="anonHint" style="display:none; margin-top:4px">
-      Your identity is never stored — only an untraceable code. You'll appear as a fun alias
-      (e.g. “Silent Falcon 42”). Note: if you submitted publicly before, old git history keeps those versions.
+      Your BITS ID is never stored — only an untraceable code. If you also leave the name blank,
+      you'll appear as an alias like “Silent Falcon 42”. Note: if you submitted publicly before,
+      old git history keeps those versions.
     </div>
     <div class="f-grid" style="margin-top:10px">
-      <div><label for="pin" id="pinLabel">Create a 4-digit PIN</label>
+      <div><label for="pin"><span id="pinLabel">Create a 4-digit PIN</span> <span class="req">*</span></label>
         <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
         <div class="hint" style="margin-top:5px">You'll need this PIN to edit your marks later.<br>
           <a id="forgotPin" href="#" style="color:var(--indigo)">Forgot PIN? Contact the admin for a reset</a></div>
@@ -386,9 +389,7 @@ async function init() {
   $("bitsNum").addEventListener("change", prefill);
   $("pin").addEventListener("change", prefill);
   $("anonChk").addEventListener("change", () => {
-    const anon = $("anonChk").checked;
-    $("studentName").parentElement.style.display = anon ? "none" : "";
-    $("anonHint").style.display = anon ? "" : "none";
+    $("anonHint").style.display = $("anonChk").checked ? "" : "none";
   });
   $("search").addEventListener("input", (e) => { QUERY = e.target.value.toLowerCase(); render(); });
   refresh();
@@ -559,7 +560,6 @@ function openForm(prefillId) {
   $("studentName").value = "";
   $("pin").value = ""; $("pinLabel").textContent = "Create a 4-digit PIN";
   $("anonChk").checked = false;
-  $("studentName").parentElement.style.display = "";
   $("anonHint").style.display = "none";
   const id = (prefillId || MY_ID || "").toUpperCase();
   const parts = id.match(ID_SPLIT_RE);
@@ -583,7 +583,7 @@ async function prefill() {
     if (!res.found) return;
     $("anonChk").checked = !!res.anon;
     $("anonChk").dispatchEvent(new Event("change"));
-    if (!res.anon) $("studentName").value = res.student.name;
+    if (res.student.name) $("studentName").value = res.student.name;
     for (const [code, comps] of Object.entries(res.student.marks || {})) {
       let any = false;
       for (const [key, val] of Object.entries(comps)) {
@@ -609,10 +609,10 @@ async function submit() {
     if (Object.keys(entry).length) marks[sub.code] = entry;
   }
   const body = { term: TERM, bits_id: getFormBitsId(), name: $("studentName").value.trim(),
-                 pin: $("pin").value.trim(), anonymous: $("anonChk").checked, marks };
+                 pin: $("pin").value.trim(), hide_id: $("anonChk").checked, marks };
   const msg = $("formMsg");
-  if (body.bits_id.length < 8 || (!body.anonymous && body.name.length < 2)) {
-    msg.className = "msg err"; msg.textContent = "Enter your BITS ID and name."; return;
+  if (body.bits_id.length < 8) {
+    msg.className = "msg err"; msg.textContent = "Enter your BITS ID."; return;
   }
   if (!/^\d{4}$/.test(body.pin)) {
     msg.className = "msg err"; msg.textContent = "PIN must be exactly 4 digits."; return;
@@ -628,7 +628,9 @@ async function submit() {
     if (MY_ANON_HASH) localStorage.setItem("bits_anon_hash", MY_ANON_HASH);
     else localStorage.removeItem("bits_anon_hash");
     msg.className = "msg ok";
-    msg.textContent = data.anon ? `Saved as “${data.alias}” 🕶️` : "Saved! 🎉";
+    msg.textContent = data.anon
+      ? (body.name ? "Saved — BITS ID hidden 🙈" : `Saved as “${data.alias}” 🙈`)
+      : "Saved! 🎉";
     setTimeout(() => { $("formDialog").close(); refresh(); }, 650);
   } catch (err) {
     msg.className = "msg err"; msg.textContent = err.message;

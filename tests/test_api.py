@@ -95,8 +95,24 @@ def test_pin_never_leaks(client: TestClient) -> None:
     assert "pin" not in text.lower()
 
 
+def test_blank_name_falls_back_to_bits_id(client: TestClient) -> None:
+    _submit(client, name="")
+    entry = client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]
+    assert entry["name"] == "2025AA05123"
+
+
+def test_hide_id_with_name_keeps_name(client: TestClient, tmp_path: Path) -> None:
+    _submit(client, hide_id=True)  # name stays "Niraj"
+    entry = client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]
+    assert entry["anon"] is True
+    assert entry["bits_id"] is None
+    assert entry["name"] == "Niraj"
+    raw = (tmp_path / "marks" / f"{TERM}.json").read_text()
+    assert "2025AA05123" not in raw
+
+
 def test_anonymous_hides_identity_everywhere(client: TestClient, tmp_path: Path) -> None:
-    resp = _submit(client, anonymous=True)
+    resp = _submit(client, hide_id=True, name="")
     assert resp.status_code == 200
     data = resp.json()
     assert data["anon"] is True and data["alias"] and data["id_hash"]
@@ -119,7 +135,7 @@ def test_anonymous_hides_identity_everywhere(client: TestClient, tmp_path: Path)
 
 
 def test_anon_lookup_requires_pin(client: TestClient) -> None:
-    _submit(client, anonymous=True)
+    _submit(client, hide_id=True, name="")
     # without / with wrong PIN: indistinguishable from unregistered
     no_pin = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
     assert no_pin["found"] is False
@@ -136,10 +152,10 @@ def test_anon_lookup_requires_pin(client: TestClient) -> None:
 
 def test_toggle_anonymous_and_back(client: TestClient) -> None:
     _submit(client)  # public
-    _submit(client, anonymous=True)  # go anonymous
+    _submit(client, hide_id=True, name="")  # go anonymous
     board = client.get("/api/leaderboard", params={"term": TERM}).json()
     assert board["students"][0]["anon"] is True
-    _submit(client, anonymous=False, name="Niraj")  # back to public, same PIN
+    _submit(client, hide_id=False, name="Niraj")  # back to public, same PIN
     board = client.get("/api/leaderboard", params={"term": TERM}).json()
     entry = board["students"][0]
     assert entry["anon"] is False and entry["bits_id"] == "2025AA05123"

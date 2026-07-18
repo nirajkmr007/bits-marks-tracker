@@ -93,14 +93,17 @@ brute-force a 4-digit PIN hash offline. The PIN stops casual overwrites, not a
 motivated attacker — and every change is a git commit, so nothing is ever lost.
 Proper per-student auth (Microsoft Entra ID) is the phase-2 fix.
 
-## Anonymous mode
+## Privacy: optional name, hideable BITS ID
 
-Students can tick “Hide my name & BITS ID” when submitting. For those rows the
-data file stores **no identity at all** — only `id_hash`, an HMAC of the BITS ID
-keyed by the server-side `ANON_SECRET` env var, plus a friendly alias derived
-from it (e.g. “Silent Falcon 42”). There is nothing to decrypt: the server finds
-the row on edit by re-computing the HMAC from the typed ID. The keyed hash also
-can't be reversed by enumerating BITS IDs without the secret.
+The **name is optional** — leave it blank (or use a nickname) and the
+leaderboard shows the BITS ID instead, or an alias if the ID is hidden too.
+
+Students can tick **“Hide my BITS ID”** when submitting. For those rows the data
+file stores **no BITS ID at all** — only `id_hash`, an HMAC of the BITS ID keyed
+by the server-side `ANON_SECRET` env var, plus a friendly alias derived from it
+(e.g. “Silent Falcon 42”). There is nothing to decrypt: the server finds the row
+on edit by re-computing the HMAC from the typed ID. The keyed hash also can't be
+reversed by enumerating BITS IDs without the secret.
 
 Operational notes:
 
