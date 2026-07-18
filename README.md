@@ -77,6 +77,22 @@ Submissions then land as commits like `marks: update 2025AA05123 (2026-S1)`.
 Add a term to `data/config.json` (subjects + components), create an empty
 `data/marks/<term>.json` (`{"students": []}`), set `current_term`, redeploy.
 
+## PIN protection
+
+Each BITS ID is claimed with a 4-digit PIN on first submission; later edits
+require the same PIN. Only a salted PBKDF2 hash of the PIN is stored in the
+data file — never the PIN itself.
+
+**Admin PIN reset:** when a student emails asking for a reset, open
+`data/marks/<term>.json` on the `data` branch on GitHub, delete that student's
+`pin_salt` and `pin_hash` fields, and commit. Their next submission sets a
+fresh PIN. (Verify it's really them — e.g. ask from their known email/WhatsApp.)
+
+Honest limitation: since the data file is public, someone determined could
+brute-force a 4-digit PIN hash offline. The PIN stops casual overwrites, not a
+motivated attacker — and every change is a git commit, so nothing is ever lost.
+Proper per-student auth (Microsoft Entra ID) is the phase-2 fix.
+
 ## Roadmap
 
 - **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,

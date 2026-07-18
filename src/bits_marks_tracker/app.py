@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import re
+import secrets
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -31,7 +33,13 @@ class Submission(BaseModel):
     term: str
     bits_id: str = Field(min_length=8, max_length=16)
     name: str = Field(min_length=2, max_length=60)
+    pin: str = Field(pattern=r"^\d{4}$")
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
+
+
+def _hash_pin(pin: str, salt: str) -> str:
+    """Salted PBKDF2 hash — only the hash is stored in the (public) data file."""
+    return hashlib.pbkdf2_hmac("sha256", pin.encode(), bytes.fromhex(salt), 100_000).hex()
 
 
 def _term_config(term: str) -> dict[str, Any]:
@@ -74,13 +82,21 @@ def api_leaderboard(term: str) -> dict[str, Any]:
 
 @app.get("/api/student")
 def api_student(term: str, bits_id: str) -> dict[str, Any]:
-    """Existing marks for one student — used by the form to pre-fill values."""
+    """Existing marks for one student — used by the form to pre-fill values.
+
+    PIN salt/hash are never returned by the API.
+    """
     _term_config(term)
     normalized = _normalize_bits_id(bits_id)
     for student in get_storage().read_marks(term).get("students", []):
         if student["bits_id"] == normalized:
-            return {"found": True, "student": student}
-    return {"found": False, "student": None}
+            public = {
+                key: student[key]
+                for key in ("bits_id", "name", "marks", "updated_at")
+                if key in student
+            }
+            return {"found": True, "has_pin": bool(student.get("pin_hash")), "student": public}
+    return {"found": False, "has_pin": False, "student": None}
 
 
 @app.post("/api/submit")
@@ -112,6 +128,20 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     if student is None:
         student = {"bits_id": bits_id, "name": name, "marks": {}}
         students.append(student)
+
+    # PIN check: first submission (or legacy record without a PIN) claims the ID;
+    # every later edit must present the same PIN.
+    if student.get("pin_hash"):
+        if _hash_pin(submission.pin, student["pin_salt"]) != student["pin_hash"]:
+            raise HTTPException(
+                status_code=403,
+                detail="Wrong PIN for this BITS ID. Forgot it? Contact the admin for a reset.",
+            )
+    else:
+        salt = secrets.token_hex(8)
+        student["pin_salt"] = salt
+        student["pin_hash"] = _hash_pin(submission.pin, salt)
+
     student["name"] = name
     for code, comps in submission.marks.items():
         subject_marks: dict[str, float | None] = student["marks"].setdefault(code, {})
@@ -120,7 +150,9 @@ def api_submit(submission: Submission) -> dict[str, Any]:
                 subject_marks.pop(key, None)
             else:
                 subject_marks[key] = value
-    student["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    student["updated_at"] = datetime.now(timezone.utc).isoformat(  # noqa: UP017
+        timespec="seconds"
+    )
 
     storage.write_marks(
         submission.term, marks_doc, message=f"marks: update {bits_id} ({submission.term})"

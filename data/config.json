@@ -3,6 +3,7 @@
   "terms": {
     "2026-S1": {
       "label": "Semester 1 · 2026",
+      "id_prefix": "2025AC",
       "subjects": [
         { "code": "MFML", "name": "Mathematical Foundations for Machine Learning" },
         { "code": "ISM", "name": "Introduction to Statistical Methods" },

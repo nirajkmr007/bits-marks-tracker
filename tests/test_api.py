@@ -26,6 +26,7 @@ def _submit(client: TestClient, **overrides: Any) -> Any:
         "term": TERM,
         "bits_id": "2025aa05123",
         "name": "Niraj",
+        "pin": "1234",
         "marks": {"MFML": {"quiz1": 4.5, "assignment1": 9}},
     }
     payload.update(overrides)
@@ -62,7 +63,46 @@ def test_validation_errors(client: TestClient) -> None:
     assert _submit(client, marks={"NOPE": {"quiz1": 1}}).status_code == 422
     assert _submit(client, marks={"MFML": {"quiz1": 99}}).status_code == 422
     assert _submit(client, marks={"MFML": {"bogus": 1}}).status_code == 422
+    assert _submit(client, pin="12").status_code == 422
+    assert _submit(client, pin="abcd").status_code == 422
     assert client.get("/api/leaderboard", params={"term": "1999-S9"}).status_code == 404
+
+
+def test_pin_protects_edits(client: TestClient) -> None:
+    assert _submit(client, pin="4321").status_code == 200
+    # wrong PIN → rejected
+    resp = _submit(client, pin="0000", name="Attacker")
+    assert resp.status_code == 403
+    assert "PIN" in resp.json()["detail"]
+    # correct PIN → allowed
+    assert _submit(client, pin="4321", name="Niraj K").status_code == 200
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["students"][0]["name"] == "Niraj K"
+
+
+def test_pin_never_leaks(client: TestClient) -> None:
+    _submit(client)
+    res = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert res["has_pin"] is True
+    assert "pin_hash" not in res["student"]
+    assert "pin_salt" not in res["student"]
+    text = client.get("/api/leaderboard", params={"term": TERM}).text
+    assert "pin_hash" not in text and "pin_salt" not in text
+    text = client.get("/api/export.csv", params={"term": TERM}).text
+    assert "pin" not in text.lower()
+
+
+def test_legacy_record_without_pin_can_be_claimed(client: TestClient, tmp_path: Path) -> None:
+    # simulate a record created before PINs existed
+    import json
+
+    marks_dir = tmp_path / "marks"
+    marks_dir.mkdir(parents=True, exist_ok=True)
+    (marks_dir / f"{TERM}.json").write_text(
+        json.dumps({"students": [{"bits_id": "2025AA05123", "name": "Old", "marks": {}}]})
+    )
+    assert _submit(client, pin="9999").status_code == 200  # first edit claims the ID
+    assert _submit(client, pin="1111").status_code == 403  # now locked
 
 
 def test_csv_export(client: TestClient) -> None:

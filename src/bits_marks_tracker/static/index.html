@@ -304,10 +304,20 @@
     <button class="xbtn" onclick="formDialog.close()">✕</button></div>
   <div class="sheet-body">
     <div class="f-grid">
-      <div><label for="bitsId">BITS ID</label>
-        <input id="bitsId" placeholder="2025AA05123" autocomplete="off" maxlength="16"></div>
+      <div><label for="bitsNum">BITS ID</label>
+        <div style="display:flex; gap:6px">
+          <input id="bitsPrefix" autocomplete="off" maxlength="8" style="flex:0 0 44%; text-transform:uppercase">
+          <input id="bitsNum" placeholder="05239" inputmode="numeric" autocomplete="off" maxlength="8">
+        </div></div>
       <div><label for="studentName">Name</label>
         <input id="studentName" placeholder="Your name" maxlength="60"></div>
+    </div>
+    <div class="f-grid" style="margin-top:10px">
+      <div><label for="pin" id="pinLabel">Create a 4-digit PIN</label>
+        <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+        <div class="hint" style="margin-top:5px">You'll need this PIN to edit your marks later.<br>
+          <a id="forgotPin" href="#" style="color:var(--indigo)">Forgot PIN? Contact the admin for a reset</a></div>
+      </div>
     </div>
     <div id="subjectFields"></div>
     <div class="hint">Leave blank anything not announced yet — come back anytime.
@@ -322,10 +332,13 @@
 
 <script>
 const REPO_URL = "https://github.com/nirajkmr007/bits-marks-tracker";
+const ADMIN_EMAIL = "nirajkmr007@gmail.com";
+const ID_SPLIT_RE = /^(\d{4}[A-Z]{2})(\d+)$/;
 document.getElementById("repoLink").href = REPO_URL;
 
 let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", QUERY = "";
 let MY_ID = localStorage.getItem("bits_id") || "";
+let MY_PIN = localStorage.getItem("bits_pin") || "";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -356,7 +369,8 @@ async function init() {
   $("openFormBtn").onclick = () => openForm();
   $("fabBtn").onclick = () => openForm();
   $("submitBtn").onclick = submit;
-  $("bitsId").addEventListener("change", prefill);
+  $("bitsPrefix").addEventListener("change", prefill);
+  $("bitsNum").addEventListener("change", prefill);
   $("search").addEventListener("input", (e) => { QUERY = e.target.value.toLowerCase(); render(); });
   refresh();
 }
@@ -515,22 +529,32 @@ function buildForm() {
     </details>`).join("");
 }
 
+function getFormBitsId() {
+  return ($("bitsPrefix").value.trim() + $("bitsNum").value.trim()).toUpperCase();
+}
+
 function openForm(prefillId) {
   buildForm();
   $("formMsg").textContent = ""; $("formMsg").className = "msg";
   $("studentName").value = "";
-  const id = prefillId || MY_ID;
-  $("bitsId").value = id || "";
+  $("pin").value = ""; $("pinLabel").textContent = "Create a 4-digit PIN";
+  const id = (prefillId || MY_ID || "").toUpperCase();
+  const parts = id.match(ID_SPLIT_RE);
+  $("bitsPrefix").value = parts ? parts[1] : (termCfg().id_prefix || "2025AC");
+  $("bitsNum").value = parts ? parts[2] : "";
+  $("forgotPin").href = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent("BITS Marks Tracker: PIN reset")}&body=${encodeURIComponent("Hi, please reset the PIN for my BITS ID: " + (id || "<your id>"))}`;
   $("formTitle").textContent = prefillId ? "Edit marks" : "Add your marks";
+  if (id && id === MY_ID && MY_PIN) $("pin").value = MY_PIN;
   if (id) prefill();
   $("formDialog").showModal();
 }
 
 async function prefill() {
-  const id = $("bitsId").value.trim();
+  const id = getFormBitsId();
   if (id.length < 8) return;
   try {
     const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`)).json();
+    $("pinLabel").textContent = res.has_pin ? "Enter your PIN" : "Create a 4-digit PIN";
     if (!res.found) return;
     $("studentName").value = res.student.name;
     for (const [code, comps] of Object.entries(res.student.marks || {})) {
@@ -557,10 +581,14 @@ async function submit() {
     }
     if (Object.keys(entry).length) marks[sub.code] = entry;
   }
-  const body = { term: TERM, bits_id: $("bitsId").value.trim(), name: $("studentName").value.trim(), marks };
+  const body = { term: TERM, bits_id: getFormBitsId(), name: $("studentName").value.trim(),
+                 pin: $("pin").value.trim(), marks };
   const msg = $("formMsg");
   if (body.bits_id.length < 8 || body.name.length < 2) {
     msg.className = "msg err"; msg.textContent = "Enter your BITS ID and name."; return;
+  }
+  if (!/^\d{4}$/.test(body.pin)) {
+    msg.className = "msg err"; msg.textContent = "PIN must be exactly 4 digits."; return;
   }
   $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
   try {
@@ -568,6 +596,7 @@ async function submit() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Submission failed");
     MY_ID = data.bits_id; localStorage.setItem("bits_id", MY_ID);
+    MY_PIN = body.pin; localStorage.setItem("bits_pin", MY_PIN);
     msg.className = "msg ok"; msg.textContent = "Saved! 🎉";
     setTimeout(() => { $("formDialog").close(); refresh(); }, 650);
   } catch (err) {
