@@ -26,14 +26,26 @@ comparisons stay fair. Percentile = % of students strictly below you overall.
 
 ## Local development
 
-Requires [uv](https://docs.astral.sh/uv/) and [just](https://github.com/casey/just).
+Two steps from a fresh clone — everything else is automated:
 
 ```bash
-just bootstrap                      # venv + deps + git hooks
-just check                          # ruff + mypy + pytest
-uv run uvicorn bits_marks_tracker.app:app --reload
-# open http://127.0.0.1:8000
+git clone https://github.com/nirajkmr007/bits-marks-tracker.git
+cd bits-marks-tracker
+
+./scripts/install-just.sh    # step 1 (once): install the `just` command runner
+just setup-local             # step 2: uv + venv + deps + git hooks + .env + tests
 ```
+
+Then:
+
+```bash
+just run                     # dev server at http://127.0.0.1:8000 (auto-reload)
+just check                   # ruff + mypy + pytest
+just                         # list all commands
+```
+
+Without `GITHUB_TOKEN` set, marks are stored locally in `data/marks/<term>.json` —
+edit or reset that file freely while developing. API docs: http://127.0.0.1:8000/docs.
 
 ## API
 

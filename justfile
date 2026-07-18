@@ -4,6 +4,14 @@
 default:
     @just --list
 
+# Full local setup: uv + deps + git hooks + .env + smoke test
+setup-local:
+    bash scripts/setup-local.sh
+
+# Start the dev server with auto-reload (http://127.0.0.1:8000)
+run PORT="8000":
+    uv run uvicorn bits_marks_tracker.app:app --reload --port {{PORT}}
+
 # Create venv, install all deps, install git hooks
 bootstrap:
     uv sync
