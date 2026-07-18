@@ -93,6 +93,27 @@ brute-force a 4-digit PIN hash offline. The PIN stops casual overwrites, not a
 motivated attacker — and every change is a git commit, so nothing is ever lost.
 Proper per-student auth (Microsoft Entra ID) is the phase-2 fix.
 
+## Anonymous mode
+
+Students can tick “Hide my name & BITS ID” when submitting. For those rows the
+data file stores **no identity at all** — only `id_hash`, an HMAC of the BITS ID
+keyed by the server-side `ANON_SECRET` env var, plus a friendly alias derived
+from it (e.g. “Silent Falcon 42”). There is nothing to decrypt: the server finds
+the row on edit by re-computing the HMAC from the typed ID. The keyed hash also
+can't be reversed by enumerating BITS IDs without the secret.
+
+Operational notes:
+
+- Set `ANON_SECRET` (e.g. `openssl rand -hex 16`) in Vercel **before launch**
+  and never rotate it — anonymous rows become unreachable if it changes.
+- For anonymous rows, `/api/student` requires the student's PIN; otherwise
+  anyone could type a BITS ID and link it to an anonymous row.
+- Commit messages use the alias, never the BITS ID.
+- Caveat: if a student was public first and goes anonymous later, their earlier
+  versions remain in git history. Truly anonymous = anonymous from first submit.
+- PIN reset for anonymous students: ask them for their **alias**, find that row
+  in `data/marks/<term>.json`, delete `pin_salt`/`pin_hash`, commit.
+
 ## Roadmap
 
 - **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,

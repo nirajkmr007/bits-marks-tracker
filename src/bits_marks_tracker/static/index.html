@@ -312,6 +312,14 @@
       <div><label for="studentName">Name</label>
         <input id="studentName" placeholder="Your name" maxlength="60"></div>
     </div>
+    <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:.78rem; font-weight:500; color:var(--ink); text-transform:none; letter-spacing:0; cursor:pointer">
+      <input type="checkbox" id="anonChk" style="width:auto; accent-color:#a855f7">
+      🕶️ Hide my name &amp; BITS ID — show me as an anonymous alias
+    </label>
+    <div class="hint" id="anonHint" style="display:none; margin-top:4px">
+      Your identity is never stored — only an untraceable code. You'll appear as a fun alias
+      (e.g. “Silent Falcon 42”). Note: if you submitted publicly before, old git history keeps those versions.
+    </div>
     <div class="f-grid" style="margin-top:10px">
       <div><label for="pin" id="pinLabel">Create a 4-digit PIN</label>
         <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
@@ -339,6 +347,11 @@ document.getElementById("repoLink").href = REPO_URL;
 let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", QUERY = "";
 let MY_ID = localStorage.getItem("bits_id") || "";
 let MY_PIN = localStorage.getItem("bits_pin") || "";
+let MY_ANON_HASH = localStorage.getItem("bits_anon_hash") || "";
+
+const isMe = (e) => e.anon ? (!!e.id_hash && e.id_hash === MY_ANON_HASH)
+                          : (!!e.bits_id && e.bits_id === MY_ID);
+const keyOf = (e) => e.bits_id || e.id_hash || "";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -371,6 +384,12 @@ async function init() {
   $("submitBtn").onclick = submit;
   $("bitsPrefix").addEventListener("change", prefill);
   $("bitsNum").addEventListener("change", prefill);
+  $("pin").addEventListener("change", prefill);
+  $("anonChk").addEventListener("change", () => {
+    const anon = $("anonChk").checked;
+    $("studentName").parentElement.style.display = anon ? "none" : "";
+    $("anonHint").style.display = anon ? "" : "none";
+  });
   $("search").addEventListener("input", (e) => { QUERY = e.target.value.toLowerCase(); render(); });
   refresh();
 }
@@ -416,7 +435,7 @@ function renderBoard() {
   const scored = list.filter((e) => pctOf(e) != null);
   const q = QUERY.trim();
   const visible = q
-    ? list.filter((e) => e.name.toLowerCase().includes(q) || e.bits_id.toLowerCase().includes(q))
+    ? list.filter((e) => e.name.toLowerCase().includes(q) || (e.bits_id || "").toLowerCase().includes(q))
     : list;
 
   // podium (top 3 of current tab, hidden while searching)
@@ -424,9 +443,9 @@ function renderBoard() {
   if (!q && scored.length >= 2) {
     const [g, s, b] = [scored[0], scored[1], scored[2]];
     const pod = (e, cls, medal, crown) => e ? `
-      <div class="pod ${cls}" data-id="${esc(e.bits_id)}">
+      <div class="pod ${cls}" data-id="${esc(keyOf(e))}">
         ${crown ? '<div class="crown">👑</div>' : ""}
-        <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
+        <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
         <div class="medal">${medal}</div>
         <div class="nm">${esc(e.name)}</div>
         <div class="pc">${fmt(pctOf(e))}%</div>
@@ -453,12 +472,12 @@ function renderBoard() {
       ? (e.percentile != null ? `${fmt(e.percentile)} pctl` : `${fmt(score.total)}/${fmt(score.max_entered)}`)
       : `${fmt(score.total)}/${fmt(score.max_entered)}`;
     return `
-    <div class="row${e.bits_id === MY_ID ? " me" : ""}" data-id="${esc(e.bits_id)}">
+    <div class="row${isMe(e) ? " me" : ""}" data-id="${esc(keyOf(e))}">
       <div class="rk${medal}">${rank ?? "—"}</div>
-      <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
       <div class="who">
-        <div class="nm">${esc(e.name)}${e.bits_id === MY_ID ? " · you" : ""}</div>
-        <div class="id">${esc(e.bits_id)}</div>
+        <div class="nm">${esc(e.name)}${isMe(e) ? " · you" : ""}</div>
+        <div class="id">${e.anon ? "ID hidden" : esc(e.bits_id)}</div>
         <div class="bar"><i style="width:${pct ?? 0}%"></i></div>
       </div>
       <div class="num"><div class="pc">${pct == null ? "—" : fmt(pct) + "%"}</div><div class="sub">${esc(sub)}</div></div>
@@ -469,17 +488,17 @@ function renderBoard() {
 
 function renderMyPin() {
   const pin = $("mypin");
-  const me = BOARD.students.find((e) => e.bits_id === MY_ID);
+  const me = BOARD.students.find(isMe);
   if (!me || me.overall.pct == null) { pin.className = "mypin"; return; }
   pin.innerHTML = `<span class="rk">#${me.rank ?? "—"}</span><span class="nm">${esc(me.name)} — your rank</span>
     <span class="pc">${fmt(me.overall.pct)}%</span>`;
   pin.className = "mypin show";
-  pin.onclick = () => openDetail(MY_ID);
+  pin.onclick = () => openDetail(keyOf(me));
 }
 
 /* ---------- detail popup ---------- */
-function openDetail(bitsId) {
-  const e = BOARD.students.find((x) => x.bits_id === bitsId);
+function openDetail(key) {
+  const e = BOARD.students.find((x) => keyOf(x) === key);
   if (!e) return;
   const cfg = termCfg();
   const subCards = cfg.subjects.map((sub) => {
@@ -499,8 +518,8 @@ function openDetail(bitsId) {
   const updated = e.updated_at ? new Date(e.updated_at).toLocaleString() : null;
   $("detailBody").innerHTML = `
     <div class="d-top">
-      <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
-      <div><div class="nm">${esc(e.name)}</div><div class="id">${esc(e.bits_id)}</div></div>
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+      <div><div class="nm">${esc(e.name)}</div><div class="id">${e.anon ? "BITS ID hidden by student" : esc(e.bits_id)}</div></div>
     </div>
     <div class="chips">
       <span class="chip hl">Rank <b>${e.rank ?? "—"}</b></span>
@@ -510,8 +529,9 @@ function openDetail(bitsId) {
     </div>
     ${subCards}
     ${updated ? `<div class="d-updated">Last updated ${esc(updated)}</div>` : ""}
-    <div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>`;
-  $("editBtn").onclick = () => { $("detailDialog").close(); openForm(e.bits_id); };
+    ${e.anon && !isMe(e) ? "" : '<div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>'}`;
+  const editBtn = $("editBtn");
+  if (editBtn) editBtn.onclick = () => { $("detailDialog").close(); openForm(e.bits_id || MY_ID); };
   $("detailDialog").showModal();
 }
 
@@ -538,6 +558,9 @@ function openForm(prefillId) {
   $("formMsg").textContent = ""; $("formMsg").className = "msg";
   $("studentName").value = "";
   $("pin").value = ""; $("pinLabel").textContent = "Create a 4-digit PIN";
+  $("anonChk").checked = false;
+  $("studentName").parentElement.style.display = "";
+  $("anonHint").style.display = "none";
   const id = (prefillId || MY_ID || "").toUpperCase();
   const parts = id.match(ID_SPLIT_RE);
   $("bitsPrefix").value = parts ? parts[1] : (termCfg().id_prefix || "2025AC");
@@ -553,10 +576,13 @@ async function prefill() {
   const id = getFormBitsId();
   if (id.length < 8) return;
   try {
-    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`)).json();
-    $("pinLabel").textContent = res.has_pin ? "Enter your PIN" : "Create a 4-digit PIN";
+    const pin = $("pin").value.trim();
+    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}&pin=${encodeURIComponent(pin)}`)).json();
+    if (res.found) $("pinLabel").textContent = res.has_pin ? "Enter your PIN" : "Create a 4-digit PIN";
     if (!res.found) return;
-    $("studentName").value = res.student.name;
+    $("anonChk").checked = !!res.anon;
+    $("anonChk").dispatchEvent(new Event("change"));
+    if (!res.anon) $("studentName").value = res.student.name;
     for (const [code, comps] of Object.entries(res.student.marks || {})) {
       let any = false;
       for (const [key, val] of Object.entries(comps)) {
@@ -582,9 +608,9 @@ async function submit() {
     if (Object.keys(entry).length) marks[sub.code] = entry;
   }
   const body = { term: TERM, bits_id: getFormBitsId(), name: $("studentName").value.trim(),
-                 pin: $("pin").value.trim(), marks };
+                 pin: $("pin").value.trim(), anonymous: $("anonChk").checked, marks };
   const msg = $("formMsg");
-  if (body.bits_id.length < 8 || body.name.length < 2) {
+  if (body.bits_id.length < 8 || (!body.anonymous && body.name.length < 2)) {
     msg.className = "msg err"; msg.textContent = "Enter your BITS ID and name."; return;
   }
   if (!/^\d{4}$/.test(body.pin)) {
@@ -597,7 +623,11 @@ async function submit() {
     if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Submission failed");
     MY_ID = data.bits_id; localStorage.setItem("bits_id", MY_ID);
     MY_PIN = body.pin; localStorage.setItem("bits_pin", MY_PIN);
-    msg.className = "msg ok"; msg.textContent = "Saved! 🎉";
+    MY_ANON_HASH = data.id_hash || "";
+    if (MY_ANON_HASH) localStorage.setItem("bits_anon_hash", MY_ANON_HASH);
+    else localStorage.removeItem("bits_anon_hash");
+    msg.className = "msg ok";
+    msg.textContent = data.anon ? `Saved as “${data.alias}” 🕶️` : "Saved! 🎉";
     setTimeout(() => { $("formDialog").close(); refresh(); }, 650);
   } catch (err) {
     msg.className = "msg err"; msg.textContent = err.message;

@@ -36,7 +36,10 @@ def _submit(client: TestClient, **overrides: Any) -> Any:
 def test_submit_and_leaderboard(client: TestClient) -> None:
     resp = _submit(client)
     assert resp.status_code == 200
-    assert resp.json() == {"ok": True, "bits_id": "2025AA05123"}  # normalized
+    data = resp.json()
+    assert data["ok"] is True
+    assert data["bits_id"] == "2025AA05123"  # normalized
+    assert data["anon"] is False
 
     board = client.get("/api/leaderboard", params={"term": TERM}).json()
     assert board["stats"]["total_students"] == 1
@@ -90,6 +93,58 @@ def test_pin_never_leaks(client: TestClient) -> None:
     assert "pin_hash" not in text and "pin_salt" not in text
     text = client.get("/api/export.csv", params={"term": TERM}).text
     assert "pin" not in text.lower()
+
+
+def test_anonymous_hides_identity_everywhere(client: TestClient, tmp_path: Path) -> None:
+    resp = _submit(client, anonymous=True)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["anon"] is True and data["alias"] and data["id_hash"]
+
+    # leaderboard: alias shown, no bits_id
+    board = client.get("/api/leaderboard", params={"term": TERM})
+    entry = board.json()["students"][0]
+    assert entry["anon"] is True
+    assert entry["bits_id"] is None
+    assert entry["name"] == data["alias"]
+    assert "2025AA05123" not in board.text and "Niraj" not in board.text
+
+    # raw data file: identity never stored
+    raw = (tmp_path / "marks" / f"{TERM}.json").read_text()
+    assert "2025AA05123" not in raw and "Niraj" not in raw
+
+    # CSV: no identity either
+    csv_text = client.get("/api/export.csv", params={"term": TERM}).text
+    assert "2025AA05123" not in csv_text and "Niraj" not in csv_text
+
+
+def test_anon_lookup_requires_pin(client: TestClient) -> None:
+    _submit(client, anonymous=True)
+    # without / with wrong PIN: indistinguishable from unregistered
+    no_pin = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert no_pin["found"] is False
+    bad = client.get(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123", "pin": "0000"}
+    ).json()
+    assert bad["found"] is False
+    good = client.get(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123", "pin": "1234"}
+    ).json()
+    assert good["found"] is True and good["anon"] is True
+    assert "bits_id" not in good["student"] and "name" not in good["student"]
+
+
+def test_toggle_anonymous_and_back(client: TestClient) -> None:
+    _submit(client)  # public
+    _submit(client, anonymous=True)  # go anonymous
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["students"][0]["anon"] is True
+    _submit(client, anonymous=False, name="Niraj")  # back to public, same PIN
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    entry = board["students"][0]
+    assert entry["anon"] is False and entry["bits_id"] == "2025AA05123"
+    # marks survived the round-trip
+    assert entry["subjects"]["MFML"]["total"] == 13.5
 
 
 def test_legacy_record_without_pin_can_be_claimed(client: TestClient, tmp_path: Path) -> None:

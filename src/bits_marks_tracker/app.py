@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import hmac
 import io
+import os
 import re
 import secrets
 from datetime import datetime, timezone
@@ -32,14 +34,73 @@ class Submission(BaseModel):
 
     term: str
     bits_id: str = Field(min_length=8, max_length=16)
-    name: str = Field(min_length=2, max_length=60)
+    name: str = Field(default="", max_length=60)
     pin: str = Field(pattern=r"^\d{4}$")
+    anonymous: bool = False
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
 
 
 def _hash_pin(pin: str, salt: str) -> str:
     """Salted PBKDF2 hash — only the hash is stored in the (public) data file."""
     return hashlib.pbkdf2_hmac("sha256", pin.encode(), bytes.fromhex(salt), 100_000).hex()
+
+
+def _id_hash(bits_id: str) -> str:
+    """Keyed pseudonym for anonymous students.
+
+    HMAC with a server-side secret: the public data file stores only this hash,
+    so nobody (including the repo) can recover the BITS ID from it — yet the
+    server can always re-derive it from a typed ID to find the row for edits.
+    A plain unkeyed hash would NOT be safe here because BITS IDs are enumerable.
+    """
+    secret = os.environ.get("ANON_SECRET", "dev-anon-secret-set-me-in-prod")
+    return hmac.new(secret.encode(), bits_id.encode(), hashlib.sha256).hexdigest()[:20]
+
+
+_ALIAS_ADJ = [
+    "Silent",
+    "Swift",
+    "Clever",
+    "Brave",
+    "Mellow",
+    "Cosmic",
+    "Quiet",
+    "Lucky",
+    "Bold",
+    "Gentle",
+    "Rapid",
+    "Shadow",
+    "Golden",
+    "Electric",
+    "Crimson",
+    "Azure",
+]
+_ALIAS_ANIMAL = [
+    "Falcon",
+    "Panther",
+    "Otter",
+    "Raven",
+    "Tiger",
+    "Dolphin",
+    "Wolf",
+    "Phoenix",
+    "Panda",
+    "Cobra",
+    "Eagle",
+    "Lynx",
+    "Orca",
+    "Sparrow",
+    "Leopard",
+    "Fox",
+]
+
+
+def _alias(id_hash: str) -> str:
+    """Deterministic, friendly alias derived from the pseudonym hash."""
+    n = int(id_hash[:10], 16)
+    adj = _ALIAS_ADJ[n % len(_ALIAS_ADJ)]
+    animal = _ALIAS_ANIMAL[(n // 16) % len(_ALIAS_ANIMAL)]
+    return f"{adj} {animal} {n % 90 + 10}"
 
 
 def _term_config(term: str) -> dict[str, Any]:
@@ -80,23 +141,48 @@ def api_leaderboard(term: str) -> dict[str, Any]:
     return result
 
 
+def _find_student(students: list[dict[str, Any]], bits_id: str) -> dict[str, Any] | None:
+    id_hash = _id_hash(bits_id)
+    return next(
+        (s for s in students if s.get("bits_id") == bits_id or s.get("id_hash") == id_hash),
+        None,
+    )
+
+
+def _check_pin(student: dict[str, Any], pin: str) -> bool:
+    if not student.get("pin_hash"):
+        return False
+    return hmac.compare_digest(_hash_pin(pin, student["pin_salt"]), student["pin_hash"])
+
+
 @app.get("/api/student")
-def api_student(term: str, bits_id: str) -> dict[str, Any]:
+def api_student(term: str, bits_id: str, pin: str = "") -> dict[str, Any]:
     """Existing marks for one student — used by the form to pre-fill values.
 
-    PIN salt/hash are never returned by the API.
+    PIN salt/hash are never returned. For anonymous records the correct PIN is
+    required — otherwise this endpoint would let anyone link a BITS ID to an
+    anonymous row's marks.
     """
     _term_config(term)
     normalized = _normalize_bits_id(bits_id)
-    for student in get_storage().read_marks(term).get("students", []):
-        if student["bits_id"] == normalized:
-            public = {
-                key: student[key]
-                for key in ("bits_id", "name", "marks", "updated_at")
-                if key in student
-            }
-            return {"found": True, "has_pin": bool(student.get("pin_hash")), "student": public}
-    return {"found": False, "has_pin": False, "student": None}
+    student = _find_student(get_storage().read_marks(term).get("students", []), normalized)
+    if student is None:
+        return {"found": False, "has_pin": False, "anon": False, "student": None}
+    anon = bool(student.get("anon"))
+    if anon and not _check_pin(student, pin):
+        # Indistinguishable from "not registered" — no linkage oracle.
+        return {"found": False, "has_pin": False, "anon": False, "student": None}
+    public = {
+        key: student[key]
+        for key in ("bits_id", "name", "alias", "marks", "updated_at")
+        if key in student
+    }
+    return {
+        "found": True,
+        "has_pin": bool(student.get("pin_hash")),
+        "anon": anon,
+        "student": public,
+    }
 
 
 @app.post("/api/submit")
@@ -104,7 +190,7 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     term_config = _term_config(submission.term)
     bits_id = _normalize_bits_id(submission.bits_id)
     name = submission.name.strip()
-    if len(name) < 2:
+    if not submission.anonymous and len(name) < 2:
         raise HTTPException(status_code=422, detail="Please enter your name.")
 
     subject_codes = {s["code"] for s in term_config["subjects"]}
@@ -124,15 +210,15 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     storage = get_storage()
     marks_doc = storage.read_marks(submission.term)
     students: list[dict[str, Any]] = marks_doc.setdefault("students", [])
-    student = next((s for s in students if s["bits_id"] == bits_id), None)
+    student = _find_student(students, bits_id)
     if student is None:
-        student = {"bits_id": bits_id, "name": name, "marks": {}}
+        student = {"marks": {}}
         students.append(student)
 
     # PIN check: first submission (or legacy record without a PIN) claims the ID;
     # every later edit must present the same PIN.
     if student.get("pin_hash"):
-        if _hash_pin(submission.pin, student["pin_salt"]) != student["pin_hash"]:
+        if not _check_pin(student, submission.pin):
             raise HTTPException(
                 status_code=403,
                 detail="Wrong PIN for this BITS ID. Forgot it? Contact the admin for a reset.",
@@ -142,7 +228,23 @@ def api_submit(submission: Submission) -> dict[str, Any]:
         student["pin_salt"] = salt
         student["pin_hash"] = _hash_pin(submission.pin, salt)
 
-    student["name"] = name
+    # Identity: anonymous rows store ONLY the keyed hash + alias — never the
+    # BITS ID or name. Toggling back to public restores them.
+    id_hash = _id_hash(bits_id)
+    alias = _alias(id_hash)
+    if submission.anonymous:
+        student.pop("bits_id", None)
+        student.pop("name", None)
+        student["anon"] = True
+        student["id_hash"] = id_hash
+        student["alias"] = alias
+    else:
+        student.pop("anon", None)
+        student.pop("id_hash", None)
+        student.pop("alias", None)
+        student["bits_id"] = bits_id
+        student["name"] = name
+
     for code, comps in submission.marks.items():
         subject_marks: dict[str, float | None] = student["marks"].setdefault(code, {})
         for key, value in comps.items():
@@ -154,10 +256,18 @@ def api_submit(submission: Submission) -> dict[str, Any]:
         timespec="seconds"
     )
 
+    # Never leak the BITS ID of an anonymous student into commit messages.
+    who = alias if submission.anonymous else bits_id
     storage.write_marks(
-        submission.term, marks_doc, message=f"marks: update {bits_id} ({submission.term})"
+        submission.term, marks_doc, message=f"marks: update {who} ({submission.term})"
     )
-    return {"ok": True, "bits_id": bits_id}
+    return {
+        "ok": True,
+        "bits_id": bits_id,
+        "anon": submission.anonymous,
+        "alias": alias if submission.anonymous else None,
+        "id_hash": id_hash if submission.anonymous else None,
+    }
 
 
 @app.get("/api/export.csv")
