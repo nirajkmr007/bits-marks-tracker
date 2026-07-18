@@ -267,6 +267,28 @@
 <div class="mypin" id="mypin"></div>
 <button class="fab" id="fabBtn" aria-label="Add my marks">＋</button>
 
+<!-- disclaimer popup (shown on landing) -->
+<dialog id="disclaimerDialog">
+  <div class="grab"></div>
+  <div class="sheet-body" style="text-align:center; padding-top:22px">
+    <div style="font-size:2.2rem">⚠️</div>
+    <h2 style="margin:10px 0 0; font-size:1.05rem; font-weight:800">Before you continue</h2>
+    <p style="font-size:.82rem; color:var(--muted); line-height:1.65; margin:12px 0 0; text-align:left">
+      This is an <b style="color:var(--ink)">unofficial, student-run</b> site with
+      <b style="color:var(--ink)">no affiliation to BITS Pilani</b>. All marks are self-reported
+      and unverified.
+    </p>
+    <p style="font-size:.82rem; color:var(--muted); line-height:1.65; margin:10px 0 0; text-align:left">
+      Anything you submit — your <b style="color:var(--ink)">BITS ID, name and marks</b> — is stored
+      in a <a id="repoLink2" href="#" target="_blank" rel="noopener" style="color:var(--indigo)">public
+      open-source repository</a> and visible to everyone. Submit only if you're comfortable with that.
+    </p>
+  </div>
+  <div class="sheet-foot" style="justify-content:center">
+    <button class="addbtn" id="disclaimerOkBtn" style="flex:1; max-width:280px; padding:12px">I understand, continue</button>
+  </div>
+</dialog>
+
 <!-- student detail popup -->
 <dialog id="detailDialog">
   <div class="grab"></div>
@@ -315,7 +337,16 @@ const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70
 const termCfg = () => CONFIG.terms[TERM];
 const pctOf = (e) => TAB === "OVERALL" ? e.overall.pct : e.subjects[TAB].pct;
 
+function showDisclaimer() {
+  if (sessionStorage.getItem("disclaimer_ack")) return;
+  document.getElementById("repoLink2").href = REPO_URL;
+  const dlg = $("disclaimerDialog");
+  $("disclaimerOkBtn").onclick = () => { sessionStorage.setItem("disclaimer_ack", "1"); dlg.close(); };
+  dlg.showModal();
+}
+
 async function init() {
+  showDisclaimer();
   CONFIG = await (await fetch("/api/config")).json();
   TERM = CONFIG.current_term;
   const sel = $("termSelect");
