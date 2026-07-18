@@ -2,114 +2,299 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1d">
 <title>BITS Marks Tracker — Unofficial Leaderboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f7fb; --card: #ffffff; --ink: #1c2333; --muted: #6b7280;
-    --accent: #1d4ed8; --accent-soft: #e8edfb; --gold: #b45309; --line: #e5e7eb;
-    --danger: #b91c1c; --ok: #047857;
+    --bg: #0b0f1d; --bg2: #0e1428;
+    --card: rgba(255,255,255,.045); --card-hi: rgba(255,255,255,.08);
+    --line: rgba(255,255,255,.09);
+    --ink: #eef1fa; --muted: #8b93ad; --faint: #5b6380;
+    --grad: linear-gradient(120deg,#6366f1,#a855f7 55%,#ec4899);
+    --indigo: #818cf8; --ok: #34d399; --err: #f87171;
+    --gold: #fbbf24; --silver: #cbd5e1; --bronze: #d97706;
+    --radius: 18px;
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         background: var(--bg); color: var(--ink); }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 16px; }
-  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 8px 0 16px; }
-  h1 { font-size: 1.35rem; margin: 0; }
-  h1 small { display: block; font-size: .78rem; font-weight: 400; color: var(--muted); }
-  .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  select, input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
-  button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 16px; }
-  .btn-primary { background: var(--accent); color: #fff; font-weight: 600; }
-  .btn-ghost { background: transparent; color: var(--accent); }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  .card .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-  .card .v { font-size: 1.35rem; font-weight: 700; margin-top: 2px; }
-  .card .s { font-size: .75rem; color: var(--muted); }
-  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .tabs button { background: var(--card); border: 1px solid var(--line); color: var(--ink); padding: 7px 14px; }
-  .tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-  .tablewrap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
-  th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
-  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); position: sticky; top: 0; background: var(--card); }
-  th:nth-child(-n+3), td:nth-child(-n+3) { text-align: left; }
-  tr:last-child td { border-bottom: 0; }
-  td.rank { font-weight: 700; color: var(--gold); }
-  td.pct { font-weight: 600; }
-  .empty { padding: 32px; text-align: center; color: var(--muted); }
-  .me { background: var(--accent-soft); }
-  dialog { border: 0; border-radius: 14px; padding: 0; width: min(680px, 94vw); max-height: 90vh; }
-  dialog::backdrop { background: rgba(15, 23, 42, .45); }
-  .form-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0; }
-  .form-body { padding: 8px 20px 20px; overflow-y: auto; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  label { display: block; font-size: .8rem; font-weight: 600; margin: 10px 0 4px; }
-  .hint { font-size: .75rem; color: var(--muted); margin-top: 2px; }
-  fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 14px 0 0; padding: 10px 12px 12px; }
-  legend { font-size: .85rem; font-weight: 700; padding: 0 6px; }
-  .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
-  .comp-grid label { margin: 0 0 3px; font-weight: 500; font-size: .72rem; color: var(--muted); }
-  .comp-grid input { width: 100%; padding: 7px 8px; }
-  .form-foot { display: flex; gap: 10px; justify-content: flex-end; align-items: center; padding: 14px 20px; border-top: 1px solid var(--line); }
-  .msg { font-size: .82rem; margin-right: auto; }
-  .msg.err { color: var(--danger); } .msg.ok { color: var(--ok); }
-  footer { margin: 22px 0 14px; font-size: .78rem; color: var(--muted); line-height: 1.5; }
-  footer strong { color: var(--danger); }
-  @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } h1 { font-size: 1.1rem; } }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0; color: var(--ink); font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(60rem 40rem at 110% -10%, rgba(99,102,241,.16), transparent 60%),
+      radial-gradient(50rem 35rem at -20% 0%, rgba(236,72,153,.10), transparent 55%);
+    background-attachment: fixed;
+    min-height: 100dvh;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px calc(96px + env(safe-area-inset-bottom)); }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20; margin: 0 -16px; padding: 14px 16px 10px;
+    background: rgba(11,15,29,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo { font-size: 1.05rem; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
+  .logo .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .logo small { display: block; font-size: .62rem; font-weight: 500; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .spacer { flex: 1; }
+  select, .iconbtn {
+    font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 8px 10px; font-size: .8rem; cursor: pointer;
+  }
+  .iconbtn { line-height: 1; text-decoration: none; }
+  .addbtn {
+    font: inherit; font-weight: 700; font-size: .8rem; color: #fff; border: 0; cursor: pointer;
+    background: var(--grad); border-radius: 12px; padding: 9px 14px;
+    box-shadow: 0 4px 18px rgba(139,92,246,.35);
+  }
+  @media (max-width: 560px) { .addbtn.headbtn { display: none; } }
+
+  /* ---------- stats ---------- */
+  .stats { display: flex; gap: 10px; overflow-x: auto; padding: 14px 2px 4px; scrollbar-width: none; }
+  .stats::-webkit-scrollbar { display: none; }
+  .stat {
+    flex: 0 0 auto; min-width: 108px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 10px 13px;
+  }
+  .stat .k { font-size: .6rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .stat .v { font-size: 1.15rem; font-weight: 800; margin-top: 2px; }
+  .stat .s { font-size: .66rem; color: var(--muted); margin-top: 1px; }
+
+  /* ---------- tabs + search ---------- */
+  .tabs {
+    display: flex; gap: 4px; margin: 12px 0 10px; padding: 4px; overflow-x: auto; scrollbar-width: none;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button {
+    flex: 1 0 auto; font: inherit; font-size: .78rem; font-weight: 600; color: var(--muted);
+    background: transparent; border: 0; border-radius: 10px; padding: 8px 14px; cursor: pointer;
+    transition: all .15s ease;
+  }
+  .tabs button.active { color: #fff; background: var(--grad); box-shadow: 0 2px 12px rgba(139,92,246,.35); }
+  .search {
+    width: 100%; font: inherit; font-size: .85rem; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; margin-bottom: 12px;
+  }
+  .search::placeholder { color: var(--faint); }
+  .search:focus, select:focus, dialog input:focus { outline: 2px solid rgba(129,140,248,.5); outline-offset: 0; border-color: transparent; }
+
+  /* ---------- podium ---------- */
+  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin: 6px 0 16px; }
+  .pod {
+    flex: 1; max-width: 130px; text-align: center; background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 12px 8px 10px; cursor: pointer; transition: transform .15s ease;
+  }
+  .pod:hover { transform: translateY(-3px); background: var(--card-hi); }
+  .pod.first { padding-top: 16px; padding-bottom: 18px; border-color: rgba(251,191,36,.35);
+    background: linear-gradient(180deg, rgba(251,191,36,.10), var(--card)); }
+  .pod .crown { font-size: 1.05rem; margin-bottom: -4px; }
+  .pod .medal { font-size: .66rem; font-weight: 800; margin-top: 6px; }
+  .pod.first  .medal { color: var(--gold); }
+  .pod.second .medal { color: var(--silver); }
+  .pod.third  .medal { color: var(--bronze); }
+  .pod .nm { font-size: .74rem; font-weight: 600; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pod .pc { font-size: .95rem; font-weight: 800; margin-top: 1px; }
+  .avatar {
+    width: 44px; height: 44px; border-radius: 50%; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; font-weight: 700; color: #fff; background: var(--grad);
+  }
+  .pod.first .avatar { width: 54px; height: 54px; box-shadow: 0 0 0 3px rgba(251,191,36,.5), 0 6px 22px rgba(251,191,36,.25); }
+
+  /* ---------- list ---------- */
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .row {
+    display: grid; grid-template-columns: 34px 40px 1fr auto; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 11px 14px; cursor: pointer; transition: background .15s ease, transform .15s ease;
+  }
+  .row:hover { background: var(--card-hi); transform: translateX(2px); }
+  .row.me { border-color: rgba(129,140,248,.55); background: rgba(99,102,241,.10); }
+  .row .rk { font-size: .82rem; font-weight: 800; color: var(--muted); text-align: center; }
+  .row .rk.m1 { color: var(--gold); } .row .rk.m2 { color: var(--silver); } .row .rk.m3 { color: var(--bronze); }
+  .row .avatar { width: 40px; height: 40px; font-size: .78rem; }
+  .row .who { min-width: 0; }
+  .row .nm { font-size: .88rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .id { font-size: .68rem; color: var(--muted); letter-spacing: .03em; }
+  .row .bar { height: 4px; border-radius: 4px; background: rgba(255,255,255,.08); margin-top: 6px; overflow: hidden; }
+  .row .bar i { display: block; height: 100%; border-radius: 4px; background: var(--grad); }
+  .row .num { text-align: right; }
+  .row .pc { font-size: 1.02rem; font-weight: 800; }
+  .row .sub { font-size: .64rem; color: var(--muted); margin-top: 1px; }
+  .empty {
+    text-align: center; color: var(--muted); padding: 48px 20px; background: var(--card);
+    border: 1px dashed var(--line); border-radius: var(--radius); font-size: .9rem;
+  }
+  .empty .big { font-size: 2rem; margin-bottom: 8px; }
+
+  /* ---------- my rank pin ---------- */
+  .mypin {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 25;
+    width: min(728px, calc(100% - 88px));
+    display: none; align-items: center; gap: 10px;
+    background: rgba(30,34,60,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(129,140,248,.5); border-radius: 16px; padding: 10px 14px; cursor: pointer;
+    box-shadow: 0 10px 34px rgba(0,0,0,.45);
+  }
+  .mypin.show { display: flex; }
+  .mypin .rk { font-weight: 800; font-size: .9rem; color: var(--indigo); }
+  .mypin .nm { flex: 1; font-size: .8rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mypin .pc { font-weight: 800; font-size: .9rem; }
+
+  /* ---------- FAB ---------- */
+  .fab {
+    position: fixed; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 26;
+    width: 54px; height: 54px; border-radius: 50%; border: 0; cursor: pointer;
+    background: var(--grad); color: #fff; font-size: 1.6rem; line-height: 1; font-weight: 400;
+    box-shadow: 0 8px 26px rgba(139,92,246,.5);
+  }
+  @media (min-width: 561px) { .fab { display: none; } .mypin { width: min(728px, calc(100% - 32px)); } }
+
+  /* ---------- dialogs (bottom sheet on mobile) ---------- */
+  dialog {
+    border: 1px solid var(--line); background: var(--bg2); color: var(--ink);
+    width: min(560px, 100%); max-height: 88dvh; padding: 0;
+    border-radius: 22px; margin: auto;
+  }
+  dialog::backdrop { background: rgba(4,6,14,.66); backdrop-filter: blur(3px); }
+  @media (max-width: 560px) {
+    dialog { margin: auto 0 0; width: 100%; max-height: 92dvh; border-radius: 22px 22px 0 0; border-bottom: 0; }
+    dialog[open] { animation: sheetup .22s ease; }
+    @keyframes sheetup { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
+  }
+  .sheet-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 0; }
+  .sheet-head h2 { margin: 0; font-size: 1rem; font-weight: 700; flex: 1; }
+  .xbtn { font-size: 1rem; color: var(--muted); background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 6px 10px; cursor: pointer; }
+  .sheet-body { padding: 14px 20px 20px; overflow-y: auto; }
+  .grab { width: 40px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.16); margin: 10px auto 0; }
+  @media (min-width: 561px) { .grab { display: none; } }
+
+  /* ---------- detail ---------- */
+  .d-top { display: flex; align-items: center; gap: 14px; }
+  .d-top .avatar { width: 54px; height: 54px; font-size: 1rem; margin: 0; }
+  .d-top .nm { font-size: 1.05rem; font-weight: 700; }
+  .d-top .id { font-size: .72rem; color: var(--muted); letter-spacing: .04em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip { font-size: .68rem; font-weight: 600; color: var(--ink); background: var(--card);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; }
+  .chip b { font-weight: 800; }
+  .chip.hl { background: rgba(99,102,241,.16); border-color: rgba(129,140,248,.4); }
+  .subcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-top: 10px; }
+  .subcard .t { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .subcard .t .c { font-size: .82rem; font-weight: 700; }
+  .subcard .t .n { flex: 1; font-size: .66rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .subcard .t .p { font-size: .82rem; font-weight: 800; }
+  .subcard .bar { height: 5px; border-radius: 5px; background: rgba(255,255,255,.08); margin: 8px 0 10px; overflow: hidden; }
+  .subcard .bar i { display: block; height: 100%; border-radius: 5px; background: var(--grad); }
+  .comps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  @media (max-width: 400px) { .comps { grid-template-columns: repeat(2, 1fr); } }
+  .comp { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; padding: 6px 9px; }
+  .comp .l { font-size: .58rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .comp .v { font-size: .8rem; font-weight: 700; margin-top: 1px; }
+  .comp .v span { font-size: .62rem; color: var(--muted); font-weight: 500; }
+  .d-updated { font-size: .66rem; color: var(--muted); margin-top: 12px; text-align: center; }
+  .d-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .d-actions .addbtn { flex: 1; padding: 12px; font-size: .86rem; }
+
+  /* ---------- form ---------- */
+  .f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 460px) { .f-grid { grid-template-columns: 1fr; } }
+  dialog label { display: block; font-size: .7rem; font-weight: 600; color: var(--muted); margin: 0 0 5px; letter-spacing: .04em; text-transform: uppercase; }
+  dialog input {
+    width: 100%; font: inherit; font-size: .9rem; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px;
+  }
+  .f-sub { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin-top: 10px; overflow: hidden; }
+  .f-sub summary {
+    list-style: none; display: flex; align-items: center; gap: 8px; padding: 12px 14px; cursor: pointer;
+    font-size: .84rem; font-weight: 700; user-select: none;
+  }
+  .f-sub summary::-webkit-details-marker { display: none; }
+  .f-sub summary .n { flex: 1; font-size: .66rem; font-weight: 500; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .f-sub summary .st { font-size: .64rem; color: var(--indigo); font-weight: 600; }
+  .f-sub summary .arrow { color: var(--muted); transition: transform .18s ease; }
+  .f-sub[open] summary .arrow { transform: rotate(90deg); }
+  .f-comps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 14px 14px; }
+  @media (max-width: 400px) { .f-comps { grid-template-columns: repeat(2, 1fr); } }
+  .f-comps label { margin: 0 0 3px; font-size: .58rem; }
+  .hint { font-size: .7rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  .sheet-foot { display: flex; gap: 10px; align-items: center; padding: 12px 20px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .msg { flex: 1; font-size: .76rem; color: var(--muted); }
+  .msg.err { color: var(--err); } .msg.ok { color: var(--ok); }
+  .ghost { font: inherit; font-size: .82rem; color: var(--muted); background: transparent; border: 0; cursor: pointer; padding: 10px 12px; }
+
+  footer { margin: 26px 0 8px; font-size: .68rem; color: var(--muted); line-height: 1.6; text-align: center; }
+  footer strong { color: var(--err); }
+  footer a { color: var(--indigo); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>🏆 BITS Marks Tracker <small>Unofficial leaderboard · MTech AI/ML · BITS Pilani WILP</small></h1>
-    <div class="controls">
-      <select id="termSelect" aria-label="Semester"></select>
-      <button class="btn-ghost" id="exportBtn">⬇ CSV</button>
-      <button class="btn-primary" id="openFormBtn">＋ Add my marks</button>
+    <div class="logo">🏆 <span class="grad">Marks Tracker</span>
+      <small>Unofficial · MTech AI/ML · BITS WILP</small>
     </div>
+    <div class="spacer"></div>
+    <select id="termSelect" aria-label="Semester"></select>
+    <a class="iconbtn" id="exportBtn" title="Download CSV" href="#">⬇</a>
+    <button class="addbtn headbtn" id="openFormBtn">＋ Add marks</button>
   </header>
 
-  <section class="cards" id="statsCards"></section>
-
+  <section class="stats" id="statsCards"></section>
   <nav class="tabs" id="tabs"></nav>
+  <input class="search" id="search" type="search" placeholder="Search name or BITS ID…" autocomplete="off">
 
-  <div class="tablewrap"><div id="tableHost"><div class="empty">Loading…</div></div></div>
+  <section class="podium" id="podium"></section>
+  <section class="list" id="list"></section>
 
   <footer>
-    <strong>Disclaimer:</strong> This is an <em>unofficial</em>, student-run site with no affiliation
-    to BITS Pilani. Marks are self-reported and unverified. Anything you submit —
-    your BITS ID, name and marks — is stored in a <a id="repoLink" href="#">public open-source
-    repository</a> and visible to everyone. Submit only if you are comfortable with that.
+    <strong>Disclaimer:</strong> Unofficial student-run site, not affiliated with BITS Pilani.
+    Marks are self-reported and unverified. Everything you submit (BITS ID, name, marks) is public,
+    stored in an <a id="repoLink" href="#" target="_blank" rel="noopener">open-source repository</a>.
   </footer>
 </div>
 
+<div class="mypin" id="mypin"></div>
+<button class="fab" id="fabBtn" aria-label="Add my marks">＋</button>
+
+<!-- student detail popup -->
+<dialog id="detailDialog">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2>Student details</h2>
+    <button class="xbtn" onclick="detailDialog.close()">✕</button></div>
+  <div class="sheet-body" id="detailBody"></div>
+</dialog>
+
+<!-- add/edit marks popup -->
 <dialog id="formDialog">
-  <div class="form-head">
-    <h2 style="margin:0;font-size:1.05rem">Add / update your marks</h2>
-    <button class="btn-ghost" id="closeFormBtn" aria-label="Close">✕</button>
-  </div>
-  <div class="form-body">
-    <div class="row2">
-      <div>
-        <label for="bitsId">BITS ID</label>
-        <input id="bitsId" placeholder="2025AA05123" autocomplete="off" maxlength="16">
-        <div class="hint" id="prefillHint">Already submitted before? Your saved marks load automatically.</div>
-      </div>
-      <div>
-        <label for="studentName">Name</label>
-        <input id="studentName" placeholder="Your name" maxlength="60">
-      </div>
+  <div class="grab"></div>
+  <div class="sheet-head"><h2 id="formTitle">Add your marks</h2>
+    <button class="xbtn" onclick="formDialog.close()">✕</button></div>
+  <div class="sheet-body">
+    <div class="f-grid">
+      <div><label for="bitsId">BITS ID</label>
+        <input id="bitsId" placeholder="2025AA05123" autocomplete="off" maxlength="16"></div>
+      <div><label for="studentName">Name</label>
+        <input id="studentName" placeholder="Your name" maxlength="60"></div>
     </div>
     <div id="subjectFields"></div>
-    <div class="hint" style="margin-top:10px">Leave blank anything not announced yet — you can come back and fill it later. Only filled components count toward your percentage.</div>
+    <div class="hint">Leave blank anything not announced yet — come back anytime.
+      Only filled components count toward your percentage.</div>
   </div>
-  <div class="form-foot">
+  <div class="sheet-foot">
     <span class="msg" id="formMsg"></span>
-    <button class="btn-ghost" id="cancelBtn">Cancel</button>
-    <button class="btn-primary" id="submitBtn">Submit</button>
+    <button class="ghost" onclick="formDialog.close()">Cancel</button>
+    <button class="addbtn" id="submitBtn">Save</button>
   </div>
 </dialog>
 
@@ -117,11 +302,18 @@
 const REPO_URL = "https://github.com/nirajkmr007/bits-marks-tracker";
 document.getElementById("repoLink").href = REPO_URL;
 
-let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", MY_ID = localStorage.getItem("bits_id") || "";
+let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", QUERY = "";
+let MY_ID = localStorage.getItem("bits_id") || "";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt = (v) => v == null ? "—" : (Number.isInteger(v) ? v : v.toFixed(2).replace(/\.?0+$/, ""));
+const fmt = (v) => v == null ? "—" : (Number.isInteger(v) ? String(v) : String(+v.toFixed(2)));
+const initials = (name) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+const hue = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70% 55%),hsl(${(hue(id)+50)%360} 75% 45%))`;
+
+const termCfg = () => CONFIG.terms[TERM];
+const pctOf = (e) => TAB === "OVERALL" ? e.overall.pct : e.subjects[TAB].pct;
 
 async function init() {
   CONFIG = await (await fetch("/api/config")).json();
@@ -130,83 +322,176 @@ async function init() {
   sel.innerHTML = Object.entries(CONFIG.terms)
     .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(t.label)}</option>`).join("");
   sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; refresh(); };
-  $("openFormBtn").onclick = openForm;
-  $("closeFormBtn").onclick = $("cancelBtn").onclick = () => $("formDialog").close();
+  $("openFormBtn").onclick = () => openForm();
+  $("fabBtn").onclick = () => openForm();
   $("submitBtn").onclick = submit;
-  $("exportBtn").onclick = () => location.href = `/api/export.csv?term=${encodeURIComponent(TERM)}`;
   $("bitsId").addEventListener("change", prefill);
+  $("search").addEventListener("input", (e) => { QUERY = e.target.value.toLowerCase(); render(); });
   refresh();
 }
 
-function termCfg() { return CONFIG.terms[TERM]; }
-
 async function refresh() {
+  $("exportBtn").href = `/api/export.csv?term=${encodeURIComponent(TERM)}`;
   BOARD = await (await fetch(`/api/leaderboard?term=${encodeURIComponent(TERM)}`)).json();
-  renderStats(); renderTabs(); renderTable();
+  render();
 }
+
+function render() { renderStats(); renderTabs(); renderBoard(); renderMyPin(); }
 
 function renderStats() {
   const s = BOARD.stats, cfg = termCfg();
+  const pc = (v) => v == null ? "—" : fmt(v) + "%";
   const cards = [
-    { k: "Students", v: s.total_students, s: "submitted marks" },
-    { k: "Topper", v: fmt(s.overall.top_pct) + (s.overall.top_pct != null ? "%" : ""), s: "best overall %" },
-    { k: "Class average", v: fmt(s.overall.avg_pct) + (s.overall.avg_pct != null ? "%" : ""), s: "overall %" },
+    { k: "Students", v: s.total_students, s: "on the board" },
+    { k: "Topper", v: pc(s.overall.top_pct), s: "best overall" },
+    { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %" },
     ...cfg.subjects.map((sub) => ({
-      k: sub.code, v: fmt(s.subjects[sub.code].top_pct) + (s.subjects[sub.code].top_pct != null ? "%" : ""),
-      s: `top · avg ${fmt(s.subjects[sub.code].avg_pct)}${s.subjects[sub.code].avg_pct != null ? "%" : ""}`
+      k: sub.code, v: pc(s.subjects[sub.code].top_pct), s: `top · avg ${pc(s.subjects[sub.code].avg_pct)}`,
     })),
   ];
   $("statsCards").innerHTML = cards.map((c) =>
-    `<div class="card"><div class="k">${esc(c.k)}</div><div class="v">${esc(c.v)}</div><div class="s">${esc(c.s)}</div></div>`).join("");
+    `<div class="stat"><div class="k">${esc(c.k)}</div><div class="v">${esc(String(c.v))}</div><div class="s">${esc(c.s)}</div></div>`).join("");
 }
 
 function renderTabs() {
   const tabs = [{ id: "OVERALL", label: "Overall" }, ...termCfg().subjects.map((s) => ({ id: s.code, label: s.code }))];
   $("tabs").innerHTML = tabs.map((t) =>
-    `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}" title="${esc(t.label)}">${esc(t.label)}</button>`).join("");
-  [...$("tabs").children].forEach((b) => b.onclick = () => { TAB = b.dataset.tab; renderTabs(); renderTable(); });
+    `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}">${esc(t.label)}</button>`).join("");
+  [...$("tabs").children].forEach((b) => b.onclick = () => { TAB = b.dataset.tab; renderTabs(); renderBoard(); });
 }
 
-function renderTable() {
-  const students = BOARD.students;
-  if (!students.length) {
-    $("tableHost").innerHTML = `<div class="empty">No marks yet — be the first! Hit “＋ Add my marks”.</div>`;
+function currentList() {
+  let list = [...BOARD.students];
+  if (TAB !== "OVERALL") list.sort((a, b) => (pctOf(b) ?? -1) - (pctOf(a) ?? -1) || a.name.localeCompare(b.name));
+  return list;
+}
+
+function renderBoard() {
+  const list = currentList();
+  const scored = list.filter((e) => pctOf(e) != null);
+  const q = QUERY.trim();
+  const visible = q
+    ? list.filter((e) => e.name.toLowerCase().includes(q) || e.bits_id.toLowerCase().includes(q))
+    : list;
+
+  // podium (top 3 of current tab, hidden while searching)
+  const podium = $("podium");
+  if (!q && scored.length >= 2) {
+    const [g, s, b] = [scored[0], scored[1], scored[2]];
+    const pod = (e, cls, medal, crown) => e ? `
+      <div class="pod ${cls}" data-id="${esc(e.bits_id)}">
+        ${crown ? '<div class="crown">👑</div>' : ""}
+        <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
+        <div class="medal">${medal}</div>
+        <div class="nm">${esc(e.name)}</div>
+        <div class="pc">${fmt(pctOf(e))}%</div>
+      </div>` : "";
+    podium.innerHTML = pod(s, "second", "2ND") + pod(g, "first", "1ST", true) + pod(b, "third", "3RD");
+    podium.style.display = "";
+    [...podium.children].forEach((el) => el.onclick = () => openDetail(el.dataset.id));
+  } else { podium.style.display = "none"; podium.innerHTML = ""; }
+
+  // list
+  const host = $("list");
+  if (!visible.length) {
+    host.innerHTML = q
+      ? `<div class="empty"><div class="big">🔍</div>No match for “${esc(q)}”.</div>`
+      : `<div class="empty"><div class="big">🚀</div>No marks yet — be the first!<br>Tap <b>＋ Add marks</b> to get on the board.</div>`;
     return;
   }
-  const cfg = termCfg();
-  let head, rows;
-  if (TAB === "OVERALL") {
-    head = ["#", "Name", "BITS ID", ...cfg.subjects.map((s) => s.code + " %"), "Total", "Overall %", "Percentile"];
-    rows = students.map((e) => [
-      { c: "rank", v: fmt(e.rank) }, { v: esc(e.name) }, { v: esc(e.bits_id) },
-      ...cfg.subjects.map((s) => ({ v: fmt(e.subjects[s.code].pct) })),
-      { v: fmt(e.overall.total) + "/" + fmt(e.overall.max_entered) },
-      { c: "pct", v: fmt(e.overall.pct) }, { v: fmt(e.percentile) },
-    ].map((x) => ({ ...x, me: e.bits_id === MY_ID })));
-  } else {
-    const sorted = [...students].sort((a, b) => (b.subjects[TAB].pct ?? -1) - (a.subjects[TAB].pct ?? -1));
-    head = ["#", "Name", "BITS ID", ...cfg.components.map((c) => `${c.label} /${c.max}`), "Total", "%"];
-    rows = sorted.map((e, i) => [
-      { c: "rank", v: e.subjects[TAB].pct == null ? "—" : i + 1 }, { v: esc(e.name) }, { v: esc(e.bits_id) },
-      ...cfg.components.map((c) => ({ v: fmt(e.subjects[TAB].components[c.key]) })),
-      { v: fmt(e.subjects[TAB].total) + "/" + fmt(e.subjects[TAB].max_entered) },
-      { c: "pct", v: fmt(e.subjects[TAB].pct) },
-    ].map((x) => ({ ...x, me: e.bits_id === MY_ID })));
-  }
-  $("tableHost").innerHTML = `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>` +
-    `<tbody>${rows.map((r) => `<tr${r[0].me ? ' class="me"' : ""}>${r.map((c) => `<td class="${c.c || ""}">${c.v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  host.innerHTML = visible.map((e) => {
+    const pct = pctOf(e);
+    const rank = pct == null ? null : scored.indexOf(e) + 1;
+    const medal = rank != null && rank <= 3 ? ` m${rank}` : "";
+    const score = TAB === "OVERALL" ? e.overall : e.subjects[TAB];
+    const sub = TAB === "OVERALL"
+      ? (e.percentile != null ? `${fmt(e.percentile)} pctl` : `${fmt(score.total)}/${fmt(score.max_entered)}`)
+      : `${fmt(score.total)}/${fmt(score.max_entered)}`;
+    return `
+    <div class="row${e.bits_id === MY_ID ? " me" : ""}" data-id="${esc(e.bits_id)}">
+      <div class="rk${medal}">${rank ?? "—"}</div>
+      <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
+      <div class="who">
+        <div class="nm">${esc(e.name)}${e.bits_id === MY_ID ? " · you" : ""}</div>
+        <div class="id">${esc(e.bits_id)}</div>
+        <div class="bar"><i style="width:${pct ?? 0}%"></i></div>
+      </div>
+      <div class="num"><div class="pc">${pct == null ? "—" : fmt(pct) + "%"}</div><div class="sub">${esc(sub)}</div></div>
+    </div>`;
+  }).join("");
+  [...host.children].forEach((el) => { if (el.dataset.id) el.onclick = () => openDetail(el.dataset.id); });
 }
 
-function openForm() {
+function renderMyPin() {
+  const pin = $("mypin");
+  const me = BOARD.students.find((e) => e.bits_id === MY_ID);
+  if (!me || me.overall.pct == null) { pin.className = "mypin"; return; }
+  pin.innerHTML = `<span class="rk">#${me.rank ?? "—"}</span><span class="nm">${esc(me.name)} — your rank</span>
+    <span class="pc">${fmt(me.overall.pct)}%</span>`;
+  pin.className = "mypin show";
+  pin.onclick = () => openDetail(MY_ID);
+}
+
+/* ---------- detail popup ---------- */
+function openDetail(bitsId) {
+  const e = BOARD.students.find((x) => x.bits_id === bitsId);
+  if (!e) return;
   const cfg = termCfg();
-  $("subjectFields").innerHTML = cfg.subjects.map((sub) => `
-    <fieldset><legend>${esc(sub.code)} — ${esc(sub.name)}</legend>
-      <div class="comp-grid">${cfg.components.map((c) => `
+  const subCards = cfg.subjects.map((sub) => {
+    const sc = e.subjects[sub.code];
+    const comps = cfg.components.map((c) => {
+      const v = sc.components[c.key];
+      return `<div class="comp"><div class="l">${esc(c.label)}</div>
+        <div class="v">${v == null ? "—" : fmt(v)} <span>/ ${c.max}</span></div></div>`;
+    }).join("");
+    return `<div class="subcard">
+      <div class="t"><span class="c">${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
+        <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span></div>
+      <div class="bar"><i style="width:${sc.pct ?? 0}%"></i></div>
+      <div class="comps">${comps}</div>
+    </div>`;
+  }).join("");
+  const updated = e.updated_at ? new Date(e.updated_at).toLocaleString() : null;
+  $("detailBody").innerHTML = `
+    <div class="d-top">
+      <div class="avatar" style="${avatarStyle(e.bits_id)}">${esc(initials(e.name))}</div>
+      <div><div class="nm">${esc(e.name)}</div><div class="id">${esc(e.bits_id)}</div></div>
+    </div>
+    <div class="chips">
+      <span class="chip hl">Rank <b>${e.rank ?? "—"}</b></span>
+      <span class="chip">Overall <b>${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</b></span>
+      <span class="chip">Total <b>${fmt(e.overall.total)}/${fmt(e.overall.max_entered)}</b></span>
+      <span class="chip">Percentile <b>${e.percentile == null ? "—" : fmt(e.percentile)}</b></span>
+    </div>
+    ${subCards}
+    ${updated ? `<div class="d-updated">Last updated ${esc(updated)}</div>` : ""}
+    <div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>`;
+  $("editBtn").onclick = () => { $("detailDialog").close(); openForm(e.bits_id); };
+  $("detailDialog").showModal();
+}
+
+/* ---------- form popup ---------- */
+function buildForm() {
+  const cfg = termCfg();
+  $("subjectFields").innerHTML = cfg.subjects.map((sub, i) => `
+    <details class="f-sub" ${i === 0 ? "open" : ""}>
+      <summary><span>${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
+        <span class="st" id="st_${sub.code}"></span><span class="arrow">›</span></summary>
+      <div class="f-comps">${cfg.components.map((c) => `
         <div><label for="m_${sub.code}_${c.key}">${esc(c.label)} /${c.max}</label>
         <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="0.5" placeholder="—"></div>`).join("")}
-      </div></fieldset>`).join("");
-  $("formMsg").textContent = "";
-  if (MY_ID) { $("bitsId").value = MY_ID; prefill(); }
+      </div>
+    </details>`).join("");
+}
+
+function openForm(prefillId) {
+  buildForm();
+  $("formMsg").textContent = ""; $("formMsg").className = "msg";
+  $("studentName").value = "";
+  const id = prefillId || MY_ID;
+  $("bitsId").value = id || "";
+  $("formTitle").textContent = prefillId ? "Edit marks" : "Add your marks";
+  if (id) prefill();
   $("formDialog").showModal();
 }
 
@@ -217,14 +502,18 @@ async function prefill() {
     const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`)).json();
     if (!res.found) return;
     $("studentName").value = res.student.name;
-    for (const [code, comps] of Object.entries(res.student.marks || {}))
+    for (const [code, comps] of Object.entries(res.student.marks || {})) {
+      let any = false;
       for (const [key, val] of Object.entries(comps)) {
         const input = $(`m_${code}_${key}`);
-        if (input) input.value = val;
+        if (input) { input.value = val; any = true; }
       }
+      const st = $(`st_${code}`);
+      if (st && any) st.textContent = "saved ✓";
+    }
     $("formMsg").className = "msg ok";
-    $("formMsg").textContent = "Loaded your saved marks — edit and resubmit.";
-  } catch { /* prefill is best-effort */ }
+    $("formMsg").textContent = "Loaded saved marks — edit and save.";
+  } catch { /* best-effort */ }
 }
 
 async function submit() {
@@ -249,7 +538,7 @@ async function submit() {
     if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Submission failed");
     MY_ID = data.bits_id; localStorage.setItem("bits_id", MY_ID);
     msg.className = "msg ok"; msg.textContent = "Saved! 🎉";
-    setTimeout(() => { $("formDialog").close(); refresh(); }, 700);
+    setTimeout(() => { $("formDialog").close(); refresh(); }, 650);
   } catch (err) {
     msg.className = "msg err"; msg.textContent = err.message;
   } finally { $("submitBtn").disabled = false; }
