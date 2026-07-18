@@ -47,12 +47,13 @@ def compute_leaderboard(term_config: dict[str, Any], marks_doc: dict[str, Any]) 
             max_entered += score["max_entered"]
         overall_pct = round(total / max_entered * 100, 2) if max_entered > 0 else None
         anon = bool(student.get("anon"))
+        fallback = student.get("alias", "Anonymous") if anon else student.get("bits_id", "?")
         entries.append(
             {
                 "anon": anon,
                 "bits_id": None if anon else student.get("bits_id"),
                 "id_hash": student.get("id_hash") if anon else None,
-                "name": student.get("alias", "Anonymous") if anon else student.get("name", "?"),
+                "name": student.get("name") or fallback,
                 "updated_at": student.get("updated_at"),
                 "subjects": per_subject,
                 "overall": {

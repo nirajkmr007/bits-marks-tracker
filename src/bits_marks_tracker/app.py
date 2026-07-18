@@ -34,9 +34,9 @@ class Submission(BaseModel):
 
     term: str
     bits_id: str = Field(min_length=8, max_length=16)
-    name: str = Field(default="", max_length=60)
+    name: str = Field(default="", max_length=60)  # optional — alias/ID shown when blank
     pin: str = Field(pattern=r"^\d{4}$")
-    anonymous: bool = False
+    hide_id: bool = False
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
 
 
@@ -193,8 +193,6 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     term_config = _term_config(submission.term)
     bits_id = _normalize_bits_id(submission.bits_id)
     name = submission.name.strip()
-    if not submission.anonymous and len(name) < 2:
-        raise HTTPException(status_code=422, detail="Please enter your name.")
 
     subject_codes = {s["code"] for s in term_config["subjects"]}
     component_max = {c["key"]: float(c["max"]) for c in term_config["components"]}
@@ -238,11 +236,11 @@ def api_submit(submission: Submission) -> dict[str, Any]:
             student["pin_salt"] = salt
             student["pin_hash"] = _hash_pin(submission.pin, salt)
 
-        # Identity: anonymous rows store ONLY the keyed hash + alias — never the
-        # BITS ID or name. Toggling back to public restores them.
-        if submission.anonymous:
+        # Identity: hidden rows store ONLY the keyed hash + alias, never the
+        # BITS ID. The name is optional either way — when blank, the display
+        # falls back to the alias (hidden) or the BITS ID (public).
+        if submission.hide_id:
             student.pop("bits_id", None)
-            student.pop("name", None)
             student["anon"] = True
             student["id_hash"] = id_hash
             student["alias"] = alias
@@ -251,7 +249,10 @@ def api_submit(submission: Submission) -> dict[str, Any]:
             student.pop("id_hash", None)
             student.pop("alias", None)
             student["bits_id"] = bits_id
+        if name:
             student["name"] = name
+        else:
+            student.pop("name", None)
 
         for code, comps in submission.marks.items():
             subject_marks: dict[str, float | None] = student["marks"].setdefault(code, {})
@@ -264,8 +265,8 @@ def api_submit(submission: Submission) -> dict[str, Any]:
             timespec="seconds"
         )
 
-        # Never leak the BITS ID of an anonymous student into commit messages.
-        who = alias if submission.anonymous else bits_id
+        # Never leak the BITS ID of a hidden-ID student into commit messages.
+        who = alias if submission.hide_id else bits_id
         try:
             storage.write_marks(
                 submission.term, marks_doc, message=f"marks: update {who} ({submission.term})"
@@ -279,9 +280,9 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     return {
         "ok": True,
         "bits_id": bits_id,
-        "anon": submission.anonymous,
-        "alias": alias if submission.anonymous else None,
-        "id_hash": id_hash if submission.anonymous else None,
+        "anon": submission.hide_id,
+        "alias": alias if submission.hide_id else None,
+        "id_hash": id_hash if submission.hide_id else None,
     }
 
 
