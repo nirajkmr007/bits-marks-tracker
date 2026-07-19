@@ -136,6 +136,46 @@ Operational notes:
   open and trust-based (every change is a commit, so history is auditable).
 - Charts (score distribution per subject), previous-semester archive views.
 
+## Contributing
+
+Contributions are welcome — bug fixes, UI polish, charts, phase-2 auth, anything
+on the roadmap, or your own ideas (open an issue first for big changes).
+
+**1. Fork & set up** (one-time, ~2 minutes):
+
+```bash
+# fork on GitHub first, then:
+git clone https://github.com/<your-username>/bits-marks-tracker.git
+cd bits-marks-tracker
+./scripts/install-just.sh    # installs the `just` command runner
+just setup-local             # uv + venv + deps + git hooks + .env + smoke test
+```
+
+**2. Branch** — direct commits to `main` are blocked by a git hook, so always:
+
+```bash
+git checkout -b feat/my-change
+```
+
+**3. Develop** — `just run` serves the app at http://127.0.0.1:8000 with
+auto-reload; marks are stored in local files (no tokens needed). Add or update
+tests in `tests/` for any behavior change.
+
+**4. Verify before pushing** — the same gate CI runs:
+
+```bash
+just check                   # ruff lint + format + mypy (strict) + pytest
+```
+
+**5. Open a Pull Request** against `nirajkmr007/bits-marks-tracker:main` with a
+short description of what and why. CI must pass; a screenshot helps for UI
+changes.
+
+Ground rules: don't edit `data/marks/*.json` in PRs (that's the live database —
+marks go through the website), don't add a real database or paid services (the
+no-DB, free-hosting design is the point), and keep the single-page frontend
+dependency-free.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). The collected data in `data/` is public domain.
