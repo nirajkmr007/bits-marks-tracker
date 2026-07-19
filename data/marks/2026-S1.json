@@ -22,9 +22,11 @@
       },
       "pin_salt": "31579af4e3dd0c81",
       "pin_hash": "5aad7afde7cee4ccaf5d6377d365da5de9181ba0915555c97f7465424ec29674",
-      "bits_id": "2025AC05239",
       "name": "Niraj Kumar",
-      "updated_at": "2026-07-19T04:52:17+00:00"
+      "updated_at": "2026-07-19T06:19:24+00:00",
+      "anon": true,
+      "id_hash": "382476fbd84df2c613da",
+      "alias": "Bold Sparrow 12"
     },
     {
       "marks": {
