@@ -25,6 +25,32 @@
       "bits_id": "2025AC05239",
       "name": "Niraj Kumar",
       "updated_at": "2026-07-19T04:52:17+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "9217c0100273d0e1",
+      "pin_hash": "dbf7d242f3e08f1d17958dec3268fa20241543d063fd0f73661697e4f916bbe2",
+      "anon": true,
+      "id_hash": "545aef282d631aa0a118",
+      "alias": "Electric Otter 73",
+      "updated_at": "2026-07-19T05:59:59+00:00"
     }
   ]
 }
