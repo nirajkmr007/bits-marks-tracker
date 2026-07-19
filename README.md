@@ -5,9 +5,10 @@ Students self-report marks per subject; the dashboard shows totals, percentages,
 ranks and percentiles — per subject and overall.
 
 > **Disclaimer:** This site has no affiliation with BITS Pilani. All marks are
-> self-reported and unverified. Everything submitted (BITS ID, name, marks) is
-> stored in this public repository under `data/` — submit only if you're
-> comfortable with that.
+> self-reported and unverified. Submitted data is stored in this public
+> repository under `data/` — but you can stay anonymous: tick “Hide my BITS ID”
+> and leave the name blank to appear as an alias (your ID is then never stored,
+> only an untraceable code).
 
 ## How it works
 
@@ -20,9 +21,13 @@ No database. The GitHub repo **is** the database:
 - Locally (no `GITHUB_TOKEN` set) it just reads/writes the files on disk.
 
 Marks per subject: Quiz 1 (5) + Assignment 1 (10) + Midsem (30) + Quiz 2 (5) +
-Assignment 2 (10) + End-sem (40) = **100**. Partial entry is fine — percentages
-are computed against the max of the components you've filled in, so mid-semester
-comparisons stay fair. Percentile = % of students strictly below you overall.
+Assignment 2 (10) + End-sem (40) = **100**. Exception: **ML** has Quiz 1 = 10 and
+Assignment 1 = 5 — any subject can override the component structure via a
+`components` array on its entry in `data/config.json`. Partial entry is fine —
+percentages are computed against the max of the components you've filled in, so
+mid-semester comparisons stay fair. Percentile = % of students strictly below
+you overall. Concurrent submissions are conflict-safe: a clashing write is
+retried on fresh data, never overwritten.
 
 ## Local development
 
@@ -54,28 +59,35 @@ edit or reset that file freely while developing. API docs: http://127.0.0.1:8000
 | GET    | `/`                         | Dashboard UI                         |
 | GET    | `/api/config`               | Semesters/subjects/components        |
 | GET    | `/api/leaderboard?term=`    | Ranked leaderboard + stats           |
-| GET    | `/api/student?term=&bits_id=` | One student's saved marks (form pre-fill) |
-| POST   | `/api/submit`               | Upsert marks (merge per component)   |
+| GET    | `/api/student?term=&bits_id=` | One student's saved marks (form pre-fill). Hidden-ID rows require the PIN via `X-Pin` header |
+| POST   | `/api/submit`               | Upsert marks (merge per component). Body: `term`, `bits_id`, `pin`, optional `name`, `hide_id`, `marks` |
 | GET    | `/api/export.csv?term=`     | Full dataset as CSV                  |
 
 ## Deploy (Vercel, free)
 
-1. Push this repo to GitHub.
-2. Generate `requirements.txt` (Vercel doesn't read `uv.lock`):
-   `uv export --no-dev --no-hashes --no-emit-project -o requirements.txt`
-3. Import the repo at [vercel.com/new](https://vercel.com/new) — `vercel.json`
+1. Push this repo to GitHub, plus a `data` branch for submissions:
+   `git branch data && git push origin main data`. Keeping marks commits on
+   `data` stops every student submission from triggering a Vercel redeploy.
+2. Import the repo at [vercel.com/new](https://vercel.com/new) — `vercel.json`
    routes everything to the FastAPI app.
-4. Set environment variables in the Vercel project:
+3. Set environment variables in the Vercel project:
    - `GITHUB_TOKEN` — fine-grained PAT, **Contents: read & write**, scoped to this repo only
    - `GITHUB_DATA_REPO` — e.g. `nirajkmr007/bits-marks-tracker`
-   - `GITHUB_DATA_BRANCH` — `main`
+   - `GITHUB_DATA_BRANCH` — `data`
+   - `ANON_SECRET` — `openssl rand -hex 16`; set once before launch, never rotate
 
-Submissions then land as commits like `marks: update 2025AA05123 (2026-S1)`.
+Submissions then land on the `data` branch as commits like
+`marks: update 2025AA05123 (2026-S1)` (alias instead of ID for hidden rows).
+Code pushes to `main` auto-deploy; CI (ruff + mypy + pytest) runs on every
+push and PR. If dependencies ever change, regenerate the file Vercel installs
+from: `uv export --no-dev --no-hashes --no-emit-project -o requirements.txt`.
 
 ## Adding a new semester
 
-Add a term to `data/config.json` (subjects + components), create an empty
-`data/marks/<term>.json` (`{"students": []}`), set `current_term`, redeploy.
+Add a term to `data/config.json` (subjects + components + `id_prefix` for the
+new batch), set `current_term`, and push to `main` (config ships with the app,
+so this needs a deploy). Create an empty `data/marks/<term>.json`
+(`{"students": []}`) on the `data` branch.
 
 ## PIN protection
 
