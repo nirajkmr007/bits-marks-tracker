@@ -314,6 +314,10 @@
         <div class="hint" style="margin-top:5px">You'll need this PIN to edit your marks later.<br>
           <a id="forgotPin" href="#" style="color:var(--indigo)">Forgot PIN? Contact the admin for a reset</a></div>
       </div>
+      <div style="display:flex; flex-direction:column; justify-content:flex-start; gap:5px; padding-top:22px">
+        <button class="iconbtn" id="loadBtn" style="padding:10px 12px; font-size:.82rem; font-weight:600">↺ Load my saved marks</button>
+        <div class="hint" style="margin-top:0">Submitted before? Fill your BITS ID (and PIN, if your ID is hidden), then load to edit.</div>
+      </div>
     </div>
     <div id="subjectFields"></div>
     <div class="hint">Leave blank anything not announced yet — come back anytime.
@@ -361,9 +365,10 @@ async function init() {
   $("openFormBtn").onclick = () => openForm();
   $("fabBtn").onclick = () => openForm();
   $("submitBtn").onclick = submit;
-  $("bitsPrefix").addEventListener("change", prefill);
-  $("bitsNum").addEventListener("change", prefill);
-  $("pin").addEventListener("change", prefill);
+  $("bitsPrefix").addEventListener("change", () => prefill());
+  $("bitsNum").addEventListener("change", () => prefill());
+  $("pin").addEventListener("change", () => prefill());
+  $("loadBtn").onclick = () => prefill(true);
   $("anonChk").addEventListener("change", () => {
     $("anonHint").style.display = $("anonChk").checked ? "" : "none";
   });
@@ -550,15 +555,25 @@ function openForm(prefillId) {
   $("formDialog").showModal();
 }
 
-async function prefill() {
+async function prefill(verbose = false) {
+  const msg = $("formMsg");
   const id = getFormBitsId();
-  if (id.length < 8) return;
+  if (id.length < 8) {
+    if (verbose) { msg.className = "msg err"; msg.textContent = "Enter your BITS ID first."; }
+    return;
+  }
   try {
     const pin = $("pin").value.trim();
     const opts = /^\d{4}$/.test(pin) ? { headers: { "X-Pin": pin } } : undefined;
     const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`, opts)).json();
     if (res.found) $("pinLabel").textContent = res.has_pin ? "Enter your PIN" : "Create a 4-digit PIN";
-    if (!res.found) return;
+    if (!res.found) {
+      if (verbose) {
+        msg.className = "msg err";
+        msg.textContent = "No saved marks for this ID — or, if your ID is hidden, enter your PIN and load again.";
+      }
+      return;
+    }
     $("anonChk").checked = !!res.anon;
     $("anonChk").dispatchEvent(new Event("change"));
     if (res.student.name) $("studentName").value = res.student.name;
