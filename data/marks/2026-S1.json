@@ -12,7 +12,8 @@
         },
         "ML": {
           "quiz1": 10.0,
-          "assignment1": 5.0
+          "assignment1": 5.0,
+          "midsem": 22.5
         },
         "DNN": {
           "quiz1": 5.0,
@@ -23,7 +24,7 @@
       "pin_hash": "5aad7afde7cee4ccaf5d6377d365da5de9181ba0915555c97f7465424ec29674",
       "bits_id": "2025AC05239",
       "name": "Niraj Kumar",
-      "updated_at": "2026-07-19T04:34:28+00:00"
+      "updated_at": "2026-07-19T04:52:17+00:00"
     }
   ]
 }
