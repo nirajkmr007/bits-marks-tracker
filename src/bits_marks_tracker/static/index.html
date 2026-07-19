@@ -506,7 +506,9 @@ function openDetail(key) {
     </div>
     ${subCards}
     ${updated ? `<div class="d-updated">Last updated ${esc(updated)}</div>` : ""}
-    ${e.anon && !isMe(e) ? "" : '<div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>'}`;
+    ${e.anon && !isMe(e)
+      ? '<div class="hint" style="text-align:center; margin-top:14px">This student hid their BITS ID. If this is you, tap “＋ Add marks” and enter your BITS ID &amp; PIN — your marks will load, and this browser will remember you afterwards.</div>'
+      : '<div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>'}`;
   const editBtn = $("editBtn");
   if (editBtn) editBtn.onclick = () => { $("detailDialog").close(); openForm(e.bits_id || MY_ID); };
   $("detailDialog").showModal();
