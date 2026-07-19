@@ -38,7 +38,10 @@ def compute_leaderboard(term_config: dict[str, Any], marks_doc: dict[str, Any]) 
         max_entered = 0.0
         for subject in subjects:
             code = subject["code"]
-            score = _subject_score(student.get("marks", {}).get(code, {}), components)
+            # A subject may override the term-wide component structure
+            # (e.g. ML: Quiz 1 = 10, Assignment 1 = 5).
+            subject_components: list[dict[str, Any]] = subject.get("components", components)
+            score = _subject_score(student.get("marks", {}).get(code, {}), subject_components)
             per_subject[code] = {
                 **score,
                 "components": student.get("marks", {}).get(code, {}),

@@ -194,11 +194,15 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     bits_id = _normalize_bits_id(submission.bits_id)
     name = submission.name.strip()
 
-    subject_codes = {s["code"] for s in term_config["subjects"]}
-    component_max = {c["key"]: float(c["max"]) for c in term_config["components"]}
+    subject_cfg = {s["code"]: s for s in term_config["subjects"]}
     for code, comps in submission.marks.items():
-        if code not in subject_codes:
+        if code not in subject_cfg:
             raise HTTPException(status_code=422, detail=f"Unknown subject: {code}")
+        # Subjects may override the term-wide component maxes (e.g. ML quiz1=10).
+        component_max = {
+            c["key"]: float(c["max"])
+            for c in subject_cfg[code].get("components", term_config["components"])
+        }
         for key, value in comps.items():
             if key not in component_max:
                 raise HTTPException(status_code=422, detail=f"Unknown component: {key}")
@@ -295,10 +299,13 @@ def api_export_csv(term: str) -> PlainTextResponse:
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
-    component_keys = [c["key"] for c in term_config["components"]]
+    subject_keys = {
+        s["code"]: [c["key"] for c in s.get("components", term_config["components"])]
+        for s in term_config["subjects"]
+    }
     header = ["rank", "bits_id", "name"]
     for subject in term_config["subjects"]:
-        header += [f"{subject['code']}_{key}" for key in component_keys]
+        header += [f"{subject['code']}_{key}" for key in subject_keys[subject["code"]]]
         header += [f"{subject['code']}_total", f"{subject['code']}_pct"]
     header += ["overall_total", "overall_pct", "percentile", "updated_at"]
     writer.writerow(header)
@@ -314,7 +321,7 @@ def api_export_csv(term: str) -> PlainTextResponse:
         row: list[Any] = [entry["rank"], entry["bits_id"], safe(entry["name"])]
         for subject in term_config["subjects"]:
             subject_entry = entry["subjects"][subject["code"]]
-            row += [subject_entry["components"].get(key) for key in component_keys]
+            row += [subject_entry["components"].get(key) for key in subject_keys[subject["code"]]]
             row += [subject_entry["total"], subject_entry["pct"]]
         row += [
             entry["overall"]["total"],

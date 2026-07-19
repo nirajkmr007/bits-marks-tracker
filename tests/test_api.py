@@ -68,6 +68,11 @@ def test_validation_errors(client: TestClient) -> None:
     assert _submit(client, marks={"MFML": {"bogus": 1}}).status_code == 422
     assert _submit(client, pin="12").status_code == 422
     assert _submit(client, pin="abcd").status_code == 422
+    # per-subject override: ML quiz1 max is 10 (not the term-wide 5)
+    assert _submit(client, marks={"ML": {"quiz1": 10}}).status_code == 200
+    assert _submit(client, marks={"ML": {"quiz1": 10.5}}).status_code == 422
+    assert _submit(client, marks={"ML": {"assignment1": 6}}).status_code == 422  # ML max 5
+    assert _submit(client, marks={"MFML": {"quiz1": 10}}).status_code == 422  # MFML max 5
     assert client.get("/api/leaderboard", params={"term": "1999-S9"}).status_code == 404
 
 

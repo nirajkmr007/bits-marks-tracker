@@ -7,7 +7,18 @@
       "subjects": [
         { "code": "MFML", "name": "Mathematical Foundations for Machine Learning" },
         { "code": "ISM", "name": "Introduction to Statistical Methods" },
-        { "code": "ML", "name": "Machine Learning" },
+        {
+          "code": "ML",
+          "name": "Machine Learning",
+          "components": [
+            { "key": "quiz1", "label": "Quiz 1", "max": 10 },
+            { "key": "assignment1", "label": "Assignment 1", "max": 5 },
+            { "key": "midsem", "label": "Mid-Semester Exam", "max": 30 },
+            { "key": "quiz2", "label": "Quiz 2", "max": 5 },
+            { "key": "assignment2", "label": "Assignment 2", "max": 10 },
+            { "key": "endsem", "label": "End-Semester Exam", "max": 40 }
+          ]
+        },
         { "code": "DNN", "name": "Deep Neural Networks" }
       ],
       "components": [
