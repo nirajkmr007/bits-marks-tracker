@@ -188,6 +188,48 @@ def api_student(
     }
 
 
+@app.delete("/api/student")
+def api_delete_student(
+    term: str, bits_id: str, x_pin: Annotated[str, Header(alias="X-Pin")] = ""
+) -> dict[str, Any]:
+    """Delete a student's record (PIN required).
+
+    Only PIN-claimed records can be deleted — otherwise anyone could wipe
+    unclaimed rows. Note: this removes the row from the current data file;
+    old versions remain in the repo's git history.
+    """
+    _term_config(term)
+    normalized = _normalize_bits_id(bits_id)
+    storage = get_storage()
+    for attempt in range(3):
+        marks_doc = storage.read_marks(term, fresh=attempt > 0)
+        students: list[dict[str, Any]] = marks_doc.setdefault("students", [])
+        student = _find_student(students, normalized)
+        if student is None:
+            raise HTTPException(status_code=404, detail="No record found for this BITS ID.")
+        if not student.get("pin_hash"):
+            raise HTTPException(
+                status_code=403,
+                detail="This record has no PIN yet — submit once with a PIN to claim it first.",
+            )
+        if not _check_pin(student, x_pin):
+            raise HTTPException(
+                status_code=403,
+                detail="Wrong PIN for this BITS ID. Forgot it? Contact the admin for a reset.",
+            )
+        students.remove(student)
+        # Never leak a hidden BITS ID into commit messages.
+        who = student.get("alias", "hidden") if student.get("anon") else normalized
+        try:
+            storage.write_marks(term, marks_doc, message=f"marks: delete {who} ({term})")
+            break
+        except WriteConflictError:
+            continue
+    else:
+        raise HTTPException(status_code=503, detail="Server is busy — please try again.")
+    return {"ok": True, "deleted": normalized}
+
+
 @app.post("/api/submit")
 def api_submit(submission: Submission) -> dict[str, Any]:
     term_config = _term_config(submission.term)

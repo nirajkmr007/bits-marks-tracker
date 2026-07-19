@@ -61,6 +61,7 @@ edit or reset that file freely while developing. API docs: http://127.0.0.1:8000
 | GET    | `/api/leaderboard?term=`    | Ranked leaderboard + stats           |
 | GET    | `/api/student?term=&bits_id=` | One student's saved marks (form pre-fill). Hidden-ID rows require the PIN via `X-Pin` header |
 | POST   | `/api/submit`               | Upsert marks (merge per component). Body: `term`, `bits_id`, `pin`, optional `name`, `hide_id`, `marks` |
+| DELETE | `/api/student?term=&bits_id=` | Delete own record — PIN via `X-Pin` header; claimed records only |
 | GET    | `/api/export.csv?term=`     | Full dataset as CSV                  |
 
 ## Deploy (Vercel, free)

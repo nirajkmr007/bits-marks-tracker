@@ -324,9 +324,23 @@
       Only filled components count toward your percentage.</div>
   </div>
   <div class="sheet-foot">
+    <button class="ghost" id="deleteBtn" style="color:var(--err); padding-left:0">🗑 Delete</button>
     <span class="msg" id="formMsg"></span>
     <button class="ghost" onclick="formDialog.close()">Cancel</button>
     <button class="addbtn" id="submitBtn">Save</button>
+  </div>
+</dialog>
+
+<!-- confirm popup (save / delete) -->
+<dialog id="confirmDialog" style="width:min(400px,94vw)">
+  <div class="sheet-body" style="text-align:center; padding-top:22px">
+    <div style="font-size:1.8rem" id="cfIcon">⚠️</div>
+    <h2 id="cfTitle" style="margin:8px 0 0; font-size:1rem; font-weight:800"></h2>
+    <p id="cfText" class="hint" style="font-size:.78rem; margin-top:8px; line-height:1.6"></p>
+  </div>
+  <div class="sheet-foot" style="justify-content:center">
+    <button class="ghost" id="cfCancel">Cancel</button>
+    <button class="addbtn" id="cfOk" style="min-width:130px"></button>
   </div>
 </dialog>
 
@@ -369,6 +383,7 @@ async function init() {
   $("bitsNum").addEventListener("change", () => prefill());
   $("pin").addEventListener("change", () => prefill());
   $("loadBtn").onclick = () => prefill(true);
+  $("deleteBtn").onclick = deleteRecord;
   $("anonChk").addEventListener("change", () => {
     $("anonHint").style.display = $("anonChk").checked ? "" : "none";
   });
@@ -591,6 +606,54 @@ async function prefill(verbose = false) {
   } catch { /* best-effort */ }
 }
 
+function askConfirm({ icon, title, text, ok, danger }) {
+  return new Promise((resolve) => {
+    $("cfIcon").textContent = icon;
+    $("cfTitle").textContent = title;
+    $("cfText").innerHTML = text;
+    $("cfOk").textContent = ok;
+    $("cfOk").style.background = danger ? "linear-gradient(120deg,#ef4444,#b91c1c)" : "";
+    const dlg = $("confirmDialog");
+    $("cfOk").onclick = () => { dlg.close(); resolve(true); };
+    $("cfCancel").onclick = () => { dlg.close(); resolve(false); };
+    dlg.showModal();
+  });
+}
+
+async function recordExists(id, pin) {
+  try {
+    const opts = /^\d{4}$/.test(pin) ? { headers: { "X-Pin": pin } } : undefined;
+    const res = await (await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`, opts)).json();
+    return res.found;
+  } catch { return false; }
+}
+
+async function deleteRecord() {
+  const id = getFormBitsId(), pin = $("pin").value.trim(), msg = $("formMsg");
+  if (id.length < 8 || !/^\d{4}$/.test(pin)) {
+    msg.className = "msg err"; msg.textContent = "Enter your BITS ID and PIN to delete."; return;
+  }
+  const ok = await askConfirm({
+    icon: "🗑️", title: "Delete this record?", danger: true, ok: "Yes, delete",
+    text: `Removes <b>${esc(id)}</b> from the leaderboard.<br>Old versions stay in the repo's git history.`,
+  });
+  if (!ok) return;
+  msg.className = "msg"; msg.textContent = "Deleting…";
+  try {
+    const res = await fetch(`/api/student?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`,
+      { method: "DELETE", headers: { "X-Pin": pin } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Delete failed");
+    if (id === MY_ID) {
+      MY_ID = ""; MY_PIN = ""; MY_ANON_HASH = "";
+      ["bits_id", "bits_pin", "bits_anon_hash"].forEach((k) => localStorage.removeItem(k));
+    }
+    $("formDialog").close(); refresh();
+  } catch (err) {
+    msg.className = "msg err"; msg.textContent = err.message;
+  }
+}
+
 async function submit() {
   const cfg = termCfg(), marks = {};
   for (const sub of cfg.subjects) {
@@ -610,7 +673,21 @@ async function submit() {
   if (!/^\d{4}$/.test(body.pin)) {
     msg.className = "msg err"; msg.textContent = "PIN must be exactly 4 digits."; return;
   }
-  $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+
+  // Confirm before saving — loud warning when this would create a NEW record,
+  // since a mistyped BITS ID is how junk rows get created.
+  $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Checking…";
+  const exists = await recordExists(body.bits_id, body.pin);
+  const filled = Object.values(marks).reduce((a, m) => a + Object.keys(m).length, 0);
+  const confirmed = await askConfirm({
+    icon: exists ? "💾" : "🆕",
+    title: exists ? "Update your marks?" : "Create a new record?",
+    ok: exists ? "Yes, update" : "Yes, create",
+    text: `BITS ID: <b>${esc(body.bits_id)}</b>${body.name ? " · " + esc(body.name) : ""}${body.hide_id ? " · 🙈 ID hidden" : ""} · ${filled} mark${filled === 1 ? "" : "s"} filled`
+      + (exists ? "" : "<br><b>Double-check the BITS ID</b> — a typo creates a junk record."),
+  });
+  if (!confirmed) { $("submitBtn").disabled = false; msg.textContent = ""; return; }
+  msg.textContent = "Saving…";
   try {
     const res = await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const data = await res.json();

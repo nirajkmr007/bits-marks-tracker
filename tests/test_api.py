@@ -191,6 +191,50 @@ def test_csv_export(client: TestClient) -> None:
     assert "2025AA05123" in lines[1]
 
 
+def test_delete_record(client: TestClient) -> None:
+    _submit(client)
+    # wrong PIN → refused
+    resp = client.delete(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "0000"}
+    )
+    assert resp.status_code == 403
+    # correct PIN → gone
+    resp = client.delete(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "1234"}
+    )
+    assert resp.status_code == 200
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["stats"]["total_students"] == 0
+    # already gone → 404
+    resp = client.delete(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "1234"}
+    )
+    assert resp.status_code == 404
+
+
+def test_delete_hidden_record_by_id_and_pin(client: TestClient) -> None:
+    _submit(client, hide_id=True, name="")
+    resp = client.delete(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "1234"}
+    )
+    assert resp.status_code == 200
+    assert client.get("/api/leaderboard", params={"term": TERM}).json()["students"] == []
+
+
+def test_delete_unclaimed_record_refused(client: TestClient, tmp_path: Path) -> None:
+    import json
+
+    marks_dir = tmp_path / "marks"
+    marks_dir.mkdir(parents=True, exist_ok=True)
+    (marks_dir / f"{TERM}.json").write_text(
+        json.dumps({"students": [{"bits_id": "2025AA05123", "name": "Old", "marks": {}}]})
+    )
+    resp = client.delete(
+        "/api/student", params={"term": TERM, "bits_id": "2025AA05123"}, headers={"X-Pin": "1234"}
+    )
+    assert resp.status_code == 403
+
+
 def test_submit_retries_on_write_conflict(
     client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
