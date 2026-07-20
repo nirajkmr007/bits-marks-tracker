@@ -154,7 +154,8 @@
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "quiz2": 4.5
+          "quiz2": 4.5,
+          "midsem": 25.0
         },
         "ML": {
           "quiz1": 9.5,
@@ -171,7 +172,7 @@
       "id_hash": "bd30e2b6430d40349159",
       "alias": "Brave Tiger 77",
       "name": "Pramod Palukuru",
-      "updated_at": "2026-07-20T07:43:13+00:00"
+      "updated_at": "2026-07-20T07:44:10+00:00"
     }
   ]
 }
