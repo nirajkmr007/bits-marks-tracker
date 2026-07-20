@@ -394,7 +394,21 @@
     {
       "marks": {
         "MFML": {
-          "assignment1": 10.0
+          "assignment1": 10.0,
+          "quiz1": 5.0
+        },
+        "ISM": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "quiz2": 4.0
+        },
+        "ML": {
+          "quiz1": 9.0,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 9.0
         }
       },
       "pin_salt": "7e19918e2f74faab",
@@ -403,7 +417,7 @@
       "id_hash": "e31957ab4af5836235ca",
       "alias": "Rapid Tiger 24",
       "name": "KR",
-      "updated_at": "2026-07-20T10:28:25+00:00"
+      "updated_at": "2026-07-20T10:33:44+00:00"
     }
   ]
 }
