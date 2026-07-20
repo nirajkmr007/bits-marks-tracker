@@ -144,6 +144,34 @@
       "alias": "Mellow Orca 78",
       "name": "Arkadeep Bhattacharjee",
       "updated_at": "2026-07-20T07:20:38+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "quiz2": 4.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 4.5,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "efaf7c8917c2a28d",
+      "pin_hash": "600a5c03f659c5fe4c0dd4f5780a98804a8c44e363181894e79c3b68c0594721",
+      "anon": true,
+      "id_hash": "bd30e2b6430d40349159",
+      "alias": "Brave Tiger 77",
+      "name": "Pramod Palukuru",
+      "updated_at": "2026-07-20T07:43:13+00:00"
     }
   ]
 }
