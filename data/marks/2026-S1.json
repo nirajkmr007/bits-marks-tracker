@@ -491,6 +491,37 @@
       "alias": "Swift Eagle 93",
       "name": "AP",
       "updated_at": "2026-07-20T11:01:16+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 17.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 0.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 21.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 24.0
+        }
+      },
+      "pin_salt": "5a7c3736e92d6cce",
+      "pin_hash": "d685f1f951b85fd72251c7191515f61cc3b1a103563d2a364bc1ee3f865d5e77",
+      "anon": true,
+      "id_hash": "15234969cc60f23a0535",
+      "alias": "Golden Orca 58",
+      "updated_at": "2026-07-20T11:56:21+00:00"
     }
   ]
 }
