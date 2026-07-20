@@ -679,6 +679,37 @@
       "alias": "Golden Lynx 96",
       "name": "Sac",
       "updated_at": "2026-07-20T16:49:19+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 12.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 28.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 27.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 24.0
+        }
+      },
+      "pin_salt": "02a9dd28112abfca",
+      "pin_hash": "6c2f96459a912bfd182a8ee3e9e3ef084c7f55fc11c31fb9b6541b2d12f5aebc",
+      "anon": true,
+      "id_hash": "b42ec0e4cce64da65006",
+      "alias": "Golden Orca 50",
+      "updated_at": "2026-07-20T16:50:18+00:00"
     }
   ]
 }
