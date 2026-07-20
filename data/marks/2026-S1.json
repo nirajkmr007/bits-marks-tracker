@@ -741,6 +741,34 @@
       "id_hash": "fcf1c0cb5be110bff013",
       "alias": "Shadow Dolphin 59",
       "updated_at": "2026-07-20T16:53:47+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 8.75
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 5.0,
+          "assignment1": 4.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "1132f52ec5c42822",
+      "pin_hash": "14f8fe4b69a6f47255d613271cbc751e07009a6d45121538f3f71e130ffa4e89",
+      "anon": true,
+      "id_hash": "9d3e19f767a9dc92bdcf",
+      "alias": "Lucky Wolf 49",
+      "name": "StudAIML",
+      "updated_at": "2026-07-20T16:57:57+00:00"
     }
   ]
 }
