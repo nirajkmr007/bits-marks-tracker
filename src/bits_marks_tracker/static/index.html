@@ -429,8 +429,8 @@ function renderStats() {
 function renderTabs() {
   const tabs = [
     { id: "OVERALL", label: "Overall" },
+    { id: "PRE_ENDSEM", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
     ...termCfg().subjects.map((s) => ({ id: s.code, label: s.code, title: s.name })),
-    { id: "PRE_ENDSEM", label: "🎯 Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
   ];
   $("tabs").innerHTML = tabs.map((t) =>
     `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
