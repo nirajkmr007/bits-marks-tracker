@@ -832,6 +832,37 @@
       "alias": "Electric Orca 99",
       "name": "Kieth",
       "updated_at": "2026-07-20T17:18:07+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 0.0,
+          "assignment1": 9.5,
+          "midsem": 19.25
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 27.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 22.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 28.5
+        }
+      },
+      "pin_salt": "762ddcca80c04814",
+      "pin_hash": "dca247d275d2f0c37ba485dc897424df8865a03bcb853932abefc4d79b771571",
+      "anon": true,
+      "id_hash": "7ee4f143d0e322b66c4a",
+      "alias": "Silent Sparrow 70",
+      "name": "GK",
+      "updated_at": "2026-07-20T17:35:13+00:00"
     }
   ]
 }
