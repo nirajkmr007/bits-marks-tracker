@@ -117,6 +117,33 @@
       "alias": "Rapid Sparrow 94",
       "name": "Goutham Tadali",
       "updated_at": "2026-07-20T07:09:56+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.75
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0
+        }
+      },
+      "pin_salt": "287b15b1b8158cd7",
+      "pin_hash": "9279b3bda7b4cb9d963770b44830ff9e1a9ceeca461cc37395c6bc3b8fd1e916",
+      "anon": true,
+      "id_hash": "78a7db47c4c715c2af38",
+      "alias": "Mellow Orca 78",
+      "name": "Arkadeep Bhattacharjee",
+      "updated_at": "2026-07-20T07:20:38+00:00"
     }
   ]
 }
