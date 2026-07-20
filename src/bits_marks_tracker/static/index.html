@@ -266,7 +266,6 @@
 
   <section class="stats" id="statsCards"></section>
   <nav class="tabs" id="tabs"></nav>
-  <nav class="tabs" id="filterTabs" style="margin-top:-4px"></nav>
   <input class="search" id="search" type="search" placeholder="Search name or BITS ID…" autocomplete="off">
 
   <section class="podium" id="podium"></section>
@@ -351,7 +350,7 @@ const ADMIN_EMAIL = "nirajkmr007@gmail.com";
 const ID_SPLIT_RE = /^(\d{4}[A-Z]{2})(\d+)$/;
 document.getElementById("repoLink").href = REPO_URL;
 
-let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", FILTER = "", QUERY = "";
+let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", QUERY = "";
 let MY_ID = localStorage.getItem("bits_id") || "";
 let MY_PIN = localStorage.getItem("bits_pin") || "";
 let MY_ANON_HASH = localStorage.getItem("bits_anon_hash") || "";
@@ -368,7 +367,8 @@ const hue = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
 const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70% 55%),hsl(${(hue(id)+50)%360} 75% 45%))`;
 
 const termCfg = () => CONFIG.terms[TERM];
-const pctOf = (e) => TAB === "OVERALL" ? e.overall.pct : e.subjects[TAB].pct;
+const isOverallTab = () => TAB === "OVERALL" || TAB === "PRE_ENDSEM";
+const pctOf = (e) => isOverallTab() ? e.overall.pct : e.subjects[TAB].pct;
 
 async function init() {
   CONFIG = await (await fetch("/api/config")).json();
@@ -376,7 +376,7 @@ async function init() {
   const sel = $("termSelect");
   sel.innerHTML = Object.entries(CONFIG.terms)
     .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(t.label)}</option>`).join("");
-  sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; FILTER = ""; refresh(); };
+  sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; refresh(); };
   $("openFormBtn").onclick = () => openForm();
   $("fabBtn").onclick = () => openForm();
   $("submitBtn").onclick = submit;
@@ -398,7 +398,7 @@ async function refresh() {
   render();
 }
 
-function render() { renderStats(); renderTabs(); renderFilterTabs(); renderBoard(); renderMyPin(); }
+function render() { renderStats(); renderTabs(); renderBoard(); renderMyPin(); }
 
 // True when every component except the end-sem is filled, in every subject —
 // the cohort whose percentile is a solid estimate going into the end-sem.
@@ -409,16 +409,6 @@ function preEndsemComplete(e) {
     const m = e.subjects[sub.code].components || {};
     return comps.every((c) => m[c.key] != null);
   });
-}
-
-function renderFilterTabs() {
-  const tabs = [
-    { id: "", label: "Everyone" },
-    { id: "pre_endsem", label: "🎯 Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
-  ];
-  $("filterTabs").innerHTML = tabs.map((t) =>
-    `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
-  [...$("filterTabs").children].forEach((b) => b.onclick = () => { FILTER = b.dataset.f; renderFilterTabs(); renderBoard(); });
 }
 
 function renderStats() {
@@ -437,25 +427,29 @@ function renderStats() {
 }
 
 function renderTabs() {
-  const tabs = [{ id: "OVERALL", label: "Overall" }, ...termCfg().subjects.map((s) => ({ id: s.code, label: s.code }))];
+  const tabs = [
+    { id: "OVERALL", label: "Overall" },
+    ...termCfg().subjects.map((s) => ({ id: s.code, label: s.code, title: s.name })),
+    { id: "PRE_ENDSEM", label: "🎯 Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
+  ];
   $("tabs").innerHTML = tabs.map((t) =>
-    `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}">${esc(t.label)}</button>`).join("");
+    `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
   [...$("tabs").children].forEach((b) => b.onclick = () => { TAB = b.dataset.tab; renderTabs(); renderBoard(); });
 }
 
 function currentList() {
   let list = [...BOARD.students];
-  if (TAB !== "OVERALL") list.sort((a, b) => (pctOf(b) ?? -1) - (pctOf(a) ?? -1) || a.name.localeCompare(b.name));
+  if (!isOverallTab()) list.sort((a, b) => (pctOf(b) ?? -1) - (pctOf(a) ?? -1) || a.name.localeCompare(b.name));
   return list;
 }
 
 function renderBoard() {
   let list = currentList();
-  if (FILTER === "pre_endsem") list = list.filter(preEndsemComplete);
+  if (TAB === "PRE_ENDSEM") list = list.filter(preEndsemComplete);
   const scored = list.filter((e) => pctOf(e) != null);
   // Percentile: server value normally; recomputed within the cohort when filtered.
   const pctlFor = (e) => {
-    if (!FILTER) return e.percentile;
+    if (TAB !== "PRE_ENDSEM") return e.percentile;
     const pct = pctOf(e);
     if (pct == null || scored.length < 2) return null;
     const below = scored.filter((o) => pctOf(o) < pct).length;
@@ -488,7 +482,7 @@ function renderBoard() {
   if (!visible.length) {
     host.innerHTML = q
       ? `<div class="empty"><div class="big">🔍</div>No match for “${esc(q)}”.</div>`
-      : FILTER
+      : TAB === "PRE_ENDSEM"
         ? `<div class="empty"><div class="big">🎯</div>Nobody has filled all pre-end-sem marks yet.<br>Every quiz, assignment and midsem must be entered in all subjects to appear here.</div>`
         : `<div class="empty"><div class="big">🚀</div>No marks yet — be the first!<br>Tap <b>＋ Add marks</b> to get on the board.</div>`;
     return;
@@ -497,8 +491,8 @@ function renderBoard() {
     const pct = pctOf(e);
     const rank = pct == null ? null : scored.indexOf(e) + 1;
     const medal = rank != null && rank <= 3 ? ` m${rank}` : "";
-    const score = TAB === "OVERALL" ? e.overall : e.subjects[TAB];
-    const pctl = TAB === "OVERALL" ? pctlFor(e) : null;
+    const score = isOverallTab() ? e.overall : e.subjects[TAB];
+    const pctl = isOverallTab() ? pctlFor(e) : null;
     const sub = pctl != null ? `${fmt(pctl)} pctl` : `${fmt(score.total)}/${fmt(score.max_entered)}`;
     return `
     <div class="row${isMe(e) ? " me" : ""}" data-id="${esc(keyOf(e))}">
