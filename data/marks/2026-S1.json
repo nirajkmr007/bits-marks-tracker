@@ -554,6 +554,36 @@
       "alias": "Crimson Raven 12",
       "name": "PAIL",
       "updated_at": "2026-07-20T12:18:29+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 29.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 29.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 27.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 26.0
+        }
+      },
+      "pin_salt": "159115cbbbbcebd5",
+      "pin_hash": "ad989ce7887cd74471d2eba2acc6efc93f35a8d84f277f9ef9032e92df75328c",
+      "anon": true,
+      "id_hash": "6cd4909119116dfe8658",
+      "alias": "Gentle Panther 89",
+      "updated_at": "2026-07-20T14:00:46+00:00"
     }
   ]
 }
