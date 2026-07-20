@@ -533,7 +533,8 @@
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 19.0
+          "midsem": 19.0,
+          "quiz2": 5.0
         },
         "ML": {
           "quiz1": 9.0,
@@ -552,7 +553,7 @@
       "id_hash": "1664574c3e51ee30aafd",
       "alias": "Crimson Raven 12",
       "name": "PAIL",
-      "updated_at": "2026-07-20T12:17:12+00:00"
+      "updated_at": "2026-07-20T12:18:29+00:00"
     }
   ]
 }
