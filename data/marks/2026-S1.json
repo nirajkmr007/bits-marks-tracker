@@ -327,6 +327,38 @@
       "alias": "Quiet Falcon 92",
       "name": "Deadpool",
       "updated_at": "2026-07-20T10:09:03+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.75
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 23.0,
+          "quiz2": 4.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 13.75
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 17.85
+        }
+      },
+      "pin_salt": "c0f38de002db784b",
+      "pin_hash": "15dcf41caaf6c3ddbe7aa4f0c965a0fa3bc6521a77377b9eeb4f6875a5c26396",
+      "anon": true,
+      "id_hash": "29a116d0a3aed3aaeceb",
+      "alias": "Brave Eagle 35",
+      "name": "Rajeshwar",
+      "updated_at": "2026-07-20T10:12:17+00:00"
     }
   ]
 }
