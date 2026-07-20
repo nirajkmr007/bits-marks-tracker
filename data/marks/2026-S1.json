@@ -615,6 +615,34 @@
       "id_hash": "d393f0d960338ac340d9",
       "alias": "Silent Wolf 36",
       "updated_at": "2026-07-20T15:40:14+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "ca2dbbbd63a235fa",
+      "pin_hash": "7b7cd82f9b8893bfd2e30c210d4b33a6d556468ec450cff8cc5562fdda926b7e",
+      "anon": true,
+      "id_hash": "1ab913fd0907c5c70f87",
+      "alias": "Gentle Falcon 67",
+      "name": "Monkey.D.Luffy",
+      "updated_at": "2026-07-20T15:53:42+00:00"
     }
   ]
 }
