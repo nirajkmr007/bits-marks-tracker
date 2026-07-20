@@ -459,6 +459,38 @@
       "id_hash": "88097a52187a766743ce",
       "alias": "Bold Panther 68",
       "updated_at": "2026-07-20T10:45:12+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 18.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 19.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 24.0
+        }
+      },
+      "pin_salt": "29cfb2c35f9ed2a6",
+      "pin_hash": "7f376ef2c029ab01a62749614c87d6eed5b2e73379c0403cd534ef3645f65d47",
+      "anon": true,
+      "id_hash": "a061a4eca1a39562eb50",
+      "alias": "Swift Eagle 93",
+      "name": "AP",
+      "updated_at": "2026-07-20T11:01:16+00:00"
     }
   ]
 }
