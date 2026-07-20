@@ -769,6 +769,33 @@
       "alias": "Lucky Wolf 49",
       "name": "StudAIML",
       "updated_at": "2026-07-20T16:57:57+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5
+        },
+        "ISM": {
+          "quiz1": 4.0,
+          "assignment1": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "6c4eaef3ca9c6d63",
+      "pin_hash": "ab54dc1f565cdcaf9824ac2746835cc15f610e7eca7a3d29d99edcf52ab2f862",
+      "anon": true,
+      "id_hash": "1bbebeca925ed41805d1",
+      "alias": "Clever Cobra 90",
+      "name": "Vishal Kunwar",
+      "updated_at": "2026-07-20T17:00:18+00:00"
     }
   ]
 }
