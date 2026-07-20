@@ -584,6 +584,37 @@
       "id_hash": "6cd4909119116dfe8658",
       "alias": "Gentle Panther 89",
       "updated_at": "2026-07-20T14:00:46+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 0.0,
+          "assignment1": 5.0,
+          "midsem": 15.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.1
+        }
+      },
+      "pin_salt": "7a23d7d29f7a3559",
+      "pin_hash": "9aff5d3c8b4b9e73251cb86d71d4dc9914885e0076be60b7567c8a2410288e44",
+      "anon": true,
+      "id_hash": "d393f0d960338ac340d9",
+      "alias": "Silent Wolf 36",
+      "updated_at": "2026-07-20T15:40:14+00:00"
     }
   ]
 }
