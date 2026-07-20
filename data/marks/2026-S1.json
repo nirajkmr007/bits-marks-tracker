@@ -522,6 +522,37 @@
       "id_hash": "15234969cc60f23a0535",
       "alias": "Golden Orca 58",
       "updated_at": "2026-07-20T11:56:21+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 19.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0
+        },
+        "ML": {
+          "quiz1": 9.0,
+          "assignment1": 5.0,
+          "midsem": 23.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 25.5
+        }
+      },
+      "pin_salt": "8272e9e2965586fe",
+      "pin_hash": "5d1e62b6ac26fa10cedaf187de97a9ef0a911a59bfc8de6a13c8cf717a5a5a27",
+      "anon": true,
+      "id_hash": "1664574c3e51ee30aafd",
+      "alias": "Crimson Raven 12",
+      "name": "PAIL",
+      "updated_at": "2026-07-20T12:17:12+00:00"
     }
   ]
 }
