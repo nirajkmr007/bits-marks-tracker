@@ -418,6 +418,38 @@
       "alias": "Rapid Tiger 24",
       "name": "KR",
       "updated_at": "2026-07-20T10:33:44+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 23.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 24.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 25.5
+        }
+      },
+      "pin_salt": "f88455321b3d8cb4",
+      "pin_hash": "6b5a5aab815450758f951580b7f0a662bd100cf106b7f99d9e6a0bc1fdbfadaf",
+      "anon": true,
+      "id_hash": "a5299c21a8705aac68ac",
+      "alias": "Bold Eagle 78",
+      "name": "SJ",
+      "updated_at": "2026-07-20T10:35:48+00:00"
     }
   ]
 }
