@@ -1,5 +1,7 @@
 # 🏆 BITS Marks Tracker
 
+**Live at [bits-marks-tracker.vercel.app](https://bits-marks-tracker.vercel.app/)**
+
 **Unofficial**, student-run marks leaderboard for the BITS Pilani WILP MTech AI/ML batch.
 Students self-report marks per subject; the dashboard shows totals, percentages,
 ranks and percentiles — per subject and overall.
