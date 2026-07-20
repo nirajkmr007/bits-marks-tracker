@@ -390,6 +390,20 @@
       "id_hash": "ed0f0e9fc6c69268bcc9",
       "alias": "Quiet Orca 78",
       "updated_at": "2026-07-20T10:19:35+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "7e19918e2f74faab",
+      "pin_hash": "657194bfdf81f09ff711fb8325fafc4b15ca9b9d785125d5121ea1ef8a99f664",
+      "anon": true,
+      "id_hash": "e31957ab4af5836235ca",
+      "alias": "Rapid Tiger 24",
+      "name": "KR",
+      "updated_at": "2026-07-20T10:28:25+00:00"
     }
   ]
 }
