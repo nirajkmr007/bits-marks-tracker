@@ -863,6 +863,32 @@
       "alias": "Silent Sparrow 70",
       "name": "GK",
       "updated_at": "2026-07-20T17:35:13+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0
+        }
+      },
+      "pin_salt": "a6a5469cd42114c6",
+      "pin_hash": "79a68376790bd7ed788db51b058b9a0c28efbbf415aeca834345eddfc5b4a84a",
+      "anon": true,
+      "id_hash": "d2387501b8c8bc7b4b37",
+      "alias": "Bold Lynx 68",
+      "updated_at": "2026-07-20T18:31:32+00:00"
     }
   ]
 }
