@@ -79,6 +79,12 @@
     transition: all .15s ease;
   }
   .tabs button.active { color: #fff; background: var(--grad); box-shadow: 0 2px 12px rgba(139,92,246,.35); }
+  /* Fixed height so content below doesn't jump when notes change length */
+  .tabnote {
+    font-size: .68rem; color: var(--muted); line-height: 1.5;
+    margin: -4px 2px 10px; min-height: 3em;
+  }
+  @media (max-width: 560px) { .tabnote { min-height: 4.5em; } }
   .search {
     width: 100%; font: inherit; font-size: .85rem; color: var(--ink);
     background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; margin-bottom: 12px;
@@ -267,6 +273,7 @@
   <section class="stats" id="statsCards"></section>
   <nav class="tabs" id="tabs"></nav>
   <nav class="tabs" id="filterTabs" style="margin-top:-4px"></nav>
+  <div class="tabnote" id="tabNote"></div>
   <input class="search" id="search" type="search" placeholder="Search name or BITS ID…" autocomplete="off">
 
   <section class="podium" id="podium"></section>
@@ -413,8 +420,8 @@ function preEndsemComplete(e) {
 
 function renderFilterTabs() {
   const tabs = [
-    { id: "", label: "Everyone" },
-    { id: "pre_endsem", label: "🎯 Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
+    { id: "", label: "All" },
+    { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
   ];
   $("filterTabs").innerHTML = tabs.map((t) =>
     `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
@@ -450,6 +457,15 @@ function currentList() {
 }
 
 function renderBoard() {
+  const subject = termCfg().subjects.find((s) => s.code === TAB);
+  const tabPart = subject
+    ? `${subject.name} — ranked by ${TAB} % (only filled components count).`
+    : "Ranked by overall % across subjects — percentile = share of students below you.";
+  const filterPart = FILTER === "pre_endsem"
+    ? " Showing only students with every quiz, assignment and midsem filled in all subjects — percentile recomputed within this group."
+    : " Showing all students with at least one mark entered.";
+  $("tabNote").textContent = tabPart + filterPart;
+
   let list = currentList();
   if (FILTER === "pre_endsem") list = list.filter(preEndsemComplete);
   const scored = list.filter((e) => pctOf(e) != null);
