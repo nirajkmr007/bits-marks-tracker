@@ -86,6 +86,37 @@
       "alias": "Swift Tiger 53",
       "name": "Krishna Ranjan",
       "updated_at": "2026-07-19T14:25:39+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 11.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 8.5,
+          "midsem": 11.7
+        }
+      },
+      "pin_salt": "c823d7f9a81b979e",
+      "pin_hash": "6176fac17050d596a3723e753275299f74c4a135d4e3797bcf95e0c4d2df93d8",
+      "anon": true,
+      "id_hash": "1326c688da7d5c155e52",
+      "alias": "Rapid Sparrow 94",
+      "name": "Goutham Tadali",
+      "updated_at": "2026-07-20T07:09:56+00:00"
     }
   ]
 }
