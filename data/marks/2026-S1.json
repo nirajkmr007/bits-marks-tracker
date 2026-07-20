@@ -359,6 +359,37 @@
       "alias": "Brave Eagle 35",
       "name": "Rajeshwar",
       "updated_at": "2026-07-20T10:12:17+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.25,
+          "assignment1": 9.0,
+          "midsem": 16.5
+        },
+        "ISM": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 20.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 21.0
+        },
+        "DNN": {
+          "quiz1": 4.5,
+          "assignment1": 9.0,
+          "midsem": 14.0
+        }
+      },
+      "pin_salt": "f1fda05bf9753e91",
+      "pin_hash": "bb8debc33b0cb0907f8aea3dfcf50680eadf33a4f49bbd06f16f3f85114312a0",
+      "anon": true,
+      "id_hash": "ed0f0e9fc6c69268bcc9",
+      "alias": "Quiet Orca 78",
+      "updated_at": "2026-07-20T10:19:35+00:00"
     }
   ]
 }
