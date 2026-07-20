@@ -173,6 +173,37 @@
       "alias": "Brave Tiger 77",
       "name": "Pramod Palukuru",
       "updated_at": "2026-07-20T07:44:10+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 21.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 17.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 21.5
+        }
+      },
+      "pin_salt": "f195d49194eca219",
+      "pin_hash": "9ad1799c631eec8de6453c59927bc8e6daa2cf027951979bde771cf7a1e291fb",
+      "anon": true,
+      "id_hash": "d052bf8536a918b8ac2d",
+      "alias": "Quiet Raven 48",
+      "updated_at": "2026-07-20T07:58:14+00:00"
     }
   ]
 }
