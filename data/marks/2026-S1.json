@@ -230,6 +230,37 @@
       "id_hash": "0c9f3bc6f67953d6f7fb",
       "alias": "Quiet Fox 84",
       "updated_at": "2026-07-20T08:07:00+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 13.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 11.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 12.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 13.5
+        }
+      },
+      "pin_salt": "8e6a71f8419e6533",
+      "pin_hash": "01b43d5f4bee7cac6a010806b54d74bd12bd713238b80aa94cfd45ab84aabb9c",
+      "anon": true,
+      "id_hash": "c1ad0bbd75591435c8a3",
+      "alias": "Cosmic Phoenix 33",
+      "name": "Prats",
+      "updated_at": "2026-07-20T08:55:29+00:00"
     }
   ]
 }
