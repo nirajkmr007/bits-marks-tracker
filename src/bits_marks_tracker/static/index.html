@@ -79,6 +79,7 @@
     transition: all .15s ease;
   }
   .tabs button.active { color: #fff; background: var(--grad); box-shadow: 0 2px 12px rgba(139,92,246,.35); }
+  .tabnote { font-size: .68rem; color: var(--muted); line-height: 1.5; margin: -4px 2px 10px; }
   .search {
     width: 100%; font: inherit; font-size: .85rem; color: var(--ink);
     background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; margin-bottom: 12px;
@@ -266,6 +267,7 @@
 
   <section class="stats" id="statsCards"></section>
   <nav class="tabs" id="tabs"></nav>
+  <div class="tabnote" id="tabNote"></div>
   <input class="search" id="search" type="search" placeholder="Search name or BITS ID…" autocomplete="off">
 
   <section class="podium" id="podium"></section>
@@ -435,6 +437,13 @@ function renderTabs() {
   $("tabs").innerHTML = tabs.map((t) =>
     `<button class="${TAB === t.id ? "active" : ""}" data-tab="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
   [...$("tabs").children].forEach((b) => b.onclick = () => { TAB = b.dataset.tab; renderTabs(); renderBoard(); });
+  const notes = {
+    OVERALL: "Everyone with at least one mark, ranked by overall % — percentile = share of students below you.",
+    PRE_ENDSEM: "Only students who filled every quiz, assignment and midsem in all subjects — percentile recomputed within this group for a truer pre-end-sem standing.",
+  };
+  const subject = termCfg().subjects.find((s) => s.code === TAB);
+  $("tabNote").textContent = notes[TAB] ||
+    `${subject ? subject.name : TAB} — ranked by ${TAB} % (only filled components count toward the percentage).`;
 }
 
 function currentList() {
