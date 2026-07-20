@@ -264,6 +264,37 @@
       "alias": "Cosmic Phoenix 33",
       "name": "Prats",
       "updated_at": "2026-07-20T08:55:29+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 10.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 13.0
+        }
+      },
+      "pin_salt": "149e647d62d0e96a",
+      "pin_hash": "a53a006f73ff0cc0011d49f9ac3b9acaa49d6522632babc351422d2702bcb092",
+      "anon": true,
+      "id_hash": "ea3a5356697a675c7fcf",
+      "alias": "Gentle Wolf 81",
+      "updated_at": "2026-07-20T10:08:17+00:00"
     }
   ]
 }
