@@ -407,12 +407,17 @@ async function refresh() {
 
 function render() { renderStats(); renderTabs(); renderFilterTabs(); renderBoard(); renderMyPin(); }
 
-// True when every component except the end-sem is filled, in every subject —
-// the cohort whose percentile is a solid estimate going into the end-sem.
-function preEndsemComplete(e) {
+// Cohort membership: required components must be filled in EVERY subject.
+// till_midsem  → Quiz 1 + Assignment 1 + Midsem
+// pre_endsem   → everything except the end-sem
+const TILL_MIDSEM_KEYS = ["quiz1", "assignment1", "midsem"];
+function cohortComplete(e, filter) {
   const cfg = termCfg();
   return cfg.subjects.every((sub) => {
-    const comps = (sub.components || cfg.components).filter((c) => c.key !== "endsem");
+    const all = sub.components || cfg.components;
+    const comps = filter === "till_midsem"
+      ? all.filter((c) => TILL_MIDSEM_KEYS.includes(c.key))
+      : all.filter((c) => c.key !== "endsem");
     const m = e.subjects[sub.code].components || {};
     return comps.every((c) => m[c.key] != null);
   });
@@ -421,6 +426,7 @@ function preEndsemComplete(e) {
 function renderFilterTabs() {
   const tabs = [
     { id: "", label: "All" },
+    { id: "till_midsem", label: "Till mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
     { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
   ];
   $("filterTabs").innerHTML = tabs.map((t) =>
@@ -461,13 +467,15 @@ function renderBoard() {
   const tabPart = subject
     ? `${subject.name} — ranked by ${TAB} % (only filled components count).`
     : "Ranked by overall % across subjects — percentile = share of students below you.";
-  const filterPart = FILTER === "pre_endsem"
-    ? " Showing only students with every quiz, assignment and midsem filled in all subjects — percentile recomputed within this group."
-    : " Showing all students with at least one mark entered.";
-  $("tabNote").textContent = tabPart + filterPart;
+  const filterNotes = {
+    "": " Showing all students with at least one mark entered.",
+    till_midsem: " Showing only students with Quiz 1, Assignment 1 and Midsem filled in all subjects — percentile recomputed within this group.",
+    pre_endsem: " Showing only students with every quiz, assignment and midsem filled in all subjects — percentile recomputed within this group.",
+  };
+  $("tabNote").textContent = tabPart + (filterNotes[FILTER] ?? "");
 
   let list = currentList();
-  if (FILTER === "pre_endsem") list = list.filter(preEndsemComplete);
+  if (FILTER) list = list.filter((e) => cohortComplete(e, FILTER));
   const scored = list.filter((e) => pctOf(e) != null);
   // Percentile: server value normally; recomputed within the cohort when filtered.
   const pctlFor = (e) => {
@@ -505,7 +513,7 @@ function renderBoard() {
     host.innerHTML = q
       ? `<div class="empty"><div class="big">🔍</div>No match for “${esc(q)}”.</div>`
       : FILTER
-        ? `<div class="empty"><div class="big">🎯</div>Nobody has filled all pre-end-sem marks yet.<br>Every quiz, assignment and midsem must be entered in all subjects to appear here.</div>`
+        ? `<div class="empty"><div class="big">🎯</div>Nobody qualifies for this view yet.<br>${FILTER === "till_midsem" ? "Quiz 1, Assignment 1 and Midsem" : "Every quiz, assignment and midsem"} must be entered in all subjects to appear here.</div>`
         : `<div class="empty"><div class="big">🚀</div>No marks yet — be the first!<br>Tap <b>＋ Add marks</b> to get on the board.</div>`;
     return;
   }
