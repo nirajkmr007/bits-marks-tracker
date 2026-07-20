@@ -796,6 +796,38 @@
       "alias": "Clever Cobra 90",
       "name": "Vishal Kunwar",
       "updated_at": "2026-07-20T17:00:18+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 14.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 22.5
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 9.5,
+          "midsem": 11.8
+        }
+      },
+      "pin_salt": "478ca300a59c0234",
+      "pin_hash": "82b31087651898ef5c1a79716e25267fbcf48c4347434dd479328b9800edaebf",
+      "anon": true,
+      "id_hash": "94a5612ccd249b6d0c35",
+      "alias": "Electric Orca 99",
+      "name": "Kieth",
+      "updated_at": "2026-07-20T17:16:45+00:00"
     }
   ]
 }
