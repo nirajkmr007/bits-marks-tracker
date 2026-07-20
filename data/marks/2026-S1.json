@@ -647,6 +647,38 @@
       "alias": "Gentle Falcon 67",
       "name": "Monkey.D.Luffy",
       "updated_at": "2026-07-20T16:20:02+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 23.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 22.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 21.5
+        }
+      },
+      "pin_salt": "9932e867a477c5d6",
+      "pin_hash": "71e299a34af5d552508ae133a2b3ea5e591b57feac2aad18daf8e25b23a7a9f6",
+      "anon": true,
+      "id_hash": "a3299528bc5cd7f90273",
+      "alias": "Golden Lynx 96",
+      "name": "Sac",
+      "updated_at": "2026-07-20T16:49:19+00:00"
     }
   ]
 }
