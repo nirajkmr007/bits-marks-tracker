@@ -778,20 +778,24 @@
       "marks": {
         "MFML": {
           "quiz1": 5.0,
-          "assignment1": 9.5
+          "assignment1": 9.5,
+          "midsem": 5.0
         },
         "ISM": {
           "quiz1": 4.0,
           "assignment1": 10.0,
-          "quiz2": 5.0
+          "quiz2": 5.0,
+          "midsem": 7.5
         },
         "ML": {
           "quiz1": 10.0,
-          "assignment1": 5.0
+          "assignment1": 5.0,
+          "midsem": 17.5
         },
         "DNN": {
           "quiz1": 5.0,
-          "assignment1": 10.0
+          "assignment1": 10.0,
+          "midsem": 17.25
         }
       },
       "pin_salt": "6c4eaef3ca9c6d63",
@@ -800,7 +804,7 @@
       "id_hash": "1bbebeca925ed41805d1",
       "alias": "Clever Cobra 90",
       "name": "Vishal Kunwar",
-      "updated_at": "2026-07-21T07:05:53+00:00"
+      "updated_at": "2026-07-21T08:32:30+00:00"
     },
     {
       "marks": {
