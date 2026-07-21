@@ -889,6 +889,38 @@
       "id_hash": "d2387501b8c8bc7b4b37",
       "alias": "Bold Lynx 68",
       "updated_at": "2026-07-20T18:31:32+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 6.5
+        },
+        "ISM": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 8.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 10.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 14.5,
+          "quiz2": 5.0
+        }
+      },
+      "pin_salt": "5bf6e271eac54837",
+      "pin_hash": "bee6ebd81d4aa98ecd124a243b921b1bcb602b93bcad07de00c1d259ee87e408",
+      "anon": true,
+      "id_hash": "be46e320c31230199f73",
+      "alias": "Brave Orca 79",
+      "name": "Mahi",
+      "updated_at": "2026-07-21T01:03:16+00:00"
     }
   ]
 }
