@@ -994,6 +994,37 @@
       "id_hash": "ed48e66ab4f5962fd7ef",
       "alias": "Mellow Lynx 40",
       "updated_at": "2026-07-21T04:32:47+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 18.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 24.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 24.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 22.0
+        }
+      },
+      "pin_salt": "99359af16e28b06a",
+      "pin_hash": "68205b0ab9a772b87ff4e600a7b309afe04acd4a64dd89926cb3c92c3a28d7da",
+      "anon": true,
+      "id_hash": "51df279d50e0e1f705ef",
+      "alias": "Silent Dolphin 80",
+      "name": "Aayeinn",
+      "updated_at": "2026-07-21T05:55:13+00:00"
     }
   ]
 }
