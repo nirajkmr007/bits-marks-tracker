@@ -782,7 +782,8 @@
         },
         "ISM": {
           "quiz1": 4.0,
-          "assignment1": 10.0
+          "assignment1": 10.0,
+          "quiz2": 5.0
         },
         "ML": {
           "quiz1": 10.0,
@@ -799,7 +800,7 @@
       "id_hash": "1bbebeca925ed41805d1",
       "alias": "Clever Cobra 90",
       "name": "Vishal Kunwar",
-      "updated_at": "2026-07-21T07:03:28+00:00"
+      "updated_at": "2026-07-21T07:05:53+00:00"
     },
     {
       "marks": {
