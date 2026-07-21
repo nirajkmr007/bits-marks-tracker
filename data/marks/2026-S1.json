@@ -921,6 +921,37 @@
       "alias": "Brave Orca 79",
       "name": "Mahi",
       "updated_at": "2026-07-21T01:03:16+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 9.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 11.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 17.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 18.5
+        }
+      },
+      "pin_salt": "980b50d6bf6930ae",
+      "pin_hash": "5f1d133c6d9a180315c73ad765471ef681e7c6d89fedd1649f667fd4f10c7a90",
+      "anon": true,
+      "id_hash": "3d452ca449822175bda8",
+      "alias": "Gentle Tiger 91",
+      "name": "Ganesh",
+      "updated_at": "2026-07-21T02:20:31+00:00"
     }
   ]
 }
