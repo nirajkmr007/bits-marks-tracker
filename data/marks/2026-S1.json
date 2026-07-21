@@ -1025,6 +1025,36 @@
       "alias": "Rapid Cobra 46",
       "name": "SP",
       "updated_at": "2026-07-21T06:34:54+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 9.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 5.0
+        },
+        "ML": {
+          "quiz1": 9.25,
+          "assignment1": 4.5,
+          "midsem": 8.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 12.0
+        }
+      },
+      "pin_salt": "ce796574d0bf439c",
+      "pin_hash": "d967071d21b5d611b4177f052ac3a5cda5a90f8376caf5815e9b2a6d8a3ca04a",
+      "anon": true,
+      "id_hash": "952a7cc7de389b9bb0a7",
+      "alias": "Crimson Sparrow 86",
+      "updated_at": "2026-07-21T08:52:22+00:00"
     }
   ]
 }
