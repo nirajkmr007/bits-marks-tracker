@@ -952,38 +952,6 @@
       "alias": "Gentle Tiger 91",
       "name": "Ganesh",
       "updated_at": "2026-07-21T02:20:31+00:00"
-    },
-    {
-      "marks": {
-        "MFML": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 14.0
-        },
-        "ISM": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 21.0,
-          "quiz2": 5.0
-        },
-        "ML": {
-          "quiz1": 10.0,
-          "assignment1": 5.0,
-          "midsem": 24.0
-        },
-        "DNN": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 22.8
-        }
-      },
-      "pin_salt": "31e82337a1942460",
-      "pin_hash": "7db6f4c4a343638c872ec80bcb8ceae8d132d6d82a72df05049d8934261a057e",
-      "anon": true,
-      "id_hash": "cd9ff222f54e57eac92a",
-      "alias": "Cosmic Fox 85",
-      "name": "Culer",
-      "updated_at": "2026-07-21T02:44:29+00:00"
     }
   ]
 }
