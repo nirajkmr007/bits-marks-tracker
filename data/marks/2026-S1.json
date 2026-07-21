@@ -1055,6 +1055,37 @@
       "id_hash": "952a7cc7de389b9bb0a7",
       "alias": "Crimson Sparrow 86",
       "updated_at": "2026-07-21T08:52:22+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 3.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 4.5,
+          "midsem": 12.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0
+        }
+      },
+      "pin_salt": "f54dc6a22c503a17",
+      "pin_hash": "fed3f116a86ac5f69fff77a36e4ed834e0525b32330c7d73536e5b0671f918ac",
+      "anon": true,
+      "id_hash": "37bf2828f9c688b9d3a9",
+      "alias": "Gentle Fox 75",
+      "name": "namcyb",
+      "updated_at": "2026-07-21T11:56:53+00:00"
     }
   ]
 }
