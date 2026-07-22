@@ -1086,6 +1086,38 @@
       "alias": "Gentle Fox 75",
       "name": "namcyb",
       "updated_at": "2026-07-21T11:56:53+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.75,
+          "midsem": 10.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 16.5
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 19.0
+        }
+      },
+      "pin_salt": "c07d3581ef111d84",
+      "pin_hash": "7e6346ced3482256ab597622dccf92daaac08f11b3059d8c01efd7f310bd4f12",
+      "anon": true,
+      "id_hash": "940dbb7bff895fb5715b",
+      "alias": "Azure Fox 61",
+      "name": "Predator",
+      "updated_at": "2026-07-22T00:41:48+00:00"
     }
   ]
 }
