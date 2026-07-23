@@ -1119,6 +1119,48 @@
       "alias": "Azure Fox 61",
       "name": "Predator",
       "updated_at": "2026-07-22T00:43:56+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 40.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 40.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 40.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 40.0
+        }
+      },
+      "pin_salt": "bf3a61f24ffaa36b",
+      "pin_hash": "bf907d00a6fbf15060c414d77974186e5dd4d907681246bb16d765d14581182a",
+      "anon": true,
+      "id_hash": "7e61d884c83b081e403a",
+      "alias": "Bold Orca 16",
+      "updated_at": "2026-07-23T15:30:00+00:00"
     }
   ]
 }
