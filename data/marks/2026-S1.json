@@ -1007,7 +1007,8 @@
         },
         "ISM": {
           "quiz1": 5.0,
-          "assignment1": 10.0
+          "assignment1": 10.0,
+          "quiz2": 5.0
         },
         "ML": {
           "quiz1": 9.5,
@@ -1024,7 +1025,7 @@
       "id_hash": "e4f597269a19e63848d2",
       "alias": "Rapid Cobra 46",
       "name": "SP",
-      "updated_at": "2026-07-21T06:34:54+00:00"
+      "updated_at": "2026-07-23T09:23:08+00:00"
     },
     {
       "marks": {
