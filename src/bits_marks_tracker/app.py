@@ -22,6 +22,8 @@ from .storage import WriteConflictError, get_storage, load_config
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 BITS_ID_RE = re.compile(r"^[A-Z0-9]{8,16}$")
+FEEDBACK_TOP_N = 10
+FEEDBACK_MAX_LEN = 280
 
 app = FastAPI(
     title="BITS Marks Tracker",
@@ -38,6 +40,12 @@ class Submission(BaseModel):
     pin: str = Field(pattern=r"^\d{4}$")
     hide_id: bool = False
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
+
+
+class Feedback(BaseModel):
+    """A single anonymous feedback message."""
+
+    text: str = Field(min_length=3, max_length=FEEDBACK_MAX_LEN)
 
 
 def _hash_pin(pin: str, salt: str) -> str:
@@ -378,3 +386,82 @@ def api_export_csv(term: str) -> PlainTextResponse:
         media_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{term}-marks.csv"'},
     )
+
+
+# ---------------------------------------------------------------------------
+# Anonymous feedback feed
+# ---------------------------------------------------------------------------
+
+_FEEDBACK_REL = "feedback"
+
+
+def _read_feedback(fresh: bool = False) -> dict[str, Any]:
+    return get_storage().read_doc(_FEEDBACK_REL, {"items": []}, fresh=fresh)
+
+
+def _top_feedback(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked = sorted(items, key=lambda i: (i.get("votes", 0), i.get("created_at", "")), reverse=True)
+    return [
+        {
+            "id": i["id"],
+            "text": i["text"],
+            "votes": i.get("votes", 0),
+            "created_at": i.get("created_at"),
+        }
+        for i in ranked[:FEEDBACK_TOP_N]
+    ]
+
+
+@app.get("/api/feedback")
+def api_feedback_list() -> dict[str, Any]:
+    """Top feedback by upvotes (ties broken by recency)."""
+    doc = _read_feedback()
+    items = doc.get("items", [])
+    return {"items": _top_feedback(items), "total": len(items)}
+
+
+@app.post("/api/feedback")
+def api_feedback_add(feedback: Feedback) -> dict[str, Any]:
+    text = feedback.text.strip()
+    if len(text) < 3:
+        raise HTTPException(status_code=422, detail="Feedback is too short.")
+    storage = get_storage()
+    item = {
+        "id": secrets.token_hex(6),
+        "text": text,
+        "votes": 0,
+        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),  # noqa: UP017
+    }
+    for attempt in range(3):
+        doc = _read_feedback(fresh=attempt > 0)
+        items: list[dict[str, Any]] = doc.setdefault("items", [])
+        items.append(item)
+        try:
+            storage.write_doc(_FEEDBACK_REL, doc, message="feedback: new message")
+            break
+        except WriteConflictError:
+            continue
+    else:
+        raise HTTPException(status_code=503, detail="Server is busy — please try again.")
+    return {"ok": True, "id": item["id"], "items": _top_feedback(items)}
+
+
+@app.post("/api/feedback/{item_id}/vote")
+def api_feedback_vote(item_id: str) -> dict[str, Any]:
+    """Upvote a feedback item. Anonymous; one-per-browser is enforced client-side."""
+    storage = get_storage()
+    for attempt in range(3):
+        doc = _read_feedback(fresh=attempt > 0)
+        items: list[dict[str, Any]] = doc.get("items", [])
+        item = next((i for i in items if i["id"] == item_id), None)
+        if item is None:
+            raise HTTPException(status_code=404, detail="Feedback not found.")
+        item["votes"] = int(item.get("votes", 0)) + 1
+        try:
+            storage.write_doc(_FEEDBACK_REL, doc, message="feedback: upvote")
+            break
+        except WriteConflictError:
+            continue
+    else:
+        raise HTTPException(status_code=503, detail="Server is busy — please try again.")
+    return {"ok": True, "items": _top_feedback(items)}

@@ -248,6 +248,16 @@
   .notice strong { color: var(--gold); }
   .notice b { color: var(--ink); }
   .notice a { color: var(--indigo); }
+  .fb-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+    display: flex; gap: 10px; align-items: flex-start; }
+  .fb-item .txt { flex: 1; font-size: .82rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .fb-item .when { font-size: .62rem; color: var(--muted); margin-top: 4px; }
+  .fb-vote { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1px;
+    background: var(--card-hi); border: 1px solid var(--line); border-radius: 10px; padding: 5px 9px;
+    cursor: pointer; color: var(--ink); font: inherit; }
+  .fb-vote.voted { border-color: rgba(129,140,248,.6); color: var(--indigo); background: rgba(99,102,241,.12); cursor: default; }
+  .fb-vote .up { font-size: .8rem; line-height: 1; }
+  .fb-vote .n { font-size: .78rem; font-weight: 800; }
 </style>
 </head>
 <body>
@@ -258,6 +268,7 @@
     </div>
     <div class="spacer"></div>
     <select id="termSelect" aria-label="Semester"></select>
+    <button class="iconbtn" id="feedbackBtn" title="Anonymous feedback">💬</button>
     <a class="iconbtn" id="exportBtn" title="Download CSV" href="#">⬇</a>
     <button class="addbtn headbtn" id="openFormBtn">＋ Add marks</button>
   </header>
@@ -283,6 +294,22 @@
 
 <div class="mypin" id="mypin"></div>
 <button class="fab" id="fabBtn" aria-label="Add my marks">＋</button>
+
+<!-- feedback popup -->
+<dialog id="feedbackDialog">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2>💬 Anonymous feedback</h2>
+    <button class="xbtn" onclick="feedbackDialog.close()">✕</button></div>
+  <div class="sheet-body">
+    <div style="display:flex; gap:8px; align-items:flex-start">
+      <textarea id="fbText" maxlength="280" rows="2" placeholder="Suggest a feature, report a bug, or share a thought… (anonymous)"
+        style="flex:1; font:inherit; font-size:.86rem; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:11px; padding:10px 12px; resize:vertical"></textarea>
+      <button class="addbtn" id="fbSend" style="padding:10px 14px">Post</button>
+    </div>
+    <div class="hint" id="fbMsg" style="margin-top:6px">No login, no names — completely anonymous. Top posts by upvotes show here.</div>
+    <div id="fbList" style="margin-top:14px; display:flex; flex-direction:column; gap:8px"></div>
+  </div>
+</dialog>
 
 <!-- student detail popup -->
 <dialog id="detailDialog">
@@ -377,6 +404,71 @@ const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70
 const termCfg = () => CONFIG.terms[TERM];
 const pctOf = (e) => TAB === "OVERALL" ? e.overall.pct : e.subjects[TAB].pct;
 
+/* ---------- feedback ---------- */
+let FB_VOTED = JSON.parse(localStorage.getItem("fb_voted") || "[]");
+
+function timeAgo(iso) {
+  if (!iso) return "";
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+function renderFeedback(items) {
+  const host = $("fbList");
+  if (!items.length) {
+    host.innerHTML = `<div class="hint" style="text-align:center; padding:16px 0">No feedback yet — be the first to share a thought.</div>`;
+    return;
+  }
+  host.innerHTML = items.map((i) => {
+    const voted = FB_VOTED.includes(i.id);
+    return `<div class="fb-item">
+      <button class="fb-vote${voted ? " voted" : ""}" data-id="${esc(i.id)}" ${voted ? "disabled" : ""} title="Upvote">
+        <span class="up">▲</span><span class="n">${i.votes}</span></button>
+      <div><div class="txt">${esc(i.text)}</div><div class="when">${esc(timeAgo(i.created_at))}</div></div>
+    </div>`;
+  }).join("");
+  [...host.querySelectorAll(".fb-vote:not(.voted)")].forEach((b) => b.onclick = () => voteFeedback(b.dataset.id));
+}
+
+async function openFeedback() {
+  $("fbText").value = "";
+  $("fbMsg").className = "hint";
+  $("fbMsg").textContent = "No login, no names — completely anonymous. Top posts by upvotes show here.";
+  $("fbList").innerHTML = `<div class="hint" style="text-align:center; padding:16px 0">Loading…</div>`;
+  $("feedbackDialog").showModal();
+  try {
+    const data = await (await fetch("/api/feedback")).json();
+    renderFeedback(data.items);
+  } catch { $("fbList").innerHTML = `<div class="hint" style="text-align:center">Couldn't load feedback.</div>`; }
+}
+
+async function sendFeedback() {
+  const text = $("fbText").value.trim(), msg = $("fbMsg");
+  if (text.length < 3) { msg.className = "hint"; msg.style.color = "var(--err)"; msg.textContent = "Please write a little more."; return; }
+  $("fbSend").disabled = true; msg.style.color = ""; msg.textContent = "Posting…";
+  try {
+    const res = await fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Failed");
+    $("fbText").value = "";
+    msg.style.color = "var(--ok)"; msg.textContent = "Thanks! Posted anonymously. 🙌";
+    renderFeedback(data.items);
+  } catch (err) { msg.style.color = "var(--err)"; msg.textContent = err.message; }
+  finally { $("fbSend").disabled = false; }
+}
+
+async function voteFeedback(id) {
+  if (FB_VOTED.includes(id)) return;
+  FB_VOTED.push(id); localStorage.setItem("fb_voted", JSON.stringify(FB_VOTED));
+  try {
+    const data = await (await fetch(`/api/feedback/${encodeURIComponent(id)}/vote`, { method: "POST" })).json();
+    if (data.items) renderFeedback(data.items);
+  } catch { /* best-effort */ }
+}
+
 async function init() {
   CONFIG = await (await fetch("/api/config")).json();
   TERM = CONFIG.current_term;
@@ -392,6 +484,8 @@ async function init() {
   $("pin").addEventListener("change", () => prefill());
   $("loadBtn").onclick = () => prefill(true);
   $("deleteBtn").onclick = deleteRecord;
+  $("feedbackBtn").onclick = openFeedback;
+  $("fbSend").onclick = sendFeedback;
   $("anonChk").addEventListener("change", () => {
     $("anonHint").style.display = $("anonChk").checked ? "" : "none";
   });

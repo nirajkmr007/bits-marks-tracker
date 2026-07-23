@@ -65,6 +65,9 @@ edit or reset that file freely while developing. API docs: http://127.0.0.1:8000
 | POST   | `/api/submit`               | Upsert marks (merge per component). Body: `term`, `bits_id`, `pin`, optional `name`, `hide_id`, `marks` |
 | DELETE | `/api/student?term=&bits_id=` | Delete own record — PIN via `X-Pin` header; claimed records only |
 | GET    | `/api/export.csv?term=`     | Full dataset as CSV                  |
+| GET    | `/api/feedback`             | Top 10 anonymous feedback by upvotes |
+| POST   | `/api/feedback`             | Post anonymous feedback. Body: `text` |
+| POST   | `/api/feedback/{id}/vote`   | Upvote a feedback item               |
 
 ## Deploy (Vercel, free)
 
@@ -131,6 +134,14 @@ Operational notes:
   versions remain in git history. Truly anonymous = anonymous from first submit.
 - PIN reset for anonymous students: ask them for their **alias**, find that row
   in `data/marks/<term>.json`, delete `pin_salt`/`pin_hash`, commit.
+
+## Feedback feed
+
+The 💬 button opens an anonymous feedback popup: anyone can post a short message
+(no login, no identity stored) and upvote others' posts. The top 10 by upvotes
+are shown. Feedback lives in `data/feedback.json` — like marks, every post and
+vote is a commit. Upvotes are one-per-browser (enforced client-side, so it's a
+friction nudge rather than hard security — fine for a class tool).
 
 ## Roadmap
 

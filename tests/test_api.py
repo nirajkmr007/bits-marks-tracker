@@ -256,6 +256,40 @@ def test_submit_retries_on_write_conflict(
     assert board["stats"]["total_students"] == 1
 
 
+def test_feedback_add_list_vote(client: TestClient) -> None:
+    # empty to start
+    assert client.get("/api/feedback").json() == {"items": [], "total": 0}
+    # add two
+    a = client.post("/api/feedback", json={"text": "Add dark mode toggle"})
+    assert a.status_code == 200
+    id_a = a.json()["id"]
+    client.post("/api/feedback", json={"text": "Show grade cutoffs"})
+    listing = client.get("/api/feedback").json()
+    assert listing["total"] == 2
+    assert len(listing["items"]) == 2
+    # vote pushes an item to the top
+    client.post(f"/api/feedback/{id_a}/vote")
+    top = client.get("/api/feedback").json()["items"][0]
+    assert top["id"] == id_a and top["votes"] == 1
+
+
+def test_feedback_validation_and_missing(client: TestClient) -> None:
+    assert client.post("/api/feedback", json={"text": "hi"}).status_code == 422  # too short
+    assert client.post("/api/feedback", json={"text": "x" * 281}).status_code == 422  # too long
+    assert client.post("/api/feedback/nope/vote").status_code == 404
+
+
+def test_feedback_top_10_by_votes(client: TestClient) -> None:
+    ids = [client.post("/api/feedback", json={"text": f"idea {n}"}).json()["id"] for n in range(12)]
+    # give the last one 3 votes so it ranks first despite being newest-but-one
+    for _ in range(3):
+        client.post(f"/api/feedback/{ids[-1]}/vote")
+    data = client.get("/api/feedback").json()
+    assert data["total"] == 12
+    assert len(data["items"]) == 10  # capped
+    assert data["items"][0]["id"] == ids[-1]
+
+
 def test_index_served(client: TestClient) -> None:
     resp = client.get("/")
     assert resp.status_code == 200
