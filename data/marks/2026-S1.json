@@ -380,7 +380,8 @@
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
-          "midsem": 21.0
+          "midsem": 21.0,
+          "quiz2": 5.0
         },
         "DNN": {
           "quiz1": 4.5,
@@ -393,7 +394,7 @@
       "anon": true,
       "id_hash": "ed0f0e9fc6c69268bcc9",
       "alias": "Quiet Orca 78",
-      "updated_at": "2026-07-20T10:19:35+00:00"
+      "updated_at": "2026-08-01T13:13:23+00:00"
     },
     {
       "marks": {
