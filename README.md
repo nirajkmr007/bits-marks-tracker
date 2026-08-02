@@ -23,10 +23,12 @@ No database. The GitHub repo **is** the database:
 - Locally (no `GITHUB_TOKEN` set) it just reads/writes the files on disk.
 
 Marks per subject: Quiz 1 (5) + Assignment 1 (10) + Midsem (30) + Quiz 2 (5) +
-Assignment 2 (10) + End-sem (40) = **100**. Exception: **ML** has Quiz 1 = 10 and
-Assignment 1 = 5 — any subject can override the component structure via a
-`components` array on its entry in `data/config.json`. Partial entry is fine —
-percentages are computed against the max of the components you've filled in, so
+Assignment 2 (10) + End-sem (40) = **100**. Exception: **ML** has Quiz 1 = 10,
+Assignment 1 = 5, Quiz 2 = 10, Assignment 2 = 15 (total **110**) — any subject
+can override the component structure via a `components` array on its entry in
+`data/config.json`. Percentages are always computed against the actual sum of a
+subject's component maxes, so a non-100 total is handled correctly. Partial
+entry is fine — percentages use the max of the components you've filled in, so
 mid-semester comparisons stay fair. Percentile = % of students strictly below
 you overall. Concurrent submissions are conflict-safe: a clashing write is
 retried on fresh data, never overwritten.
