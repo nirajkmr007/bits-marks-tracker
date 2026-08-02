@@ -316,6 +316,22 @@ def test_flagged_record_held_from_ranking(
     assert item["reason"] == "quiz2 not out yet"
 
 
+def test_flag_by_alias(client: TestClient, tmp_path: Path) -> None:
+    import json
+
+    _submit(client, hide_id=True, name="")
+    # find the alias the server assigned
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    alias = board["students"][0]["name"]
+    (tmp_path / "flags.json").write_text(
+        json.dumps({"flags": [{"term": TERM, "ref": alias, "reason": "no data yet"}]})
+    )
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["students"] == []
+    assert board["under_review"][0]["name"] == alias
+    assert board["under_review"][0]["reason"] == "no data yet"
+
+
 def test_flagged_hidden_record_by_id_hash(
     client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

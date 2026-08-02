@@ -45,8 +45,17 @@ def compute_leaderboard(
     entries: list[dict[str, Any]] = []
     under_review: list[dict[str, Any]] = []
     for student in marks_doc.get("students", []):
-        ref = student.get("bits_id") or student.get("id_hash") or ""
-        if ref in flags:
+        # A flag can reference a record by bits_id, id_hash, or alias — whichever
+        # the admin finds convenient (alias is the human-readable one shown in UI).
+        matched = next(
+            (
+                r
+                for r in (student.get("bits_id"), student.get("id_hash"), student.get("alias"))
+                if r and r in flags
+            ),
+            None,
+        )
+        if matched is not None:
             anon = bool(student.get("anon"))
             under_review.append(
                 {
@@ -58,7 +67,7 @@ def compute_leaderboard(
                         if anon
                         else student.get("name") or student.get("bits_id", "?")
                     ),
-                    "reason": flags[ref],
+                    "reason": flags[matched],
                     "updated_at": student.get("updated_at"),
                 }
             )

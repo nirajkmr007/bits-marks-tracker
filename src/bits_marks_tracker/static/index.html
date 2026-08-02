@@ -542,14 +542,41 @@ function renderFilterTabs() {
   ];
   $("filterTabs").innerHTML = tabs.map((t) =>
     `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
-  [...$("filterTabs").children].forEach((b) => b.onclick = () => { FILTER = b.dataset.f; renderFilterTabs(); renderBoard(); });
+  [...$("filterTabs").children].forEach((b) => b.onclick = () => { FILTER = b.dataset.f; renderFilterTabs(); renderStats(); renderBoard(); });
+}
+
+// Records in the active sub-filter cohort (flagged rows already excluded by server).
+function cohortEntries() {
+  let list = [...BOARD.students];
+  if (FILTER) list = list.filter((e) => cohortComplete(e, FILTER));
+  return list;
+}
+
+// Stats over an arbitrary set of entries, so cards follow the sub-filter.
+function statsFor(list) {
+  const cfg = termCfg();
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const avg = (arr) => (arr.length ? round2(arr.reduce((a, b) => a + b, 0) / arr.length) : null);
+  const overallPcts = list.map((e) => e.overall.pct).filter((v) => v != null);
+  const subjects = {};
+  for (const sub of cfg.subjects) {
+    const pcts = list.map((e) => e.subjects[sub.code].pct).filter((v) => v != null);
+    subjects[sub.code] = { top_pct: pcts.length ? Math.max(...pcts) : null, avg_pct: avg(pcts) };
+  }
+  return {
+    total_students: list.length,
+    overall: { top_pct: overallPcts.length ? Math.max(...overallPcts) : null, avg_pct: avg(overallPcts) },
+    subjects,
+  };
 }
 
 function renderStats() {
-  const s = BOARD.stats, cfg = termCfg();
+  const cfg = termCfg();
+  const s = statsFor(cohortEntries());
+  const scope = FILTER === "till_midsem" ? "till mid-sem" : FILTER === "pre_endsem" ? "pre end-sem" : "on the board";
   const pc = (v) => v == null ? "—" : fmt(v) + "%";
   const cards = [
-    { k: "Students", v: s.total_students, s: "on the board" },
+    { k: "Students", v: s.total_students, s: scope },
     { k: "Topper", v: pc(s.overall.top_pct), s: "best overall" },
     { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %" },
     ...cfg.subjects.map((sub) => ({
