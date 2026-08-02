@@ -1336,6 +1336,21 @@
       "id_hash": "8ce33c3b6e2ac3b3198b",
       "alias": "Crimson Wolf 96",
       "updated_at": "2026-08-02T09:38:04+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 7.25
+        }
+      },
+      "pin_salt": "68d626ada0e1659d",
+      "pin_hash": "02dac37eb0127af37905a78af78fc4b957ad7f169a29c5278d8e1966298c0053",
+      "anon": true,
+      "id_hash": "086b2a9a236275504d2e",
+      "alias": "Brave Otter 41",
+      "updated_at": "2026-08-02T09:40:39+00:00"
     }
   ]
 }
