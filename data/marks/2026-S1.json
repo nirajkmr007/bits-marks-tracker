@@ -665,12 +665,12 @@
         "MFML": {
           "quiz1": 4.75,
           "assignment1": 10.0,
-          "midsem": 23.0
+          "midsem": 22.0
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 21.0,
+          "midsem": 22.0,
           "quiz2": 5.0
         },
         "ML": {
@@ -690,7 +690,7 @@
       "id_hash": "a3299528bc5cd7f90273",
       "alias": "Golden Lynx 96",
       "name": "Sac",
-      "updated_at": "2026-07-20T16:49:19+00:00"
+      "updated_at": "2026-08-02T08:29:29+00:00"
     },
     {
       "marks": {
