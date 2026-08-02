@@ -1243,39 +1243,6 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 7.0
-        },
-        "ISM": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 10.0,
-          "quiz2": 5.0
-        },
-        "ML": {
-          "quiz1": 9.5,
-          "assignment1": 5.0,
-          "midsem": 7.0,
-          "quiz2": 10.0
-        },
-        "DNN": {
-          "quiz1": 5.0,
-          "assignment1": 9.5,
-          "midsem": 17.15
-        }
-      },
-      "pin_salt": "68cf0f307035abb8",
-      "pin_hash": "c51d0514c3a7781152b09604bc74671ff10f7342e2a4e247cd0368562b63ed92",
-      "anon": true,
-      "id_hash": "2222c10176952b896f80",
-      "alias": "Quiet Phoenix 60",
-      "name": "Sachit",
-      "updated_at": "2026-08-02T09:24:39+00:00"
-    },
-    {
-      "marks": {
-        "MFML": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
           "midsem": 14.5
         },
         "ISM": {
