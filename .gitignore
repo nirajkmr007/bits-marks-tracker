@@ -40,3 +40,4 @@ review/
 .vscode/
 *.swp
 .DS_Store
+scripts/export-review.py
