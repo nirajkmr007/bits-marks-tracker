@@ -63,7 +63,7 @@
       "marks": {
         "MFML": {
           "quiz1": 5.0,
-          "assignment1": 8.75,
+          "assignment1": 10.0,
           "midsem": 16.5
         },
         "ISM": {
@@ -75,7 +75,8 @@
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
-          "midsem": 13.5
+          "midsem": 13.5,
+          "quiz2": 10.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -89,7 +90,7 @@
       "id_hash": "4efbb1ed413327d39875",
       "alias": "Swift Tiger 53",
       "name": "Boom Boom",
-      "updated_at": "2026-07-22T01:02:39+00:00"
+      "updated_at": "2026-08-02T10:12:29+00:00"
     },
     {
       "marks": {
