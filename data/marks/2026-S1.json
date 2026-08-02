@@ -736,12 +736,13 @@
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 13.0,
-          "quiz2": 0.0
+          "quiz2": 4.5
         },
         "ML": {
           "quiz1": 9.0,
           "assignment1": 5.0,
-          "midsem": 12.0
+          "midsem": 12.0,
+          "quiz2": 10.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -754,7 +755,7 @@
       "anon": true,
       "id_hash": "fcf1c0cb5be110bff013",
       "alias": "Shadow Dolphin 59",
-      "updated_at": "2026-08-02T11:13:41+00:00",
+      "updated_at": "2026-08-02T11:14:26+00:00",
       "name": "Sasanka"
     },
     {
