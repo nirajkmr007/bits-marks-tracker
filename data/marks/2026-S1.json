@@ -1343,6 +1343,11 @@
           "quiz1": 5.0,
           "assignment1": 9.5,
           "midsem": 7.25
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 8.5
         }
       },
       "pin_salt": "68d626ada0e1659d",
@@ -1350,7 +1355,7 @@
       "anon": true,
       "id_hash": "086b2a9a236275504d2e",
       "alias": "Brave Otter 41",
-      "updated_at": "2026-08-02T09:41:15+00:00",
+      "updated_at": "2026-08-02T09:42:49+00:00",
       "name": "Slayer"
     }
   ]
