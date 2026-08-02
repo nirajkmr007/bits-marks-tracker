@@ -1298,6 +1298,44 @@
       "alias": "Electric Lynx 91",
       "name": "Peter",
       "updated_at": "2026-08-02T09:27:13+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 30.0,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "f0bd14e04987a761",
+      "pin_hash": "cd6b2d2c29f2ff8e3c0bbbf32205d48cbcd37304def642f737d239745dd66f9c",
+      "anon": true,
+      "id_hash": "8ce33c3b6e2ac3b3198b",
+      "alias": "Crimson Wolf 96",
+      "updated_at": "2026-08-02T09:38:04+00:00"
     }
   ]
 }
