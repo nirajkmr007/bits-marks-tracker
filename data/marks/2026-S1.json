@@ -1267,6 +1267,37 @@
       "alias": "Quiet Phoenix 60",
       "name": "Sachit",
       "updated_at": "2026-08-02T09:24:39+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 9.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 19.5
+        }
+      },
+      "pin_salt": "1419e8b87bb56787",
+      "pin_hash": "843b43eff12e8830732a0755b78aea38be322af981f3925b620dd2786f9c402c",
+      "anon": true,
+      "id_hash": "b268001ebdbfc7716b7a",
+      "alias": "Electric Lynx 91",
+      "name": "Peter",
+      "updated_at": "2026-08-02T09:27:13+00:00"
     }
   ]
 }
