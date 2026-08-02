@@ -1375,45 +1375,6 @@
     {
       "marks": {
         "MFML": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 17.5,
-          "quiz2": 5.0,
-          "assignment2": 10.0
-        },
-        "ISM": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 16.5,
-          "quiz2": 5.0,
-          "assignment2": 10.0
-        },
-        "ML": {
-          "quiz1": 10.0,
-          "assignment1": 5.0,
-          "midsem": 14.0,
-          "quiz2": 10.0,
-          "assignment2": 15.0
-        },
-        "DNN": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 19.9,
-          "quiz2": 5.0,
-          "assignment2": 10.0
-        }
-      },
-      "pin_salt": "b856734bfdc78624",
-      "pin_hash": "7de4a215b5991bc1833829f94dc53f059c610a629e98c87d50abe3034d26a6dd",
-      "anon": true,
-      "id_hash": "d00476576141dc19f47e",
-      "alias": "Swift Wolf 29",
-      "updated_at": "2026-08-02T13:16:08+00:00",
-      "name": "Aqua_blue"
-    },
-    {
-      "marks": {
-        "MFML": {
           "quiz1": 4.75,
           "assignment1": 9.0,
           "midsem": 13.5
