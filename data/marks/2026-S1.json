@@ -1203,6 +1203,37 @@
       "alias": "Swift Leopard 85",
       "name": "Aman",
       "updated_at": "2026-07-23T15:52:18+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 8.0,
+          "midsem": 12.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 25.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 24.0
+        }
+      },
+      "pin_salt": "8c3d653c22e9a3a8",
+      "pin_hash": "9a84e8c26ee5924ed306d1057c82573b547b22bc591bb1746e6558bec50c4b70",
+      "anon": true,
+      "id_hash": "b360240bef018d8c30a7",
+      "alias": "Azure Leopard 61",
+      "name": "T&S",
+      "updated_at": "2026-08-02T09:22:58+00:00"
     }
   ]
 }
