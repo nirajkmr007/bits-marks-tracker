@@ -26,13 +26,43 @@ def _subject_score(marks: dict[str, Any], components: list[dict[str, Any]]) -> d
     return {"total": round(total, 2), "max_entered": max_entered, "pct": pct}
 
 
-def compute_leaderboard(term_config: dict[str, Any], marks_doc: dict[str, Any]) -> dict[str, Any]:
-    """Build ranked leaderboard entries plus dashboard stats for one term."""
+def compute_leaderboard(
+    term_config: dict[str, Any],
+    marks_doc: dict[str, Any],
+    flags: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Build ranked leaderboard entries plus dashboard stats for one term.
+
+    ``flags`` maps a record ref (``bits_id`` for public rows, ``id_hash`` for
+    hidden ones) to a reason. Flagged records are held out of ranking and stats
+    and returned separately under ``under_review`` so bad/premature data can't
+    skew anyone's percentile while the student corrects it.
+    """
+    flags = flags or {}
     subjects: list[dict[str, Any]] = term_config["subjects"]
     components: list[dict[str, Any]] = term_config["components"]
 
     entries: list[dict[str, Any]] = []
+    under_review: list[dict[str, Any]] = []
     for student in marks_doc.get("students", []):
+        ref = student.get("bits_id") or student.get("id_hash") or ""
+        if ref in flags:
+            anon = bool(student.get("anon"))
+            under_review.append(
+                {
+                    "anon": anon,
+                    "bits_id": None if anon else student.get("bits_id"),
+                    "id_hash": student.get("id_hash") if anon else None,
+                    "name": (
+                        student.get("alias", "Anonymous")
+                        if anon
+                        else student.get("name") or student.get("bits_id", "?")
+                    ),
+                    "reason": flags[ref],
+                    "updated_at": student.get("updated_at"),
+                }
+            )
+            continue
         per_subject: dict[str, Any] = {}
         total = 0.0
         max_entered = 0.0
@@ -87,6 +117,7 @@ def compute_leaderboard(term_config: dict[str, Any], marks_doc: dict[str, Any]) 
     return {
         "students": ranked + unranked,
         "stats": _stats(subjects, ranked, len(entries)),
+        "under_review": under_review,
     }
 
 

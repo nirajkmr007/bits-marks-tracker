@@ -139,11 +139,21 @@ def api_config() -> dict[str, Any]:
     return load_config()
 
 
+def _read_flags(term: str) -> dict[str, str]:
+    """Map of flagged record ref (bits_id or id_hash) → reason, for a term."""
+    doc = get_storage().read_doc("flags", {"flags": []})
+    flags: dict[str, str] = {}
+    for f in doc.get("flags", []):
+        if f.get("term") in (term, None) and f.get("ref"):
+            flags[str(f["ref"])] = f.get("reason", "Under review")
+    return flags
+
+
 @app.get("/api/leaderboard")
 def api_leaderboard(term: str) -> dict[str, Any]:
     term_config = _term_config(term)
     marks_doc = get_storage().read_marks(term)
-    result = compute_leaderboard(term_config, marks_doc)
+    result = compute_leaderboard(term_config, marks_doc, flags=_read_flags(term))
     result["term"] = term
     result["label"] = term_config["label"]
     return result
@@ -244,6 +254,7 @@ def api_submit(submission: Submission) -> dict[str, Any]:
     bits_id = _normalize_bits_id(submission.bits_id)
     name = submission.name.strip()
 
+    locked = set(term_config.get("locked_components", []))
     subject_cfg = {s["code"]: s for s in term_config["subjects"]}
     for code, comps in submission.marks.items():
         if code not in subject_cfg:
@@ -256,6 +267,11 @@ def api_submit(submission: Submission) -> dict[str, Any]:
         for key, value in comps.items():
             if key not in component_max:
                 raise HTTPException(status_code=422, detail=f"Unknown component: {key}")
+            if value is not None and key in locked:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"{key} isn't released yet — you can't enter it now.",
+                )
             if value is not None and not 0 <= value <= component_max[key]:
                 raise HTTPException(
                     status_code=422,

@@ -32,6 +32,9 @@ coverage.xml
 .env.*
 !.env.example
 
+# Local review exports — may contain de-anonymised BITS IDs. Never commit.
+review/
+
 # IDE / editor
 .idea/
 .vscode/

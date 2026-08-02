@@ -248,6 +248,17 @@
   .notice strong { color: var(--gold); }
   .notice b { color: var(--ink); }
   .notice a { color: var(--indigo); }
+  .review-head { margin: 22px 2px 0; font-size: .82rem; font-weight: 800; color: var(--gold); }
+  .review-head span { font-weight: 600; color: var(--muted); }
+  .rev-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px;
+    background: rgba(251,191,36,.06); border: 1px solid rgba(251,191,36,.28); border-radius: var(--radius);
+    padding: 11px 14px; }
+  .rev-row .nm { font-size: .88rem; font-weight: 600; }
+  .rev-row .rsn { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+  .rev-row .acts { display: flex; gap: 6px; }
+  .rev-row .mini { font: inherit; font-size: .7rem; font-weight: 600; cursor: pointer; border-radius: 9px;
+    padding: 6px 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; }
+  .rev-row .mini.p { background: var(--grad); border: 0; color: #fff; }
   .fb-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
     display: flex; gap: 10px; align-items: flex-start; }
   .fb-item .txt { flex: 1; font-size: .82rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
@@ -278,7 +289,8 @@
     Marks are self-reported and unverified, stored in a public
     <a id="repoLink" href="#" target="_blank" rel="noopener">open-source repository</a>.
     Want privacy? You can <b>hide your BITS ID</b> and leave the name blank to appear
-    as an anonymous alias.
+    as an anonymous alias. Please add real marks — wrong or premature entries may be
+    flagged and moved to the <b>Under review</b> list until you correct them.
   </div>
 
   <section class="stats" id="statsCards"></section>
@@ -289,6 +301,11 @@
 
   <section class="podium" id="podium"></section>
   <section class="list" id="list"></section>
+  <section id="reviewSection" style="display:none">
+    <div class="review-head">⚠️ Under review <span id="reviewCount"></span></div>
+    <div class="hint" style="margin:2px 2px 8px">These entries look off and are held out of the rankings until corrected. If one is yours, fix it or contact the admin.</div>
+    <div class="list" id="reviewList"></div>
+  </section>
 
 </div>
 
@@ -631,6 +648,29 @@ function renderBoard() {
     </div>`;
   }).join("");
   [...host.children].forEach((el) => { if (el.dataset.id) el.onclick = () => openDetail(el.dataset.id); });
+  renderReview();
+}
+
+function renderReview() {
+  const items = (BOARD.under_review || []);
+  const sec = $("reviewSection");
+  if (!items.length) { sec.style.display = "none"; return; }
+  sec.style.display = "";
+  $("reviewCount").textContent = `· ${items.length}`;
+  $("reviewList").innerHTML = items.map((e) => {
+    const mailto = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent("BITS Marks Tracker: review request")}`
+      + `&body=${encodeURIComponent(`Hi, my entry is under review (reason: ${e.reason}).\nBITS ID: ${e.bits_id || "(hidden — alias " + e.name + ")"}\nExplanation: `)}`;
+    return `<div class="rev-row">
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+      <div><div class="nm">${esc(e.name)}${isMe(e) ? " · you" : ""}</div><div class="rsn">⚠️ ${esc(e.reason)}</div></div>
+      <div class="acts">
+        <button class="mini p" data-edit="${esc(e.bits_id || "")}">Edit &amp; correct</button>
+        <a class="mini" href="${mailto}">Contact admin</a>
+      </div>
+    </div>`;
+  }).join("");
+  [...$("reviewList").querySelectorAll("[data-edit]")].forEach((b) =>
+    b.onclick = () => openForm(b.dataset.edit || MY_ID || undefined));
 }
 
 function renderMyPin() {
@@ -687,13 +727,17 @@ function openDetail(key) {
 /* ---------- form popup ---------- */
 function buildForm() {
   const cfg = termCfg();
+  const locked = new Set(cfg.locked_components || []);
   $("subjectFields").innerHTML = cfg.subjects.map((sub, i) => `
     <details class="f-sub" ${i === 0 ? "open" : ""}>
       <summary><span>${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
         <span class="st" id="st_${sub.code}"></span><span class="arrow">›</span></summary>
-      <div class="f-comps">${(sub.components || cfg.components).map((c) => `
-        <div><label for="m_${sub.code}_${c.key}">${esc(c.label)} /${c.max}</label>
-        <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="any" placeholder="—"></div>`).join("")}
+      <div class="f-comps">${(sub.components || cfg.components).map((c) => {
+        const isLocked = locked.has(c.key);
+        return `<div><label for="m_${sub.code}_${c.key}">${esc(c.label)} /${c.max}${isLocked ? " 🔒" : ""}</label>
+        <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="any"
+          placeholder="${isLocked ? "not out yet" : "—"}"${isLocked ? " disabled title='Not released yet'" : ""}></div>`;
+      }).join("")}
       </div>
     </details>`).join("");
 }
@@ -807,9 +851,11 @@ async function deleteRecord() {
 
 async function submit() {
   const cfg = termCfg(), marks = {};
+  const locked = new Set(cfg.locked_components || []);
   for (const sub of cfg.subjects) {
     const entry = {};
     for (const c of (sub.components || cfg.components)) {
+      if (locked.has(c.key)) continue;  // not released — never submit
       const raw = $(`m_${sub.code}_${c.key}`).value.trim();
       if (raw !== "") entry[c.key] = Number(raw);
     }

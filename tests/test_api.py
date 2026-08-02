@@ -290,6 +290,51 @@ def test_feedback_top_10_by_votes(client: TestClient) -> None:
     assert data["items"][0]["id"] == ids[-1]
 
 
+def test_locked_component_rejected(client: TestClient) -> None:
+    # end-sem is locked in config → cannot be entered
+    assert _submit(client, marks={"MFML": {"endsem": 35}}).status_code == 422
+    # a released component still works
+    assert _submit(client, marks={"MFML": {"quiz1": 4}}).status_code == 200
+
+
+def test_flagged_record_held_from_ranking(
+    client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import json
+
+    _submit(client)  # 2025AA05123, public
+    # admin flags it by committing to data/flags.json
+    (tmp_path / "flags.json").write_text(
+        json.dumps({"flags": [{"term": TERM, "ref": "2025AA05123", "reason": "quiz2 not out yet"}]})
+    )
+    board = client.get("/api/leaderboard", params={"term": TERM}).json()
+    assert board["students"] == []  # excluded from ranking
+    assert board["stats"]["total_students"] == 0  # excluded from stats
+    assert len(board["under_review"]) == 1
+    item = board["under_review"][0]
+    assert item["bits_id"] == "2025AA05123"
+    assert item["reason"] == "quiz2 not out yet"
+
+
+def test_flagged_hidden_record_by_id_hash(
+    client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import json
+
+    from bits_marks_tracker.app import _id_hash
+
+    _submit(client, hide_id=True, name="")
+    (tmp_path / "flags.json").write_text(
+        json.dumps({"flags": [{"term": TERM, "ref": _id_hash("2025AA05123"), "reason": "check"}]})
+    )
+    resp = client.get("/api/leaderboard", params={"term": TERM})
+    board = resp.json()
+    assert board["students"] == []
+    review = board["under_review"][0]
+    assert review["anon"] is True and review["bits_id"] is None
+    assert "2025AA05123" not in resp.text  # hidden ID never leaked
+
+
 def test_index_served(client: TestClient) -> None:
     resp = client.get("/")
     assert resp.status_code == 200

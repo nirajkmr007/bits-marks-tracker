@@ -145,6 +145,32 @@ are shown. Feedback lives in `data/feedback.json` — like marks, every post and
 vote is a commit. Upvotes are one-per-browser (enforced client-side, so it's a
 friction nudge rather than hard security — fine for a class tool).
 
+## Integrity: locked components & flagging
+
+Two layers keep bad or premature marks out of the rankings:
+
+**Prevention — locked components.** `data/config.json` has a term-level
+`locked_components` list (currently `["endsem"]`). Those inputs are disabled in
+the form ("not out yet 🔒") and rejected by the API, so nobody can enter marks
+for an assessment that hasn't happened. When the end-sem is done, remove it from
+the list and redeploy.
+
+**Reactive — flagging.** If a row looks wrong, add an entry to `data/flags.json`
+on the `data` branch and commit:
+
+```json
+{ "flags": [
+  { "term": "2026-S1", "ref": "2025AC05123", "reason": "quiz2 not out yet" }
+] }
+```
+
+`ref` is the `bits_id` for public rows, or the `id_hash` for hidden ones (both
+visible in `data/marks/<term>.json`). Flagged records are held out of every tab,
+the stats, and percentile math, and appear in an **⚠️ Under review** section on
+the site with the reason, an "Edit & correct" button, and a "Contact admin"
+link. To clear a flag, remove its entry. No admin login exists — flagging and
+un-flagging are just git commits, fully auditable.
+
 ## Roadmap
 
 - **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,
