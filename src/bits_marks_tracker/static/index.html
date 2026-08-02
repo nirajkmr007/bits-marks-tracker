@@ -66,6 +66,7 @@
   .stat .k { font-size: .6rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .stat .v { font-size: 1.15rem; font-weight: 800; margin-top: 2px; }
   .stat .s { font-size: .66rem; color: var(--muted); margin-top: 1px; }
+  .stat .s .warn { color: var(--gold); font-weight: 700; }
 
   /* ---------- tabs + search ---------- */
   .tabs {
@@ -574,9 +575,11 @@ function renderStats() {
   const cfg = termCfg();
   const s = statsFor(cohortEntries());
   const scope = FILTER === "till_midsem" ? "till mid-sem" : FILTER === "pre_endsem" ? "pre end-sem" : "on the board";
+  const reviewN = (BOARD.under_review || []).length;
+  const reviewNote = reviewN ? ` · <b class="warn">${reviewN} under review</b>` : "";
   const pc = (v) => v == null ? "—" : fmt(v) + "%";
   const cards = [
-    { k: "Students", v: s.total_students, s: scope },
+    { k: "Students", v: s.total_students, s: scope + reviewNote, html: true },
     { k: "Topper", v: pc(s.overall.top_pct), s: "best overall" },
     { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %" },
     ...cfg.subjects.map((sub) => ({
@@ -584,7 +587,7 @@ function renderStats() {
     })),
   ];
   $("statsCards").innerHTML = cards.map((c) =>
-    `<div class="stat"><div class="k">${esc(c.k)}</div><div class="v">${esc(String(c.v))}</div><div class="s">${esc(c.s)}</div></div>`).join("");
+    `<div class="stat"><div class="k">${esc(c.k)}</div><div class="v">${esc(String(c.v))}</div><div class="s">${c.html ? c.s : esc(c.s)}</div></div>`).join("");
 }
 
 function renderTabs() {
