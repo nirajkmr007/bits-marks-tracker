@@ -21,7 +21,7 @@
     --radius: 18px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { color-scheme: dark; }
+  html { color-scheme: dark; scroll-behavior: smooth; }
   body {
     margin: 0; color: var(--ink); font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
@@ -67,6 +67,8 @@
   .stat .v { font-size: 1.15rem; font-weight: 800; margin-top: 2px; }
   .stat .s { font-size: .66rem; color: var(--muted); margin-top: 1px; }
   .stat .s .warn { color: var(--gold); font-weight: 700; }
+  .stat .s a.warn { text-decoration: underline; cursor: pointer; }
+  #reviewSection { scroll-margin-top: 84px; }
 
   /* ---------- tabs + search ---------- */
   .tabs {
@@ -576,7 +578,7 @@ function renderStats() {
   const s = statsFor(cohortEntries());
   const scope = FILTER === "till_midsem" ? "till mid-sem" : FILTER === "pre_endsem" ? "pre end-sem" : "on the board";
   const reviewN = (BOARD.under_review || []).length;
-  const reviewNote = reviewN ? ` · <b class="warn">${reviewN} under review</b>` : "";
+  const reviewNote = reviewN ? ` · <a class="warn" id="reviewJump" href="#reviewSection">${reviewN} under review</a>` : "";
   const pc = (v) => v == null ? "—" : fmt(v) + "%";
   const cards = [
     { k: "Students", v: s.total_students, s: scope + reviewNote, html: true },
