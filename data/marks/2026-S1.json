@@ -1401,6 +1401,39 @@
       "id_hash": "d00476576141dc19f47e",
       "alias": "Swift Wolf 29",
       "updated_at": "2026-08-02T11:27:57+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 9.0,
+          "midsem": 13.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 13.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 14.0,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 9.0,
+          "midsem": 15.0
+        }
+      },
+      "pin_salt": "e81b2f5baf84fa23",
+      "pin_hash": "2f1769a3bae98275faccf3aff942172f262c6e9404ea6991f2b837e438ce2948",
+      "anon": true,
+      "id_hash": "4efdd0b34ee15e4f381a",
+      "alias": "Crimson Tiger 26",
+      "name": "Shinkansen",
+      "updated_at": "2026-08-02T11:28:11+00:00"
     }
   ]
 }
