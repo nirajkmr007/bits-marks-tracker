@@ -1435,6 +1435,38 @@
       "alias": "Crimson Tiger 26",
       "name": "Shinkansen",
       "updated_at": "2026-08-02T11:28:11+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 21.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 15.0
+        },
+        "ML": {
+          "quiz1": 9.0,
+          "assignment1": 5.0,
+          "midsem": 16.5,
+          "quiz2": 9.5
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 26.0
+        }
+      },
+      "pin_salt": "c9775ca455b34d45",
+      "pin_hash": "427135a2d29f9cdc775134b1dc45f90a5d4cbfa5b97813b9c0b5fa9065e822d9",
+      "anon": true,
+      "id_hash": "240c64f11df103607451",
+      "alias": "Electric Panther 23",
+      "name": "iWannaDropOut",
+      "updated_at": "2026-08-02T11:50:56+00:00"
     }
   ]
 }
