@@ -322,7 +322,8 @@
         "ML": {
           "quiz1": 9.5,
           "assignment1": 5.0,
-          "midsem": 12.5
+          "midsem": 12.5,
+          "quiz2": 10.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -336,7 +337,7 @@
       "id_hash": "df5568ea0672ad5f5e77",
       "alias": "Quiet Falcon 92",
       "name": "Deadpool",
-      "updated_at": "2026-07-20T10:09:03+00:00"
+      "updated_at": "2026-08-02T08:24:38+00:00"
     },
     {
       "marks": {
