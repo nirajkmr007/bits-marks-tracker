@@ -1495,6 +1495,44 @@
       "id_hash": "453e6210577c954abbfc",
       "alias": "Lucky Dolphin 87",
       "updated_at": "2026-08-03T10:57:49+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 12.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 21.0,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "a190be14d05f3eea",
+      "pin_hash": "3854a6f9727a871732af638a5a5defc81d618364b1268f0c3f7a848f0839833a",
+      "anon": true,
+      "id_hash": "be964d3af2b3bab1bc5f",
+      "alias": "Clever Fox 52",
+      "updated_at": "2026-08-03T18:16:16+00:00"
     }
   ]
 }
