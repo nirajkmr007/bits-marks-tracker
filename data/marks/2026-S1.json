@@ -1433,6 +1433,37 @@
       "id_hash": "aaf4b60e4ec287e7aa61",
       "alias": "Crimson Tiger 38",
       "updated_at": "2026-08-02T15:17:49+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 8.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 8.0
+        },
+        "ML": {
+          "quiz1": 8.5,
+          "assignment1": 5.0,
+          "midsem": 8.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 5.0
+        }
+      },
+      "pin_salt": "4a649078978fde20",
+      "pin_hash": "81e3970c1b7b587f973b9c9f34ead6e49d733a54167a29429d2f056b33f70741",
+      "anon": true,
+      "id_hash": "3a8629e8a061293a280d",
+      "alias": "Silent Eagle 50",
+      "name": "RRY",
+      "updated_at": "2026-08-03T02:40:09+00:00"
     }
   ]
 }
