@@ -1464,6 +1464,36 @@
       "alias": "Silent Eagle 50",
       "name": "RRE",
       "updated_at": "2026-08-03T02:41:20+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.0,
+          "assignment1": 9.0,
+          "midsem": 21.0
+        },
+        "ISM": {
+          "quiz1": 4.0,
+          "assignment1": 9.0,
+          "midsem": 21.0
+        },
+        "ML": {
+          "quiz1": 5.0,
+          "assignment1": 5.0,
+          "midsem": 21.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 14.0
+        }
+      },
+      "pin_salt": "cc14daa7570da67b",
+      "pin_hash": "23b78040b417893440f8bfbd3a0c6d4773e973be23d41991b032f960e810de35",
+      "anon": true,
+      "id_hash": "453e6210577c954abbfc",
+      "alias": "Lucky Dolphin 87",
+      "updated_at": "2026-08-03T10:57:49+00:00"
     }
   ]
 }
