@@ -1541,6 +1541,39 @@
       "id_hash": "be964d3af2b3bab1bc5f",
       "alias": "Clever Fox 52",
       "updated_at": "2026-08-03T18:16:16+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 8.5,
+          "midsem": 7.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 8.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 20.0,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 8.5,
+          "midsem": 14.5
+        }
+      },
+      "pin_salt": "f7b8f87666fb4b9a",
+      "pin_hash": "291d72dcc0ee7dcfce8885afe12386a00ada63797d72dcf6efc863ab14165c83",
+      "anon": true,
+      "id_hash": "b31cb013ad33794d038c",
+      "alias": "Electric Eagle 75",
+      "name": "Lily",
+      "updated_at": "2026-08-04T11:49:56+00:00"
     }
   ]
 }
