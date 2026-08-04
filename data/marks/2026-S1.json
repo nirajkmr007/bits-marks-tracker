@@ -1471,22 +1471,30 @@
         "MFML": {
           "quiz1": 4.0,
           "assignment1": 9.0,
-          "midsem": 21.0
+          "midsem": 21.0,
+          "quiz2": 4.0,
+          "assignment2": 9.0
         },
         "ISM": {
           "quiz1": 4.0,
           "assignment1": 9.0,
-          "midsem": 21.0
+          "midsem": 21.0,
+          "quiz2": 4.0,
+          "assignment2": 9.0
         },
         "ML": {
           "quiz1": 5.0,
           "assignment1": 5.0,
-          "midsem": 21.0
+          "midsem": 21.0,
+          "quiz2": 5.0,
+          "assignment2": 14.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 9.0,
-          "midsem": 14.0
+          "midsem": 14.0,
+          "quiz2": 4.0,
+          "assignment2": 9.0
         }
       },
       "pin_salt": "cc14daa7570da67b",
@@ -1494,7 +1502,7 @@
       "anon": true,
       "id_hash": "453e6210577c954abbfc",
       "alias": "Lucky Dolphin 87",
-      "updated_at": "2026-08-03T10:57:49+00:00"
+      "updated_at": "2026-08-04T10:58:18+00:00"
     },
     {
       "marks": {
