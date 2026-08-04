@@ -1574,6 +1574,37 @@
       "alias": "Electric Eagle 75",
       "name": "Lily",
       "updated_at": "2026-08-04T11:49:56+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 8.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 18.5,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 20.5
+        }
+      },
+      "pin_salt": "24600f55660fdc3b",
+      "pin_hash": "fabda9524321dc5ca7d5bbd598c915d86a40b5defe54d51bb11623bd72bef1bc",
+      "anon": true,
+      "id_hash": "4b35743a32d75a9e5077",
+      "alias": "Clever Raven 62",
+      "updated_at": "2026-08-04T14:18:19+00:00"
     }
   ]
 }
