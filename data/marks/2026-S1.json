@@ -1605,6 +1605,37 @@
       "id_hash": "4b35743a32d75a9e5077",
       "alias": "Clever Raven 62",
       "updated_at": "2026-08-04T14:18:19+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 9.5,
+          "midsem": 13.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 20.5,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 12.5
+        }
+      },
+      "pin_salt": "e996cad499a85021",
+      "pin_hash": "0c4e0815ba795ef59177849089bcad805b165ddbfa7bf23cdf536a33bfc35454",
+      "anon": true,
+      "id_hash": "86c39f6dc547be839231",
+      "alias": "Cosmic Orca 39",
+      "updated_at": "2026-08-04T18:23:47+00:00"
     }
   ]
 }
