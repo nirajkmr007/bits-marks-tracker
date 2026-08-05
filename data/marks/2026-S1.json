@@ -167,7 +167,7 @@
           "quiz1": 5.0,
           "assignment1": 10.0,
           "quiz2": 4.5,
-          "midsem": 25.0
+          "midsem": 26.5
         },
         "ML": {
           "quiz1": 9.5,
@@ -178,7 +178,7 @@
         "DNN": {
           "quiz1": 4.5,
           "assignment1": 10.0,
-          "midsem": 21.7
+          "midsem": 27.4
         }
       },
       "pin_salt": "efaf7c8917c2a28d",
@@ -187,7 +187,7 @@
       "id_hash": "bd30e2b6430d40349159",
       "alias": "Brave Tiger 77",
       "name": "Pramod Palukuru",
-      "updated_at": "2026-08-03T14:57:10+00:00"
+      "updated_at": "2026-08-05T16:03:12+00:00"
     },
     {
       "marks": {
