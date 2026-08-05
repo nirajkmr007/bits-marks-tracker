@@ -330,7 +330,8 @@
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 13.0
+          "midsem": 13.0,
+          "quiz2": 5.0
         }
       },
       "pin_salt": "06ce0a2e8a7017b9",
@@ -339,7 +340,7 @@
       "id_hash": "df5568ea0672ad5f5e77",
       "alias": "Quiet Falcon 92",
       "name": "Deadpool",
-      "updated_at": "2026-08-02T08:24:38+00:00"
+      "updated_at": "2026-08-05T14:25:50+00:00"
     },
     {
       "marks": {
