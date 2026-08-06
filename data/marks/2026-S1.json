@@ -1637,6 +1637,35 @@
       "id_hash": "86c39f6dc547be839231",
       "alias": "Cosmic Orca 39",
       "updated_at": "2026-08-04T18:23:47+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "quiz2": 4.5
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 8.0
+        }
+      },
+      "pin_salt": "c80c8c2804094097",
+      "pin_hash": "39005b1ad4d0029354a35d8761555868cbfa096b7f929dc372e14e99e29b7713",
+      "anon": true,
+      "id_hash": "cafc1dbff25af03cbb16",
+      "alias": "Clever Fox 56",
+      "name": "Dr.Doom",
+      "updated_at": "2026-08-06T06:39:54+00:00"
     }
   ]
 }
