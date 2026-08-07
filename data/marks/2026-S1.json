@@ -410,20 +410,24 @@
       "marks": {
         "MFML": {
           "assignment1": 10.0,
-          "quiz1": 5.0
+          "quiz1": 5.0,
+          "midsem": 12.5
         },
         "ISM": {
           "quiz1": 4.5,
           "assignment1": 10.0,
-          "quiz2": 4.0
+          "quiz2": 4.0,
+          "midsem": 21.5
         },
         "ML": {
           "quiz1": 9.0,
-          "assignment1": 5.0
+          "assignment1": 5.0,
+          "midsem": 23.5
         },
         "DNN": {
           "quiz1": 4.75,
-          "assignment1": 9.0
+          "assignment1": 9.0,
+          "midsem": 18.0
         }
       },
       "pin_salt": "7e19918e2f74faab",
@@ -432,7 +436,7 @@
       "id_hash": "e31957ab4af5836235ca",
       "alias": "Rapid Tiger 24",
       "name": "KR",
-      "updated_at": "2026-07-20T10:33:44+00:00"
+      "updated_at": "2026-08-07T19:30:30+00:00"
     },
     {
       "marks": {
