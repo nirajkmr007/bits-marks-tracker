@@ -1739,6 +1739,36 @@
       "id_hash": "6108ec5e2ed06529e172",
       "alias": "Crimson Otter 86",
       "updated_at": "2026-08-07T17:28:49+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 20.0
+        },
+        "ML": {
+          "quiz1": 4.5,
+          "assignment1": 5.0,
+          "midsem": 19.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0
+        }
+      },
+      "pin_salt": "b9df3fd332913ff1",
+      "pin_hash": "c824108cf68e31d7f2c77deb5d5cb472d8ddaaff64ece5e80aa131afdd9061c6",
+      "anon": true,
+      "id_hash": "0b538d1a5e31ea8a2e1c",
+      "alias": "Crimson Dolphin 80",
+      "updated_at": "2026-08-07T20:13:50+00:00"
     }
   ]
 }
