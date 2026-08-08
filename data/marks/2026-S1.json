@@ -1769,6 +1769,21 @@
       "id_hash": "0b538d1a5e31ea8a2e1c",
       "alias": "Crimson Dolphin 80",
       "updated_at": "2026-08-07T20:13:50+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 2.0
+        }
+      },
+      "pin_salt": "9b6954a378f68235",
+      "pin_hash": "a11c32471b260928cd2e327b4b23f030ae9f2266aea58cc9435385537b0ffee0",
+      "anon": true,
+      "id_hash": "a653d0faae56d929bbc1",
+      "alias": "Crimson Eagle 66",
+      "updated_at": "2026-08-08T11:53:28+00:00"
     }
   ]
 }
