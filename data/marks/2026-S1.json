@@ -1790,6 +1790,41 @@
       "id_hash": "a653d0faae56d929bbc1",
       "alias": "Crimson Eagle 66",
       "updated_at": "2026-08-08T11:53:28+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0,
+          "quiz2": 5.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.5,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 27.5,
+          "quiz2": 3.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.0,
+          "quiz2": 5.0
+        }
+      },
+      "pin_salt": "274aa3845ba80b8e",
+      "pin_hash": "6932dff3319f89b3341a00927981dd68f5b43acad2e4ce0a4a0854fa29efe24f",
+      "anon": true,
+      "id_hash": "95f1c5ccfd0077a0ab50",
+      "alias": "Electric Fox 19",
+      "name": "Zookeeper",
+      "updated_at": "2026-08-10T05:16:19+00:00"
     }
   ]
 }
