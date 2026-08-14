@@ -1575,7 +1575,8 @@
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 8.5,
-          "midsem": 14.5
+          "midsem": 14.5,
+          "assignment2": 10.0
         }
       },
       "pin_salt": "f7b8f87666fb4b9a",
@@ -1584,7 +1585,7 @@
       "id_hash": "b31cb013ad33794d038c",
       "alias": "Electric Eagle 75",
       "name": "Lily",
-      "updated_at": "2026-08-04T11:49:56+00:00"
+      "updated_at": "2026-08-14T06:38:52+00:00"
     },
     {
       "marks": {
