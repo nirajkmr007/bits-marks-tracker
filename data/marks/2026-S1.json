@@ -1829,6 +1829,38 @@
       "alias": "Electric Fox 19",
       "name": "Zookeeper",
       "updated_at": "2026-08-10T05:18:06+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 0.0
+        },
+        "ISM": {
+          "quiz1": 4.0,
+          "assignment1": 10.0,
+          "midsem": 7.0,
+          "quiz2": 5.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 19.5,
+          "quiz2": 10.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0
+        }
+      },
+      "pin_salt": "dcbc57e29e79b0c4",
+      "pin_hash": "1f300c62ab8bc9f5b9b1dfba72a0885a022ca378935c744ebbb05047be69b6cd",
+      "anon": true,
+      "id_hash": "1bbebeca925ed41805d1",
+      "alias": "Clever Cobra 90",
+      "updated_at": "2026-08-15T16:29:33+00:00"
     }
   ]
 }
