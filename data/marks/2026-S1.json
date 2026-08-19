@@ -380,7 +380,8 @@
         "MFML": {
           "quiz1": 4.25,
           "assignment1": 9.0,
-          "midsem": 16.5
+          "midsem": 16.5,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 4.5,
@@ -406,7 +407,7 @@
       "anon": true,
       "id_hash": "ed0f0e9fc6c69268bcc9",
       "alias": "Quiet Orca 78",
-      "updated_at": "2026-08-15T15:47:21+00:00"
+      "updated_at": "2026-08-19T07:13:01+00:00"
     },
     {
       "marks": {
