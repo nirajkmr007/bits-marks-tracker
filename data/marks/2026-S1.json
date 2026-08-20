@@ -1563,7 +1563,8 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 8.5,
-          "midsem": 7.5
+          "midsem": 7.5,
+          "assignment2": 7.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -1590,7 +1591,7 @@
       "id_hash": "b31cb013ad33794d038c",
       "alias": "Electric Eagle 75",
       "name": "Lily",
-      "updated_at": "2026-08-14T06:41:00+00:00"
+      "updated_at": "2026-08-20T04:53:12+00:00"
     },
     {
       "marks": {
