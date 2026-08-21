@@ -1583,7 +1583,8 @@
           "quiz1": 5.0,
           "assignment1": 8.5,
           "midsem": 14.5,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "quiz2": 5.0
         }
       },
       "pin_salt": "f7b8f87666fb4b9a",
@@ -1592,7 +1593,7 @@
       "id_hash": "b31cb013ad33794d038c",
       "alias": "Electric Eagle 75",
       "name": "Lily",
-      "updated_at": "2026-08-20T04:53:12+00:00"
+      "updated_at": "2026-08-21T08:09:40+00:00"
     },
     {
       "marks": {
