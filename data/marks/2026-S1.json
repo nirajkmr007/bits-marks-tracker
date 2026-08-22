@@ -401,7 +401,8 @@
           "quiz1": 4.5,
           "assignment1": 9.0,
           "midsem": 14.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "quiz2": 5.0
         }
       },
       "pin_salt": "f1fda05bf9753e91",
@@ -409,7 +410,7 @@
       "anon": true,
       "id_hash": "ed0f0e9fc6c69268bcc9",
       "alias": "Quiet Orca 78",
-      "updated_at": "2026-08-19T07:13:01+00:00"
+      "updated_at": "2026-08-22T13:14:21+00:00"
     },
     {
       "marks": {
