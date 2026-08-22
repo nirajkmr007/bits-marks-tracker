@@ -1844,24 +1844,30 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 9.5,
-          "midsem": 0.0
+          "midsem": 7.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 4.0,
           "assignment1": 10.0,
-          "midsem": 7.0,
-          "quiz2": 5.0
+          "midsem": 6.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
           "midsem": 19.5,
-          "quiz2": 10.0
+          "quiz2": 10.0,
+          "assignment2": 15.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 19.0
+          "midsem": 19.0,
+          "quiz2": 5.0,
+          "assignment2": 8.5
         }
       },
       "pin_salt": "dcbc57e29e79b0c4",
@@ -1869,7 +1875,7 @@
       "anon": true,
       "id_hash": "1bbebeca925ed41805d1",
       "alias": "Clever Cobra 90",
-      "updated_at": "2026-08-15T16:29:33+00:00"
+      "updated_at": "2026-08-22T16:18:20+00:00"
     }
   ]
 }
