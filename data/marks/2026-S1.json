@@ -743,7 +743,8 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 11.5
+          "midsem": 11.5,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -760,7 +761,9 @@
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 9.0,
-          "midsem": 10.5
+          "midsem": 10.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         }
       },
       "pin_salt": "b07ab0fd968697ef",
@@ -768,7 +771,7 @@
       "anon": true,
       "id_hash": "fcf1c0cb5be110bff013",
       "alias": "Shadow Dolphin 59",
-      "updated_at": "2026-08-04T10:27:54+00:00",
+      "updated_at": "2026-08-22T18:38:25+00:00",
       "name": "Sasanka"
     },
     {
