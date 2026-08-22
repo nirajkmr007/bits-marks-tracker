@@ -1373,7 +1373,9 @@
         "DNN": {
           "quiz1": 4.75,
           "assignment1": 9.0,
-          "midsem": 15.0
+          "midsem": 15.0,
+          "quiz2": 5.0,
+          "assignment2": 9.5
         }
       },
       "pin_salt": "e81b2f5baf84fa23",
@@ -1382,7 +1384,7 @@
       "id_hash": "4efdd0b34ee15e4f381a",
       "alias": "Crimson Tiger 26",
       "name": "Shinkansen",
-      "updated_at": "2026-08-15T14:56:41+00:00"
+      "updated_at": "2026-08-22T04:55:36+00:00"
     },
     {
       "marks": {
