@@ -1328,7 +1328,8 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 9.5,
-          "midsem": 7.25
+          "midsem": 7.25,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -1354,7 +1355,7 @@
       "anon": true,
       "id_hash": "086b2a9a236275504d2e",
       "alias": "Brave Otter 41",
-      "updated_at": "2026-08-23T18:56:52+00:00",
+      "updated_at": "2026-08-23T18:59:01+00:00",
       "name": "Slayer"
     },
     {
