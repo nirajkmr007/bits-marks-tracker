@@ -1849,7 +1849,7 @@
           "assignment1": 9.5,
           "midsem": 7.0,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 0.0
         },
         "ISM": {
           "quiz1": 4.0,
@@ -1878,7 +1878,7 @@
       "anon": true,
       "id_hash": "1bbebeca925ed41805d1",
       "alias": "Clever Cobra 90",
-      "updated_at": "2026-08-23T05:04:42+00:00"
+      "updated_at": "2026-08-23T05:05:37+00:00"
     }
   ]
 }
