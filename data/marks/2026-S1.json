@@ -1572,7 +1572,8 @@
           "quiz1": 5.0,
           "assignment1": 8.5,
           "midsem": 7.5,
-          "assignment2": 7.0
+          "assignment2": 7.0,
+          "quiz2": 5.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -1601,7 +1602,7 @@
       "id_hash": "b31cb013ad33794d038c",
       "alias": "Electric Eagle 75",
       "name": "Lily",
-      "updated_at": "2026-08-23T13:33:11+00:00"
+      "updated_at": "2026-08-23T13:34:58+00:00"
     },
     {
       "marks": {
