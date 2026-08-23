@@ -1334,7 +1334,8 @@
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 8.5
+          "midsem": 8.5,
+          "assignment2": 10.0
         },
         "ML": {
           "quiz1": 10.0,
@@ -1355,7 +1356,7 @@
       "anon": true,
       "id_hash": "086b2a9a236275504d2e",
       "alias": "Brave Otter 41",
-      "updated_at": "2026-08-23T18:59:01+00:00",
+      "updated_at": "2026-08-23T19:00:23+00:00",
       "name": "Slayer"
     },
     {
