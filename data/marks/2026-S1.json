@@ -1227,23 +1227,30 @@
       "marks": {
         "MFML": {
           "quiz1": 5.0,
-          "assignment1": 8.0,
-          "midsem": 12.0
+          "assignment1": 9.0,
+          "midsem": 12.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 17.5
+          "midsem": 17.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
-          "midsem": 25.0
+          "midsem": 25.0,
+          "quiz2": 10.0
         },
         "DNN": {
           "quiz1": 4.75,
           "assignment1": 10.0,
-          "midsem": 24.0
+          "midsem": 24.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         }
       },
       "pin_salt": "8c3d653c22e9a3a8",
@@ -1252,7 +1259,7 @@
       "id_hash": "b360240bef018d8c30a7",
       "alias": "Azure Leopard 61",
       "name": "T&S",
-      "updated_at": "2026-08-02T09:22:58+00:00"
+      "updated_at": "2026-08-24T09:54:42+00:00"
     },
     {
       "marks": {
