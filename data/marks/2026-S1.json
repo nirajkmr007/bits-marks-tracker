@@ -748,13 +748,15 @@
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 11.5,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "quiz2": 5.0
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 13.0,
-          "quiz2": 4.5
+          "quiz2": 4.5,
+          "assignment2": 8.0
         },
         "ML": {
           "quiz1": 9.0,
@@ -775,7 +777,7 @@
       "anon": true,
       "id_hash": "fcf1c0cb5be110bff013",
       "alias": "Shadow Dolphin 59",
-      "updated_at": "2026-08-22T18:38:25+00:00",
+      "updated_at": "2026-08-27T16:33:20+00:00",
       "name": "Sasanka"
     },
     {
