@@ -319,19 +319,23 @@
         "MFML": {
           "quiz1": 4.5,
           "assignment1": 9.75,
-          "midsem": 15.0
+          "midsem": 15.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 16.0,
-          "quiz2": 5.0
+          "quiz2": 5.0,
+          "assignment2": 10.0
         },
         "ML": {
           "quiz1": 9.5,
           "assignment1": 5.0,
           "midsem": 12.5,
-          "quiz2": 10.0
+          "quiz2": 10.0,
+          "assignment2": 15.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -347,7 +351,7 @@
       "id_hash": "df5568ea0672ad5f5e77",
       "alias": "Quiet Falcon 92",
       "name": "Deadpool",
-      "updated_at": "2026-08-15T11:01:37+00:00"
+      "updated_at": "2026-08-29T16:08:53+00:00"
     },
     {
       "marks": {
