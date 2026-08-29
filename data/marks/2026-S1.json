@@ -1944,6 +1944,42 @@
       "id_hash": "f573d1bdddc70916d918",
       "alias": "Electric Sparrow 89",
       "updated_at": "2026-08-29T16:17:30+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 11.0,
+          "quiz2": 4.75,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 14.5,
+          "quiz2": 9.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 12.5,
+          "quiz2": 5.0,
+          "assignment2": 9.25
+        }
+      },
+      "pin_salt": "804419107ab9c3a0",
+      "pin_hash": "6f3ec4d32a8fc5e3953a108d9b189f5171bf16b9fcd1e6f4b7c1ffe4d0eae9d0",
+      "anon": true,
+      "id_hash": "8946f562e8bba381cec6",
+      "alias": "Bold Leopard 42",
+      "updated_at": "2026-08-29T17:39:54+00:00"
     }
   ]
 }
