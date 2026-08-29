@@ -203,6 +203,23 @@
   .subcard .t .c { font-size: .82rem; font-weight: 700; }
   .subcard .t .n { flex: 1; font-size: .66rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .subcard .t .p { font-size: .82rem; font-weight: 800; }
+  .vtoggle { display: flex; gap: 4px; margin: 14px 0 4px; padding: 3px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 11px; }
+  .vtoggle button { flex: 1; font: inherit; font-size: .72rem; font-weight: 600; color: var(--muted);
+    background: transparent; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+  .vtoggle button.on { color: #fff; background: var(--grad); }
+  .simple { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 6px 14px; margin-top: 10px; }
+  .srow { display: grid; grid-template-columns: 1fr auto 62px; align-items: baseline; gap: 10px;
+    padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .srow:last-of-type { border-bottom: 0; }
+  .srow .c { font-size: .82rem; font-weight: 700; }
+  .srow .mk { font-size: .84rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .srow .mk .of { color: var(--muted); font-weight: 500; }
+  .srow .p { font-size: .82rem; font-weight: 800; text-align: right; }
+  .srow.tot { border-top: 1px solid var(--line); margin-top: 2px; }
+  .srow.tot .c, .srow.tot .mk, .srow.tot .p { color: var(--indigo); }
+  .sub-tot { font-size: .68rem; font-weight: 600; color: var(--ink); margin-top: 6px; }
+  .sub-tot .dim { color: var(--muted); font-weight: 400; }
   .subcard .bar { height: 5px; border-radius: 5px; background: rgba(255,255,255,.08); margin: 8px 0 10px; overflow: hidden; }
   .subcard .bar i { display: block; height: 100%; border-radius: 5px; background: var(--grad); }
   .comps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -409,6 +426,7 @@ let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", FILTER = "", QUER
 let MY_ID = localStorage.getItem("bits_id") || "";
 let MY_PIN = localStorage.getItem("bits_pin") || "";
 let MY_ANON_HASH = localStorage.getItem("bits_anon_hash") || "";
+let DETAIL_VIEW = localStorage.getItem("detail_view") || "simple";
 
 const isMe = (e) => e.anon ? (!!e.id_hash && e.id_hash === MY_ANON_HASH)
                           : (!!e.bits_id && e.bits_id === MY_ID);
@@ -716,12 +734,37 @@ function renderMyPin() {
 }
 
 /* ---------- detail popup ---------- */
-function openDetail(key) {
-  const e = BOARD.students.find((x) => keyOf(x) === key);
-  if (!e) return;
+// Full marks possible for a subject (sum of every component max).
+function subjectMax(sub) {
   const cfg = termCfg();
-  const subCards = cfg.subjects.map((sub) => {
+  return (sub.components || cfg.components).reduce((a, c) => a + Number(c.max), 0);
+}
+
+function detailSubjects(e) {
+  const cfg = termCfg();
+  if (DETAIL_VIEW === "simple") {
+    const rows = cfg.subjects.map((sub) => {
+      const sc = e.subjects[sub.code];
+      const possible = subjectMax(sub);
+      return `<div class="srow">
+        <span class="c">${esc(sub.code)}</span>
+        <span class="mk">${fmt(sc.total)}<span class="of"> / ${fmt(possible)}</span></span>
+        <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span>
+      </div>`;
+    }).join("");
+    const totalPossible = cfg.subjects.reduce((a, sub) => a + subjectMax(sub), 0);
+    return `<div class="simple">${rows}
+      <div class="srow tot">
+        <span class="c">Total</span>
+        <span class="mk">${fmt(e.overall.total)}<span class="of"> / ${fmt(totalPossible)}</span></span>
+        <span class="p">${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</span>
+      </div>
+      <div class="hint" style="margin-top:8px">Marks so far out of the full subject total. The % uses only the components entered, so it stays fair mid-semester.</div>
+    </div>`;
+  }
+  return cfg.subjects.map((sub) => {
     const sc = e.subjects[sub.code];
+    const possible = subjectMax(sub);
     const comps = (sub.components || cfg.components).map((c) => {
       const v = sc.components[c.key];
       return `<div class="comp"><div class="l">${esc(c.label)}</div>
@@ -730,10 +773,24 @@ function openDetail(key) {
     return `<div class="subcard">
       <div class="t"><span class="c">${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
         <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span></div>
+      <div class="sub-tot">${fmt(sc.total)} / ${fmt(possible)} marks so far
+        <span class="dim">(scored out of ${fmt(sc.max_entered)} released)</span></div>
       <div class="bar"><i style="width:${sc.pct ?? 0}%"></i></div>
       <div class="comps">${comps}</div>
     </div>`;
   }).join("");
+}
+
+function openDetail(key) {
+  const e = BOARD.students.find((x) => keyOf(x) === key);
+  if (!e) return;
+  const cfg = termCfg();
+  const subCards = `
+    <div class="vtoggle">
+      <button data-v="simple" class="${DETAIL_VIEW === "simple" ? "on" : ""}">Simple</button>
+      <button data-v="detailed" class="${DETAIL_VIEW === "detailed" ? "on" : ""}">Detailed</button>
+    </div>
+    <div id="detailSubjects">${detailSubjects(e)}</div>`;
   const updated = e.updated_at ? new Date(e.updated_at).toLocaleString() : null;
   $("detailBody").innerHTML = `
     <div class="d-top">
@@ -753,6 +810,13 @@ function openDetail(key) {
       : '<div class="d-actions"><button class="addbtn" id="editBtn">✏️ Edit these marks</button></div>'}`;
   const editBtn = $("editBtn");
   if (editBtn) editBtn.onclick = () => { $("detailDialog").close(); openForm(e.bits_id || MY_ID); };
+  [...document.querySelectorAll(".vtoggle button")].forEach((b) => b.onclick = () => {
+    DETAIL_VIEW = b.dataset.v;
+    localStorage.setItem("detail_view", DETAIL_VIEW);
+    [...document.querySelectorAll(".vtoggle button")].forEach((x) =>
+      x.classList.toggle("on", x.dataset.v === DETAIL_VIEW));
+    $("detailSubjects").innerHTML = detailSubjects(e);
+  });
   $("detailDialog").showModal();
 }
 
