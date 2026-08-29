@@ -1907,6 +1907,43 @@
       "id_hash": "1bbebeca925ed41805d1",
       "alias": "Clever Cobra 90",
       "updated_at": "2026-08-23T05:07:31+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 15.75,
+          "quiz2": 4.75,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 20.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 9.0,
+          "assignment1": 5.0,
+          "midsem": 18.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 20.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "f5cfa513d53a36d0",
+      "pin_hash": "1c9191a871b326f4fa840370a0a6cab3578984136858f378b0065c71b68c31a1",
+      "anon": true,
+      "id_hash": "f573d1bdddc70916d918",
+      "alias": "Electric Sparrow 89",
+      "updated_at": "2026-08-29T16:17:30+00:00"
     }
   ]
 }
