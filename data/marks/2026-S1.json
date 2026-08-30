@@ -1959,7 +1959,8 @@
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 14.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "quiz2": 5.0
         },
         "ML": {
           "quiz1": 10.0,
@@ -1981,7 +1982,7 @@
       "anon": true,
       "id_hash": "8946f562e8bba381cec6",
       "alias": "Bold Leopard 42",
-      "updated_at": "2026-08-30T07:43:33+00:00"
+      "updated_at": "2026-08-30T11:18:49+00:00"
     }
   ]
 }
