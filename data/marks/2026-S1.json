@@ -405,7 +405,8 @@
           "quiz1": 10.0,
           "assignment1": 5.0,
           "midsem": 21.0,
-          "quiz2": 10.0
+          "quiz2": 10.0,
+          "assignment2": 15.0
         },
         "DNN": {
           "quiz1": 4.5,
@@ -420,7 +421,7 @@
       "anon": true,
       "id_hash": "ed0f0e9fc6c69268bcc9",
       "alias": "Quiet Orca 78",
-      "updated_at": "2026-08-26T15:40:19+00:00"
+      "updated_at": "2026-08-31T01:01:50+00:00"
     },
     {
       "marks": {
