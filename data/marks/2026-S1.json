@@ -2064,6 +2064,45 @@
       "id_hash": "806572f331ea6fe6ac97",
       "alias": "Swift Raven 75",
       "updated_at": "2026-09-12T17:30:04+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 12.25,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 16.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "d29cbf5c7a0c4f92",
+      "pin_hash": "19d6dabe6a5d77b26e310148d52f18b938efbba22668a018c1db1262f75d4bd7",
+      "anon": true,
+      "id_hash": "0071fddbbcd78a734f60",
+      "alias": "Golden Lynx 78",
+      "name": "Og",
+      "updated_at": "2026-09-12T17:31:33+00:00"
     }
   ]
 }
