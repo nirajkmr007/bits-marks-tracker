@@ -2383,6 +2383,27 @@
           "midsem": 25.5,
           "quiz2": 5.0,
           "assignment2": 9.75
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 22.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 27.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
         }
       },
       "pin_salt": "33353b85cb6e6522",
@@ -2391,7 +2412,7 @@
       "id_hash": "7a1300716d44a6c21f38",
       "alias": "Electric Wolf 43",
       "name": "Zlatan",
-      "updated_at": "2026-09-12T21:53:30+00:00"
+      "updated_at": "2026-09-12T21:55:10+00:00"
     }
   ]
 }
