@@ -2296,6 +2296,45 @@
       "alias": "Brave Panda 99",
       "name": "Pail",
       "updated_at": "2026-09-12T17:58:52+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 10.25,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 18.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 19.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 18.8,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "3d688ac887d9aa64",
+      "pin_hash": "984cc63c2952d80f516488d3faaf1cba1b7d15866982f7479745872e2ff2ef3e",
+      "anon": true,
+      "id_hash": "72fa1196a0b1f5befdfd",
+      "alias": "Silent Eagle 56",
+      "name": "Admin",
+      "updated_at": "2026-09-12T18:45:01+00:00"
     }
   ]
 }
