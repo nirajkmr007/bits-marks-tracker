@@ -1733,7 +1733,7 @@
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 11.5,
-          "quiz2": 5.0,
+          "quiz2": 0.0,
           "assignment2": 10.0
         },
         "ISM": {
@@ -1760,7 +1760,7 @@
       },
       "pin_salt": "19648c069c5e2f5c",
       "pin_hash": "4ccb799af283991f4f53895df66c583d7200a1affe2d947fc00d0f220a179b11",
-      "updated_at": "2026-09-12T17:58:57+00:00",
+      "updated_at": "2026-09-12T17:59:43+00:00",
       "bits_id": "2025AC0000",
       "name": "_::_}}"
     },
