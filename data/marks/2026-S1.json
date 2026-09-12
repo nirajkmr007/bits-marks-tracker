@@ -1732,38 +1732,37 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 30.0,
+          "midsem": 11.5,
           "quiz2": 5.0,
           "assignment2": 10.0
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 30.0,
+          "midsem": 12.5,
           "quiz2": 5.0,
           "assignment2": 10.0
         },
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
-          "midsem": 29.0,
+          "midsem": 21.0,
           "quiz2": 10.0,
           "assignment2": 15.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 30.0,
+          "midsem": 11.0,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 9.5
         }
       },
       "pin_salt": "19648c069c5e2f5c",
       "pin_hash": "4ccb799af283991f4f53895df66c583d7200a1affe2d947fc00d0f220a179b11",
-      "anon": true,
-      "id_hash": "8cd07bd8f92e8e5cda16",
-      "alias": "Gentle Fox 61",
-      "updated_at": "2026-08-06T17:45:47+00:00"
+      "updated_at": "2026-09-12T17:58:57+00:00",
+      "bits_id": "2025AC0000",
+      "name": "_::_}}"
     },
     {
       "marks": {
