@@ -2181,6 +2181,44 @@
       "alias": "Silent Falcon 86",
       "name": "Brown Panther",
       "updated_at": "2026-09-12T17:34:52+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 19.5,
+          "quiz2": 5.0,
+          "assignment2": 9.75
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 10.0,
+          "quiz2": 5.0,
+          "assignment2": 9.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 20.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 30.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "dedfa62602c69686",
+      "pin_hash": "791ee8bbe35bcbe4488e26d2df1abeb262bc1879ca2371ff04fbdd0a71226588",
+      "anon": true,
+      "id_hash": "0d4cd8a69b0605c8834c",
+      "alias": "Shadow Cobra 21",
+      "updated_at": "2026-09-12T17:37:38+00:00"
     }
   ]
 }
