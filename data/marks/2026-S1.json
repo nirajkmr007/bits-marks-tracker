@@ -2449,42 +2449,6 @@
       "pin_hash": "a829a58b6c142668ff057defd0cc5eb0002fce4cc97e208a9a5743c65dac2d1a",
       "bits_id": "2025AC24253",
       "updated_at": "2026-09-12T23:52:21+00:00"
-    },
-    {
-      "marks": {
-        "MFML": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 13.5,
-          "quiz2": 5.0,
-          "assignment2": 9.5
-        },
-        "ISM": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 2.0,
-          "quiz2": 5.0,
-          "assignment2": 10.0
-        },
-        "ML": {
-          "quiz1": 9.5,
-          "assignment1": 5.0,
-          "midsem": 20.5,
-          "quiz2": 9.5,
-          "assignment2": 15.0
-        },
-        "DNN": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 18.9,
-          "quiz2": 5.0,
-          "assignment2": 9.5
-        }
-      },
-      "pin_salt": "922b7185342c62b5",
-      "pin_hash": "66eaa8724f3dbf551622b545080ad207133e8944bf1806e9c93ab31795170c4a",
-      "bits_id": "2025AC05387",
-      "updated_at": "2026-09-12T23:53:50+00:00"
     }
   ]
 }
