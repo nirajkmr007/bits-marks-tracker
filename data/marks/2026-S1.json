@@ -2119,6 +2119,13 @@
           "midsem": 15.0,
           "quiz2": 5.0,
           "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 22.0,
+          "quiz2": 10.0,
+          "assignment2": 15.0
         }
       },
       "pin_salt": "bc7c9771ecfd56cd",
@@ -2127,7 +2134,7 @@
       "id_hash": "721dc05f3ac666f3c08e",
       "alias": "Rapid Raven 18",
       "name": "Tejas Anand",
-      "updated_at": "2026-09-12T17:34:48+00:00"
+      "updated_at": "2026-09-12T17:35:40+00:00"
     },
     {
       "marks": {
