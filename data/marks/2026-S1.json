@@ -2374,6 +2374,24 @@
       "alias": "Azure Raven 93",
       "name": "kookie",
       "updated_at": "2026-09-12T20:13:48+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 25.5,
+          "quiz2": 5.0,
+          "assignment2": 9.75
+        }
+      },
+      "pin_salt": "33353b85cb6e6522",
+      "pin_hash": "8b76b16a2bc2cb981fd427c36c1f96004192b4a8ed2f51f43b07137ce212e7da",
+      "anon": true,
+      "id_hash": "7a1300716d44a6c21f38",
+      "alias": "Electric Wolf 43",
+      "name": "Zlatan",
+      "updated_at": "2026-09-12T21:53:30+00:00"
     }
   ]
 }
