@@ -2258,6 +2258,45 @@
       "alias": "Brave Fox 71",
       "name": "Sharma",
       "updated_at": "2026-09-12T17:44:17+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 19.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 9.0,
+          "assignment1": 5.0,
+          "midsem": 23.5,
+          "quiz2": 10.0,
+          "assignment2": 5.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 25.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "f008193405aaf5d8",
+      "pin_hash": "db6445c5163492a160664bf6ea651f0e1f25134d640698ed5497d03b677fe0da",
+      "anon": true,
+      "id_hash": "3aa40777830a2904cfab",
+      "alias": "Brave Panda 99",
+      "name": "Pail",
+      "updated_at": "2026-09-12T17:58:52+00:00"
     }
   ]
 }
