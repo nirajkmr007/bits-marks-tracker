@@ -2103,6 +2103,24 @@
       "alias": "Golden Lynx 78",
       "name": "Og",
       "updated_at": "2026-09-12T17:31:33+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.75,
+          "midsem": 10.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "bc7c9771ecfd56cd",
+      "pin_hash": "271b5c6b856d6d8c78281a41a9f6912bf051b6d36dcca09f181ef275094caab4",
+      "anon": true,
+      "id_hash": "721dc05f3ac666f3c08e",
+      "alias": "Rapid Raven 18",
+      "name": "Tejas Anand",
+      "updated_at": "2026-09-12T17:34:05+00:00"
     }
   ]
 }
