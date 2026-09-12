@@ -2219,6 +2219,45 @@
       "id_hash": "0d4cd8a69b0605c8834c",
       "alias": "Shadow Cobra 21",
       "updated_at": "2026-09-12T17:37:38+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 23.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 12.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 23.0,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 26.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "247f5848fbe02cd0",
+      "pin_hash": "e848cee2ba93410a34563581db69b93703059a03d74f93f287820d08d30317d7",
+      "anon": true,
+      "id_hash": "d1ad61eff34848910836",
+      "alias": "Brave Fox 71",
+      "name": "Sharma",
+      "updated_at": "2026-09-12T17:44:17+00:00"
     }
   ]
 }
