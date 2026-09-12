@@ -2006,6 +2006,43 @@
       "alias": "Golden Panda 28",
       "name": "Sowmiya",
       "updated_at": "2026-09-12T17:26:50+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.5,
+          "quiz2": 5.0,
+          "assignment2": 9.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 21.0,
+          "quiz2": 4.5,
+          "assignment2": 9.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 16.0,
+          "quiz2": 9.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 20.0,
+          "quiz2": 5.0
+        }
+      },
+      "pin_salt": "8286ea58f31720d1",
+      "pin_hash": "125226faf5f909408d45d19ae87fe2e6c556972fd565b4acb8b57e7b600cf5c6",
+      "anon": true,
+      "id_hash": "806572f331ea6fe6ac97",
+      "alias": "Swift Raven 75",
+      "updated_at": "2026-09-12T17:30:04+00:00"
     }
   ]
 }
