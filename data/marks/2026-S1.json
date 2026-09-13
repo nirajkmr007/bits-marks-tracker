@@ -171,24 +171,30 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 23.5
+          "midsem": 25.0,
+          "quiz2": 5.0,
+          "assignment2": 9.75
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "quiz2": 4.5,
-          "midsem": 26.5
+          "midsem": 26.5,
+          "assignment2": 10.0
         },
         "ML": {
           "quiz1": 9.5,
           "assignment1": 5.0,
           "midsem": 26.5,
-          "quiz2": 10.0
+          "quiz2": 10.0,
+          "assignment2": 15.0
         },
         "DNN": {
           "quiz1": 4.5,
           "assignment1": 10.0,
-          "midsem": 27.4
+          "midsem": 27.4,
+          "quiz2": 5.0,
+          "assignment2": 9.0
         }
       },
       "pin_salt": "efaf7c8917c2a28d",
@@ -197,7 +203,7 @@
       "id_hash": "bd30e2b6430d40349159",
       "alias": "Brave Tiger 77",
       "name": "Pramod Palukuru",
-      "updated_at": "2026-08-05T16:03:12+00:00"
+      "updated_at": "2026-09-13T09:47:20+00:00"
     },
     {
       "marks": {
