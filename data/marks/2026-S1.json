@@ -2452,6 +2452,44 @@
       "id_hash": "a772506b64a000bea723",
       "alias": "Mellow Wolf 98",
       "name": "JK"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 9.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 23.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 29.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0
+        }
+      },
+      "pin_salt": "5e6657d8a457a4cb",
+      "pin_hash": "0479254b5cb683c907dd09c65cdde06c22b75f5a62042b39e48c91f24289bb66",
+      "anon": true,
+      "id_hash": "43dccfe5d8841320a960",
+      "alias": "Bold Sparrow 64",
+      "updated_at": "2026-09-13T00:51:47+00:00"
     }
   ]
 }
