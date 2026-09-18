@@ -592,9 +592,9 @@ function cohortComplete(e, filter) {
   const cfg = termCfg();
   return cfg.subjects.every((sub) => {
     const all = sub.components || cfg.components;
-    const comps = filter === "till_midsem"
-      ? all.filter((c) => TILL_MIDSEM_KEYS.includes(c.key))
-      : all.filter((c) => c.key !== "endsem");
+    const comps = filter === "till_midsem" ? all.filter((c) => TILL_MIDSEM_KEYS.includes(c.key))
+      : filter === "till_endsem" ? all                       // everything, end-sem included
+      : all.filter((c) => c.key !== "endsem");               // pre_endsem
     const m = e.subjects[sub.code].components || {};
     return comps.every((c) => m[c.key] != null);
   });
@@ -605,6 +605,7 @@ function renderFilterTabs() {
     { id: "", label: "All" },
     { id: "till_midsem", label: "Till mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
     { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
+    { id: "till_endsem", label: "Till end-sem", title: "Students who filled everything including the end-sem — the final picture, percentile recomputed within this group" },
   ];
   $("filterTabs").innerHTML = tabs.map((t) =>
     `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
@@ -639,12 +640,15 @@ function statsFor(list) {
 function renderStats() {
   const cfg = termCfg();
   const s = statsFor(cohortEntries());
-  const scope = FILTER === "till_midsem" ? "till mid-sem" : FILTER === "pre_endsem" ? "pre end-sem" : "on the board";
+  const scope = FILTER === "till_midsem" ? "till mid-sem"
+    : FILTER === "pre_endsem" ? "pre end-sem"
+    : FILTER === "till_endsem" ? "all marks in" : "on the board";
   const reviewN = (BOARD.under_review || []).length;
   const reviewNote = reviewN ? ` · <a class="warn" id="reviewJump" href="#reviewSection">${reviewN} under review</a>` : "";
   const pc = (v) => v == null ? "—" : fmt(v) + "%";
   const viewName = FILTER === "till_midsem" ? "the “Till mid-sem” group"
-    : FILTER === "pre_endsem" ? "the “Only end-sem left” group" : "everyone on the board";
+    : FILTER === "pre_endsem" ? "the “Only end-sem left” group"
+    : FILTER === "till_endsem" ? "the “Till end-sem” group (everything filled)" : "everyone on the board";
   const cards = [
     { k: "Students", v: s.total_students, s: scope + reviewNote, html: true,
       t: `Number of students in ${viewName}. Records under review are excluded.` },
@@ -683,6 +687,7 @@ function renderBoard() {
     "": " Showing all students with at least one mark entered.",
     till_midsem: " Showing only students with Quiz 1, Assignment 1 and Midsem filled in all subjects — percentile recomputed within this group.",
     pre_endsem: " Showing only students with every quiz, assignment and midsem filled in all subjects — percentile recomputed within this group.",
+    till_endsem: " Showing only students who have filled everything including the end-sem — percentile recomputed within this group.",
   };
   $("tabNote").textContent = tabPart + (filterNotes[FILTER] ?? "");
 
@@ -725,7 +730,7 @@ function renderBoard() {
     host.innerHTML = q
       ? `<div class="empty"><div class="big">🔍</div>No match for “${esc(q)}”.</div>`
       : FILTER
-        ? `<div class="empty"><div class="big">🎯</div>Nobody qualifies for this view yet.<br>${FILTER === "till_midsem" ? "Quiz 1, Assignment 1 and Midsem" : "Every quiz, assignment and midsem"} must be entered in all subjects to appear here.</div>`
+        ? `<div class="empty"><div class="big">🎯</div>Nobody qualifies for this view yet.<br>${FILTER === "till_midsem" ? "Quiz 1, Assignment 1 and Midsem" : FILTER === "till_endsem" ? "Every component, including the end-sem," : "Every quiz, assignment and midsem"} must be entered in all subjects to appear here.</div>`
         : `<div class="empty"><div class="big">🚀</div>No marks yet — be the first!<br>Tap <b>＋ Add marks</b> to get on the board.</div>`;
     return;
   }

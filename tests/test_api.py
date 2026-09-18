@@ -339,10 +339,25 @@ def test_feedback_top_10_by_votes(client: TestClient) -> None:
     assert data["items"][0]["id"] == ids[-1]
 
 
-def test_locked_component_rejected(client: TestClient) -> None:
-    # end-sem is locked in config → cannot be entered
-    assert _submit(client, marks={"MFML": {"endsem": 35}}).status_code == 422
-    # a released component still works
+def test_endsem_is_open(client: TestClient) -> None:
+    """End-sem is released, so it can be entered and counts towards the total."""
+    assert _submit(client, marks={"MFML": {"endsem": 35}}).status_code == 200
+    entry = client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]
+    assert entry["subjects"]["MFML"]["components"]["endsem"] == 35
+    assert _submit(client, marks={"MFML": {"endsem": 41}}).status_code == 422  # still max-checked
+
+
+def test_locked_component_rejected(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The lock mechanism still works for any component listed in config."""
+    from bits_marks_tracker.storage import load_config as real_load_config
+
+    def locked_config() -> Any:
+        cfg = real_load_config()
+        cfg["terms"][TERM]["locked_components"] = ["quiz2"]
+        return cfg
+
+    monkeypatch.setattr("bits_marks_tracker.app.load_config", locked_config)
+    assert _submit(client, marks={"MFML": {"quiz2": 4}}).status_code == 422
     assert _submit(client, marks={"MFML": {"quiz1": 4}}).status_code == 200
 
 
