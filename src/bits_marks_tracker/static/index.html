@@ -837,6 +837,15 @@ function openDetail(key) {
     </div>
     <div id="detailSubjects">${detailSubjects(e)}</div>`;
   const updated = e.updated_at ? new Date(e.updated_at).toLocaleString() : null;
+  // This student's own averages (distinct from Overall, which is marks-weighted):
+  //  · Avg / subject — unweighted mean of their subject percentages
+  //  · Avg marks     — mean marks per subject, out of the mean released per subject
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const scored = cfg.subjects.map((sub) => e.subjects[sub.code]).filter((sc) => sc.pct != null);
+  const subjAvg = scored.length ? round2(scored.reduce((a, sc) => a + sc.pct, 0) / scored.length) : null;
+  const avgMarks = scored.length ? round2(scored.reduce((a, sc) => a + sc.total, 0) / scored.length) : null;
+  const avgReleased = scored.length ? round2(scored.reduce((a, sc) => a + sc.max_entered, 0) / scored.length) : null;
+
   $("detailBody").innerHTML = `
     <div class="d-top">
       <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
@@ -845,6 +854,8 @@ function openDetail(key) {
     <div class="chips">
       <span class="chip hl">Rank <b>${e.rank ?? "—"}</b></span>
       <span class="chip">Overall <b>${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</b></span>
+      <span class="chip" title="Average of this student's subject percentages (each subject counted equally)">Avg / subject <b>${subjAvg == null ? "—" : fmt(subjAvg) + "%"}</b></span>
+      <span class="chip" title="Average marks scored per subject, out of the average released so far">Avg marks <b>${avgMarks == null ? "—" : fmt(avgMarks) + "/" + fmt(avgReleased)}</b></span>
       <span class="chip">Total <b>${fmt(e.overall.total)}/${fmt(e.overall.max_entered)}</b></span>
       <span class="chip">Percentile <b>${e.percentile == null ? "—" : fmt(e.percentile)}</b></span>
     </div>
