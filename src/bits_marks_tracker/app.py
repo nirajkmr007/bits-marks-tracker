@@ -423,6 +423,10 @@ def _top_feedback(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "text": i["text"],
             "votes": i.get("votes", 0),
             "created_at": i.get("created_at"),
+            "replies": [
+                {"id": r["id"], "text": r["text"], "created_at": r.get("created_at")}
+                for r in i.get("replies", [])
+            ],
         }
         for i in ranked[:FEEDBACK_TOP_N]
     ]
@@ -481,3 +485,32 @@ def api_feedback_vote(item_id: str) -> dict[str, Any]:
     else:
         raise HTTPException(status_code=503, detail="Server is busy — please try again.")
     return {"ok": True, "items": _top_feedback(items)}
+
+
+@app.post("/api/feedback/{item_id}/reply")
+def api_feedback_reply(item_id: str, feedback: Feedback) -> dict[str, Any]:
+    """Reply to a feedback item. Anonymous, like the feedback itself."""
+    text = feedback.text.strip()
+    if len(text) < 3:
+        raise HTTPException(status_code=422, detail="Reply is too short.")
+    storage = get_storage()
+    reply = {
+        "id": secrets.token_hex(6),
+        "text": text,
+        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),  # noqa: UP017
+    }
+    for attempt in range(3):
+        doc = _read_feedback(fresh=attempt > 0)
+        items: list[dict[str, Any]] = doc.get("items", [])
+        item = next((i for i in items if i["id"] == item_id), None)
+        if item is None:
+            raise HTTPException(status_code=404, detail="Feedback not found.")
+        item.setdefault("replies", []).append(reply)
+        try:
+            storage.write_doc(_FEEDBACK_REL, doc, message="feedback: reply")
+            break
+        except WriteConflictError:
+            continue
+    else:
+        raise HTTPException(status_code=503, detail="Server is busy — please try again.")
+    return {"ok": True, "id": reply["id"], "items": _top_feedback(items)}

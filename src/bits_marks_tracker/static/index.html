@@ -289,6 +289,12 @@
   .fb-vote.voted { border-color: rgba(129,140,248,.6); color: var(--indigo); background: rgba(99,102,241,.12); cursor: default; }
   .fb-vote .up { font-size: .8rem; line-height: 1; }
   .fb-vote .n { font-size: .78rem; font-weight: 800; }
+  .fb-replybtn { color: var(--indigo); text-decoration: none; font-weight: 600; }
+  .fb-reply { margin-top: 8px; padding-left: 10px; border-left: 2px solid rgba(129,140,248,.45); }
+  .fb-reply .txt { font-size: .78rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .fb-replybox { display: flex; gap: 6px; margin-top: 8px; }
+  .fb-replybox input { flex: 1; min-width: 0; font: inherit; font-size: .78rem; color: var(--ink);
+    background: var(--card-hi); border: 1px solid var(--line); border-radius: 9px; padding: 7px 10px; }
 </style>
 </head>
 <body>
@@ -462,13 +468,48 @@ function renderFeedback(items) {
   }
   host.innerHTML = items.map((i) => {
     const voted = FB_VOTED.includes(i.id);
+    const replies = (i.replies || []).map((r) =>
+      `<div class="fb-reply"><div class="txt">${esc(r.text)}</div><div class="when">${esc(timeAgo(r.created_at))}</div></div>`).join("");
     return `<div class="fb-item">
       <button class="fb-vote${voted ? " voted" : ""}" data-id="${esc(i.id)}" ${voted ? "disabled" : ""} title="Upvote">
         <span class="up">▲</span><span class="n">${i.votes}</span></button>
-      <div><div class="txt">${esc(i.text)}</div><div class="when">${esc(timeAgo(i.created_at))}</div></div>
+      <div style="flex:1; min-width:0">
+        <div class="txt">${esc(i.text)}</div>
+        <div class="when">${esc(timeAgo(i.created_at))}
+          · <a class="fb-replybtn" data-reply="${esc(i.id)}" href="#">Reply</a></div>
+        ${replies}
+        <div class="fb-replybox" id="rb_${esc(i.id)}" style="display:none">
+          <input id="ri_${esc(i.id)}" maxlength="280" placeholder="Write a reply…">
+          <button class="mini p" data-send="${esc(i.id)}">Send</button>
+        </div>
+      </div>
     </div>`;
   }).join("");
   [...host.querySelectorAll(".fb-vote:not(.voted)")].forEach((b) => b.onclick = () => voteFeedback(b.dataset.id));
+  [...host.querySelectorAll("[data-reply]")].forEach((a) => a.onclick = (ev) => {
+    ev.preventDefault();
+    const box = $(`rb_${a.dataset.reply}`);
+    box.style.display = box.style.display === "none" ? "flex" : "none";
+    if (box.style.display === "flex") $(`ri_${a.dataset.reply}`).focus();
+  });
+  [...host.querySelectorAll("[data-send]")].forEach((b) => b.onclick = () => sendReply(b.dataset.send));
+  [...host.querySelectorAll(".fb-replybox input")].forEach((inp) =>
+    inp.addEventListener("keydown", (ev) => { if (ev.key === "Enter") sendReply(inp.id.slice(3)); }));
+}
+
+async function sendReply(itemId) {
+  const inp = $(`ri_${itemId}`), msg = $("fbMsg");
+  const text = (inp?.value || "").trim();
+  if (text.length < 3) { msg.style.color = "var(--err)"; msg.textContent = "Reply is too short."; return; }
+  msg.style.color = ""; msg.textContent = "Posting reply…";
+  try {
+    const res = await fetch(`/api/feedback/${encodeURIComponent(itemId)}/reply`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail?.[0]?.msg || data.detail || "Reply failed");
+    msg.style.color = "var(--ok)"; msg.textContent = "Reply posted. 🙌";
+    renderFeedback(data.items);
+  } catch (err) { msg.style.color = "var(--err)"; msg.textContent = err.message; }
 }
 
 async function openFeedback() {

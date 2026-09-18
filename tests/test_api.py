@@ -273,6 +273,30 @@ def test_feedback_add_list_vote(client: TestClient) -> None:
     assert top["id"] == id_a and top["votes"] == 1
 
 
+def test_feedback_reply(client: TestClient) -> None:
+    fid = client.post("/api/feedback", json={"text": "Add dark mode"}).json()["id"]
+    # no replies initially
+    assert client.get("/api/feedback").json()["items"][0]["replies"] == []
+    # reply, and it comes back nested under the item
+    resp = client.post(f"/api/feedback/{fid}/reply", json={"text": "Good idea, on the list!"})
+    assert resp.status_code == 200
+    item = client.get("/api/feedback").json()["items"][0]
+    assert len(item["replies"]) == 1
+    assert item["replies"][0]["text"] == "Good idea, on the list!"
+    assert item["replies"][0]["created_at"]
+    # a second reply appends in order
+    client.post(f"/api/feedback/{fid}/reply", json={"text": "Shipped now."})
+    texts = [r["text"] for r in client.get("/api/feedback").json()["items"][0]["replies"]]
+    assert texts == ["Good idea, on the list!", "Shipped now."]
+
+
+def test_feedback_reply_validation(client: TestClient) -> None:
+    fid = client.post("/api/feedback", json={"text": "Add dark mode"}).json()["id"]
+    assert client.post(f"/api/feedback/{fid}/reply", json={"text": "ok"}).status_code == 422
+    assert client.post(f"/api/feedback/{fid}/reply", json={"text": "x" * 281}).status_code == 422
+    assert client.post("/api/feedback/nope/reply", json={"text": "hello there"}).status_code == 404
+
+
 def test_feedback_validation_and_missing(client: TestClient) -> None:
     assert client.post("/api/feedback", json={"text": "hi"}).status_code == 422  # too short
     assert client.post("/api/feedback", json={"text": "x" * 281}).status_code == 422  # too long
