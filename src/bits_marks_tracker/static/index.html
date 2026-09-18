@@ -643,16 +643,22 @@ function renderStats() {
   const reviewN = (BOARD.under_review || []).length;
   const reviewNote = reviewN ? ` · <a class="warn" id="reviewJump" href="#reviewSection">${reviewN} under review</a>` : "";
   const pc = (v) => v == null ? "—" : fmt(v) + "%";
+  const viewName = FILTER === "till_midsem" ? "the “Till mid-sem” group"
+    : FILTER === "pre_endsem" ? "the “Only end-sem left” group" : "everyone on the board";
   const cards = [
-    { k: "Students", v: s.total_students, s: scope + reviewNote, html: true },
-    { k: "Topper", v: pc(s.overall.top_pct), s: "best overall" },
-    { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %" },
+    { k: "Students", v: s.total_students, s: scope + reviewNote, html: true,
+      t: `Number of students in ${viewName}. Records under review are excluded.` },
+    { k: "Topper", v: pc(s.overall.top_pct), s: "best overall",
+      t: `Highest overall % among ${viewName}.` },
+    { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %",
+      t: `Average of the overall % of ${viewName}.` },
     ...cfg.subjects.map((sub) => ({
       k: sub.code, v: pc(s.subjects[sub.code].top_pct), s: `top · avg ${pc(s.subjects[sub.code].avg_pct)}`,
+      t: `${sub.name} — highest and average % among ${viewName}. Based only on the components entered so far.`,
     })),
   ];
   $("statsCards").innerHTML = cards.map((c) =>
-    `<div class="stat"><div class="k">${esc(c.k)}</div><div class="v">${esc(String(c.v))}</div><div class="s">${c.html ? c.s : esc(c.s)}</div></div>`).join("");
+    `<div class="stat" title="${esc(c.t || "")}"><div class="k">${esc(c.k)}</div><div class="v">${esc(String(c.v))}</div><div class="s">${c.html ? c.s : esc(c.s)}</div></div>`).join("");
 }
 
 function renderTabs() {
@@ -739,7 +745,7 @@ function renderBoard() {
         <div class="id">${e.anon ? "ID hidden" : esc(e.bits_id)}</div>
         <div class="bar"><i style="width:${pct ?? 0}%"></i></div>
       </div>
-      <div class="num"><div class="pc">${pct == null ? "—" : fmt(pct) + "%"}</div><div class="sub">${esc(sub)}</div></div>
+      <div class="num" title="${TAB === "OVERALL" ? "Overall % (marks scored ÷ marks released so far)" : TAB + " % (marks scored ÷ marks released in " + TAB + ")"}${pctl != null ? " · percentile = % of students below" : ""}"><div class="pc">${pct == null ? "—" : fmt(pct) + "%"}</div><div class="sub">${esc(sub)}</div></div>
     </div>`;
   }).join("");
   [...host.children].forEach((el) => { if (el.dataset.id) el.onclick = () => openDetail(el.dataset.id); });
@@ -791,7 +797,7 @@ function detailSubjects(e) {
     const rows = cfg.subjects.map((sub) => {
       const sc = e.subjects[sub.code];
       const possible = subjectMax(sub);
-      return `<div class="srow">
+      return `<div class="srow" title="${esc(sub.name)} — ${fmt(sc.total)} marks so far out of ${fmt(possible)} for the whole subject. The % is ${fmt(sc.total)}/${fmt(sc.max_entered)} (only what's been released).">
         <span class="c">${esc(sub.code)}</span>
         <span class="mk">${fmt(sc.total)}<span class="of"> / ${fmt(possible)}</span></span>
         <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span>
@@ -799,7 +805,7 @@ function detailSubjects(e) {
     }).join("");
     const totalPossible = cfg.subjects.reduce((a, sub) => a + subjectMax(sub), 0);
     return `<div class="simple">${rows}
-      <div class="srow tot">
+      <div class="srow tot" title="Marks so far across all subjects, out of the full semester total.">
         <span class="c">Total</span>
         <span class="mk">${fmt(e.overall.total)}<span class="of"> / ${fmt(totalPossible)}</span></span>
         <span class="p">${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</span>
@@ -812,13 +818,14 @@ function detailSubjects(e) {
     const possible = subjectMax(sub);
     const comps = (sub.components || cfg.components).map((c) => {
       const v = sc.components[c.key];
-      return `<div class="comp"><div class="l">${esc(c.label)}</div>
+      return `<div class="comp" title="${esc(c.label)} — ${v == null ? "not entered yet" : fmt(v) + " out of " + c.max}">
+        <div class="l">${esc(c.label)}</div>
         <div class="v">${v == null ? "—" : fmt(v)} <span>/ ${c.max}</span></div></div>`;
     }).join("");
     return `<div class="subcard">
       <div class="t"><span class="c">${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
-        <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span></div>
-      <div class="sub-tot">${fmt(sc.total)} / ${fmt(possible)} marks so far
+        <span class="p" title="Marks scored ÷ marks released so far in ${esc(sub.code)}.">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span></div>
+      <div class="sub-tot" title="Left: progress towards the full ${fmt(possible)}-mark subject. Right: what the % above is calculated from.">${fmt(sc.total)} / ${fmt(possible)} marks so far
         <span class="dim">(scored out of ${fmt(sc.max_entered)} released)</span></div>
       <div class="bar"><i style="width:${sc.pct ?? 0}%"></i></div>
       <div class="comps">${comps}</div>
@@ -852,12 +859,12 @@ function openDetail(key) {
       <div><div class="nm">${esc(e.name)}</div><div class="id">${e.anon ? "BITS ID hidden by student" : esc(e.bits_id)}</div></div>
     </div>
     <div class="chips">
-      <span class="chip hl">Rank <b>${e.rank ?? "—"}</b></span>
-      <span class="chip">Overall <b>${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</b></span>
+      <span class="chip hl" title="Position on the leaderboard by overall %. Students with the same % share a rank.">Rank <b>${e.rank ?? "—"}</b></span>
+      <span class="chip" title="All marks scored ÷ all marks released so far, across every subject. Marks-weighted, so subjects with more released marks count more.">Overall <b>${e.overall.pct == null ? "—" : fmt(e.overall.pct) + "%"}</b></span>
       <span class="chip" title="Average of this student's subject percentages (each subject counted equally)">Avg / subject <b>${subjAvg == null ? "—" : fmt(subjAvg) + "%"}</b></span>
       <span class="chip" title="Average marks scored per subject, out of the average released so far">Avg marks <b>${avgMarks == null ? "—" : fmt(avgMarks) + "/" + fmt(avgReleased)}</b></span>
-      <span class="chip">Total <b>${fmt(e.overall.total)}/${fmt(e.overall.max_entered)}</b></span>
-      <span class="chip">Percentile <b>${e.percentile == null ? "—" : fmt(e.percentile)}</b></span>
+      <span class="chip" title="Marks scored so far out of the marks released so far (not the full semester total).">Total <b>${fmt(e.overall.total)}/${fmt(e.overall.max_entered)}</b></span>
+      <span class="chip" title="Percentage of ranked students scoring strictly below this student.">Percentile <b>${e.percentile == null ? "—" : fmt(e.percentile)}</b></span>
     </div>
     ${subCards}
     ${updated ? `<div class="d-updated">Last updated ${esc(updated)}</div>` : ""}
