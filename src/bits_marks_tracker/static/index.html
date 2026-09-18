@@ -292,6 +292,9 @@
   .fb-replybtn { color: var(--indigo); text-decoration: none; font-weight: 600; }
   .fb-reply { margin-top: 8px; padding-left: 10px; border-left: 2px solid rgba(129,140,248,.45); }
   .fb-reply .txt { font-size: .78rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .fb-reply.admin { border-left-color: var(--gold); }
+  .abadge { display: inline-block; font-size: .58rem; font-weight: 800; letter-spacing: .04em;
+    color: #1c1405; background: var(--gold); border-radius: 999px; padding: 1px 6px; }
   .fb-replybox { display: flex; gap: 6px; margin-top: 8px; }
   .fb-replybox input { flex: 1; min-width: 0; font: inherit; font-size: .78rem; color: var(--ink);
     background: var(--card-hi); border: 1px solid var(--line); border-radius: 9px; padding: 7px 10px; }
@@ -469,7 +472,8 @@ function renderFeedback(items) {
   host.innerHTML = items.map((i) => {
     const voted = FB_VOTED.includes(i.id);
     const replies = (i.replies || []).map((r) =>
-      `<div class="fb-reply"><div class="txt">${esc(r.text)}</div><div class="when">${esc(timeAgo(r.created_at))}</div></div>`).join("");
+      `<div class="fb-reply${r.admin ? " admin" : ""}"><div class="txt">${esc(r.text)}</div>
+        <div class="when">${r.admin ? '<span class="abadge">✓ Admin</span> · ' : ""}${esc(timeAgo(r.created_at))}</div></div>`).join("");
     return `<div class="fb-item">
       <button class="fb-vote${voted ? " voted" : ""}" data-id="${esc(i.id)}" ${voted ? "disabled" : ""} title="Upvote">
         <span class="up">▲</span><span class="n">${i.votes}</span></button>

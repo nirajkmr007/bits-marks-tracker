@@ -424,7 +424,14 @@ def _top_feedback(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "votes": i.get("votes", 0),
             "created_at": i.get("created_at"),
             "replies": [
-                {"id": r["id"], "text": r["text"], "created_at": r.get("created_at")}
+                {
+                    "id": r["id"],
+                    "text": r["text"],
+                    "created_at": r.get("created_at"),
+                    # Set by the admin editing data/feedback.json directly in git —
+                    # the API never sets this, so it can't be spoofed via the UI.
+                    "admin": bool(r.get("admin")),
+                }
                 for r in i.get("replies", [])
             ],
         }

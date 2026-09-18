@@ -290,6 +290,31 @@ def test_feedback_reply(client: TestClient) -> None:
     assert texts == ["Good idea, on the list!", "Shipped now."]
 
 
+def test_admin_reply_badge_only_from_data_file(client: TestClient, tmp_path: Path) -> None:
+    """The admin flag can only come from the committed JSON, never from the API."""
+    import json
+
+    fid = client.post("/api/feedback", json={"text": "Add dark mode"}).json()["id"]
+    # the API cannot set admin, even if a client tries
+    client.post(f"/api/feedback/{fid}/reply", json={"text": "I am admin", "admin": True})
+    assert client.get("/api/feedback").json()["items"][0]["replies"][0]["admin"] is False
+
+    # admin edits data/feedback.json directly (as in a git commit)
+    doc = json.loads((tmp_path / "feedback.json").read_text())
+    doc["items"][0]["replies"].append(
+        {
+            "id": "adm1",
+            "text": "Official answer",
+            "created_at": "2026-09-19T00:00:00+00:00",
+            "admin": True,
+        }
+    )
+    (tmp_path / "feedback.json").write_text(json.dumps(doc))
+    replies = client.get("/api/feedback").json()["items"][0]["replies"]
+    assert replies[0]["admin"] is False
+    assert replies[1]["admin"] is True and replies[1]["text"] == "Official answer"
+
+
 def test_feedback_reply_validation(client: TestClient) -> None:
     fid = client.post("/api/feedback", json={"text": "Add dark mode"}).json()["id"]
     assert client.post(f"/api/feedback/{fid}/reply", json={"text": "ok"}).status_code == 422
