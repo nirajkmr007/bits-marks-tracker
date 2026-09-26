@@ -2519,6 +2519,49 @@
       "id_hash": "43dccfe5d8841320a960",
       "alias": "Bold Sparrow 64",
       "updated_at": "2026-09-13T00:51:47+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.75,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 10.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 17.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 22.0
+        },
+        "ML": {
+          "quiz1": 5.0,
+          "assignment1": 4.5,
+          "midsem": 19.5,
+          "quiz2": 5.0,
+          "assignment2": 15.0,
+          "endsem": 21.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.9,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 23.0
+        }
+      },
+      "pin_salt": "0277822fb385a4e8",
+      "pin_hash": "0061d6c9dddbb6d64c5ae8f9cd758db03f69ab0297279b584173269358947454",
+      "anon": true,
+      "id_hash": "7e91ae02a37762733a85",
+      "alias": "Brave Eagle 95",
+      "name": "Thala",
+      "updated_at": "2026-09-26T16:14:23+00:00"
     }
   ]
 }
