@@ -1630,7 +1630,7 @@
           "midsem": 7.5,
           "assignment2": 7.0,
           "quiz2": 5.0,
-          "endsem": 20.0
+          "endsem": 5.25
         },
         "ISM": {
           "quiz1": 5.0,
@@ -1638,7 +1638,7 @@
           "midsem": 8.0,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 10.0
+          "endsem": 17.0
         },
         "ML": {
           "quiz1": 9.5,
@@ -1646,7 +1646,7 @@
           "midsem": 20.0,
           "quiz2": 10.0,
           "assignment2": 15.0,
-          "endsem": 10.0
+          "endsem": 13.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -1654,7 +1654,7 @@
           "midsem": 14.5,
           "assignment2": 10.0,
           "quiz2": 5.0,
-          "endsem": 10.0
+          "endsem": 25.0
         }
       },
       "pin_salt": "f7b8f87666fb4b9a",
@@ -1663,7 +1663,7 @@
       "id_hash": "b31cb013ad33794d038c",
       "alias": "Electric Eagle 75",
       "name": "Lily",
-      "updated_at": "2026-09-25T09:21:49+00:00"
+      "updated_at": "2026-09-26T14:50:48+00:00"
     },
     {
       "marks": {
