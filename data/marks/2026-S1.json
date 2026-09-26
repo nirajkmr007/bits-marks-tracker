@@ -1426,7 +1426,8 @@
           "assignment1": 5.0,
           "midsem": 14.0,
           "quiz2": 10.0,
-          "assignment2": 15.0
+          "assignment2": 15.0,
+          "endsem": 16.5
         },
         "DNN": {
           "quiz1": 4.75,
@@ -1442,7 +1443,7 @@
       "id_hash": "4efdd0b34ee15e4f381a",
       "alias": "Crimson Tiger 26",
       "name": "Shinkansen",
-      "updated_at": "2026-09-26T14:35:12+00:00"
+      "updated_at": "2026-09-26T14:36:06+00:00"
     },
     {
       "marks": {
