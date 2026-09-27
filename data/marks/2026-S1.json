@@ -193,28 +193,32 @@
           "assignment1": 10.0,
           "midsem": 25.0,
           "quiz2": 5.0,
-          "assignment2": 9.75
+          "assignment2": 9.75,
+          "endsem": 27.5
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "quiz2": 4.5,
           "midsem": 26.5,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 35.5
         },
         "ML": {
           "quiz1": 9.5,
           "assignment1": 5.0,
           "midsem": 26.5,
           "quiz2": 10.0,
-          "assignment2": 15.0
+          "assignment2": 15.0,
+          "endsem": 32.0
         },
         "DNN": {
           "quiz1": 4.5,
           "assignment1": 10.0,
           "midsem": 27.4,
           "quiz2": 5.0,
-          "assignment2": 9.0
+          "assignment2": 9.0,
+          "endsem": 34.5
         }
       },
       "pin_salt": "efaf7c8917c2a28d",
@@ -223,7 +227,7 @@
       "id_hash": "bd30e2b6430d40349159",
       "alias": "Brave Tiger 77",
       "name": "Pramod",
-      "updated_at": "2026-09-13T09:50:14+00:00"
+      "updated_at": "2026-09-27T05:54:43+00:00"
     },
     {
       "marks": {
