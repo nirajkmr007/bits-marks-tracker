@@ -431,7 +431,8 @@ const ADMIN_EMAIL = "nirajkmr007@gmail.com";
 const ID_SPLIT_RE = /^(\d{4}[A-Z]{2})(\d+)$/;
 document.getElementById("repoLink").href = REPO_URL;
 
-let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", FILTER = "", QUERY = "";
+const DEFAULT_FILTER = "till_endsem";
+let CONFIG = null, TERM = null, BOARD = null, TAB = "OVERALL", FILTER = DEFAULT_FILTER, QUERY = "";
 let MY_ID = localStorage.getItem("bits_id") || "";
 let MY_PIN = localStorage.getItem("bits_pin") || "";
 let MY_ANON_HASH = localStorage.getItem("bits_anon_hash") || "";
@@ -558,7 +559,7 @@ async function init() {
   const sel = $("termSelect");
   sel.innerHTML = Object.entries(CONFIG.terms)
     .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(t.label)}</option>`).join("");
-  sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; FILTER = ""; refresh(); };
+  sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; FILTER = DEFAULT_FILTER; refresh(); };
   $("openFormBtn").onclick = () => openForm();
   $("fabBtn").onclick = () => openForm();
   $("submitBtn").onclick = submit;
@@ -602,10 +603,10 @@ function cohortComplete(e, filter) {
 
 function renderFilterTabs() {
   const tabs = [
-    { id: "", label: "All" },
-    { id: "till_midsem", label: "Till mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
-    { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
     { id: "till_endsem", label: "Till end-sem", title: "Students who filled everything including the end-sem — the final picture, percentile recomputed within this group" },
+    { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
+    { id: "till_midsem", label: "Till mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
+    { id: "", label: "All", title: "Everyone with at least one mark entered" },
   ];
   $("filterTabs").innerHTML = tabs.map((t) =>
     `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
@@ -650,8 +651,12 @@ function renderStats() {
     : FILTER === "pre_endsem" ? "the “Only end-sem left” group"
     : FILTER === "till_endsem" ? "the “Till end-sem” group (everything filled)" : "everyone on the board";
   const cards = [
-    { k: "Students", v: s.total_students, s: scope + reviewNote, html: true,
-      t: `Number of students in ${viewName}. Records under review are excluded.` },
+    // In a cohort view show "in this view / total on the board"; plain count for All.
+    { k: "Students", v: FILTER ? `${s.total_students}/${BOARD.students.length}` : s.total_students,
+      s: scope + reviewNote, html: true,
+      t: FILTER
+        ? `${s.total_students} of ${BOARD.students.length} students qualify for ${viewName}. Records under review are excluded from both.`
+        : `Number of students in ${viewName}. Records under review are excluded.` },
     { k: "Topper", v: pc(s.overall.top_pct), s: "best overall",
       t: `Highest overall % among ${viewName}.` },
     { k: "Class avg", v: pc(s.overall.avg_pct), s: "overall %",
