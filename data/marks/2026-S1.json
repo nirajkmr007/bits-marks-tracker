@@ -1083,13 +1083,18 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 8.0,
-          "midsem": 5.0
+          "midsem": 5.0,
+          "quiz2": 4.5,
+          "assignment2": 9.0,
+          "endsem": 2.5
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "quiz2": 5.0,
-          "midsem": 9.5
+          "midsem": 9.5,
+          "assignment2": 10.0,
+          "endsem": 7.5
         },
         "ML": {
           "quiz1": 9.5,
@@ -1114,7 +1119,7 @@
       "id_hash": "e4f597269a19e63848d2",
       "alias": "Rapid Cobra 46",
       "name": "SP",
-      "updated_at": "2026-09-27T10:15:49+00:00"
+      "updated_at": "2026-09-27T10:17:08+00:00"
     },
     {
       "marks": {
