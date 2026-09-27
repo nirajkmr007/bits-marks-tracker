@@ -2770,6 +2770,49 @@
       "alias": "Mellow Otter 90",
       "name": "Don",
       "updated_at": "2026-09-27T04:51:18+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 19.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 16.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 25.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 17.0,
+          "quiz2": 5.0,
+          "assignment2": 15.0,
+          "endsem": 15.5
+        },
+        "DNN": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 13.3,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 24.0
+        }
+      },
+      "pin_salt": "5153ac92ba844c46",
+      "pin_hash": "a2ba181e019efad105e15a2da18d950a306d64090a175c0bd08507c933d2d677",
+      "anon": true,
+      "id_hash": "1a3bd0e69b38fa31617c",
+      "alias": "Shadow Cobra 13",
+      "name": "Pritesh",
+      "updated_at": "2026-09-27T07:15:34+00:00"
     }
   ]
 }
