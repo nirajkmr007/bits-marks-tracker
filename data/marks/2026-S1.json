@@ -2939,6 +2939,49 @@
       "alias": "Crimson Eagle 22",
       "name": "Thaggidhe tappenti",
       "updated_at": "2026-09-27T13:41:41+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.75,
+          "midsem": 16.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 7.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 10.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 16.5
+        },
+        "ML": {
+          "quiz1": 5.0,
+          "assignment1": 5.0,
+          "midsem": 17.5,
+          "quiz2": 4.75,
+          "assignment2": 15.0,
+          "endsem": 11.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 12.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 17.5
+        }
+      },
+      "pin_salt": "fa2345156c8bd4e9",
+      "pin_hash": "fd35898d27d4d9e2bb2f0b635b80fb7b5a213fc738c6e91eafed40c78f506f9a",
+      "anon": true,
+      "id_hash": "7d58d0c7aeb41690505c",
+      "alias": "Crimson Eagle 54",
+      "name": "Ghost",
+      "updated_at": "2026-09-27T14:20:53+00:00"
     }
   ]
 }
