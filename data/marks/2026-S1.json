@@ -2850,6 +2850,48 @@
       "alias": "Shadow Cobra 13",
       "name": "Tesla",
       "updated_at": "2026-09-27T07:18:12+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 4.5,
+          "quiz2": 4.75,
+          "assignment2": 10.0,
+          "endsem": 5.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 16.5
+        },
+        "ML": {
+          "quiz1": 8.5,
+          "assignment1": 5.0,
+          "midsem": 19.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 15.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 8.0,
+          "quiz2": 5.0,
+          "assignment2": 9.0,
+          "endsem": 14.5
+        }
+      },
+      "pin_salt": "7cfcf082a5fd9663",
+      "pin_hash": "dd7aa70eaa159a1d169f09e8a2553881505373fda8043ca1f99a5ae707a92f29",
+      "anon": true,
+      "id_hash": "5e39baa936deb073bc7a",
+      "alias": "Quiet Raven 90",
+      "updated_at": "2026-09-27T12:51:12+00:00"
     }
   ]
 }
