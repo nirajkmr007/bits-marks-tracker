@@ -2656,6 +2656,48 @@
       "alias": "Mellow Fox 38",
       "name": "Jkp",
       "updated_at": "2026-09-27T02:37:01+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.75,
+          "assignment1": 10.0,
+          "midsem": 10.75,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 10.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 7.5,
+          "midsem": 16.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 16.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 16.0,
+          "quiz2": 10.0,
+          "assignment2": 5.0,
+          "endsem": 15.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.4,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 27.5
+        }
+      },
+      "pin_salt": "184c5e28290db61a",
+      "pin_hash": "7319a590b9e692c0d1d886a14595d642f5f796a3d3e12618d566cb11444c270a",
+      "anon": true,
+      "id_hash": "a82be4a3af11575be6c5",
+      "alias": "Azure Eagle 97",
+      "updated_at": "2026-09-27T03:04:44+00:00"
     }
   ]
 }
