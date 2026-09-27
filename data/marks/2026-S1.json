@@ -2998,6 +2998,49 @@
       "alias": "Crimson Eagle 54",
       "name": "Ghost",
       "updated_at": "2026-09-27T14:20:53+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.25,
+          "quiz2": 4.5,
+          "assignment2": 10.0,
+          "endsem": 10.0
+        },
+        "ISM": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 12.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 17.0
+        },
+        "ML": {
+          "quiz1": 5.0,
+          "assignment1": 5.0,
+          "midsem": 15.0,
+          "quiz2": 9.0,
+          "assignment2": 15.0,
+          "endsem": 9.0
+        },
+        "DNN": {
+          "quiz1": 4.0,
+          "assignment1": 9.0,
+          "midsem": 13.0,
+          "quiz2": 5.0,
+          "assignment2": 9.0,
+          "endsem": 25.0
+        }
+      },
+      "pin_salt": "6e7901dd6b8f40e3",
+      "pin_hash": "01d837d7879cd3eb35f65dc6367e9de2224959e4cdc2dfd7e6ef60920e678381",
+      "anon": true,
+      "id_hash": "5c7d4e0a758d143f811a",
+      "alias": "Cosmic Phoenix 27",
+      "name": "Tester",
+      "updated_at": "2026-09-27T17:50:58+00:00"
     }
   ]
 }
