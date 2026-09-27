@@ -920,9 +920,9 @@ function openForm(prefillId) {
   $("formMsg").textContent = ""; $("formMsg").className = "msg";
   $("studentName").value = "";
   $("pin").value = ""; $("pinLabel").textContent = "Create a 4-digit PIN";
-  // Privacy by default: hide the BITS ID unless the student opts out.
-  $("anonChk").checked = true;
-  $("anonHint").style.display = "";
+  // Off by default — hiding the BITS ID is the student's explicit choice.
+  $("anonChk").checked = false;
+  $("anonHint").style.display = "none";
   const id = (prefillId || MY_ID || "").toUpperCase();
   const parts = id.match(ID_SPLIT_RE);
   $("bitsPrefix").value = parts ? parts[1] : (termCfg().id_prefix || "2025AC");
