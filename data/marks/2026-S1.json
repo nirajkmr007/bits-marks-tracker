@@ -2495,28 +2495,32 @@
           "assignment1": 10.0,
           "midsem": 9.5,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 16.5
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 19.5,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 27.0
         },
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
           "midsem": 23.5,
           "quiz2": 10.0,
-          "assignment2": 15.0
+          "assignment2": 15.0,
+          "endsem": 18.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 29.0,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 31.5
         }
       },
       "pin_salt": "5e6657d8a457a4cb",
@@ -2524,7 +2528,7 @@
       "anon": true,
       "id_hash": "43dccfe5d8841320a960",
       "alias": "Bold Sparrow 64",
-      "updated_at": "2026-09-13T00:51:47+00:00"
+      "updated_at": "2026-09-27T02:29:57+00:00"
     },
     {
       "marks": {
