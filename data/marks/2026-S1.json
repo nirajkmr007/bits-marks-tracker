@@ -2896,6 +2896,49 @@
       "id_hash": "5e39baa936deb073bc7a",
       "alias": "Quiet Raven 90",
       "updated_at": "2026-09-27T12:51:12+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 8.5,
+          "midsem": 14.5,
+          "quiz2": 4.5,
+          "assignment2": 6.5,
+          "endsem": 9.5
+        },
+        "ISM": {
+          "quiz1": 4.5,
+          "assignment1": 10.0,
+          "midsem": 10.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 31.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 18.0,
+          "quiz2": 9.5,
+          "assignment2": 15.0,
+          "endsem": 19.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 18.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 26.5
+        }
+      },
+      "pin_salt": "251d2bd6015659a7",
+      "pin_hash": "51878cc8df4982b7a9b016c6f5f4feb6c3d9d13b2b7f02396d7c8715f566cccf",
+      "anon": true,
+      "id_hash": "9a98ce88ae4937be6df1",
+      "alias": "Crimson Eagle 22",
+      "name": "Thaggidhe tappenti",
+      "updated_at": "2026-09-27T13:41:41+00:00"
     }
   ]
 }
