@@ -2613,6 +2613,49 @@
       "id_hash": "b1da0322b5d234afaed1",
       "alias": "Cosmic Lynx 23",
       "updated_at": "2026-09-27T02:35:16+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 11.5,
+          "quiz2": 4.75,
+          "assignment2": 10.0,
+          "endsem": 10.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 9.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 11.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 15.0,
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 16.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 14.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 22.0
+        }
+      },
+      "pin_salt": "9a3472e1fd1c180e",
+      "pin_hash": "74d1c72b7cc1f76c1946d597585c70a875a3fbce7672422014439fc8f90b029d",
+      "anon": true,
+      "id_hash": "61a483caf469b01cb921",
+      "alias": "Mellow Fox 38",
+      "name": "Jkp",
+      "updated_at": "2026-09-27T02:37:01+00:00"
     }
   ]
 }
