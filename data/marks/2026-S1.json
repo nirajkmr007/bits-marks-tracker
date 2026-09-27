@@ -2712,6 +2712,49 @@
       "alias": "Azure Eagle 97",
       "updated_at": "2026-09-27T03:52:00+00:00",
       "name": "Compaq"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 19.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 18.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 21.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 27.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 23.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 33.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 20.5,
+          "quiz2": 5.0,
+          "assignment2": 9.5,
+          "endsem": 27.5
+        }
+      },
+      "pin_salt": "814a9d0e526f8b99",
+      "pin_hash": "9f28587aed773aed227df60d91e4be32b63b6266463d1cf9ab7c93b69ce9a085",
+      "anon": true,
+      "id_hash": "a37e57ee24ccec7403df",
+      "alias": "Mellow Otter 90",
+      "name": "Manohar",
+      "updated_at": "2026-09-27T04:50:48+00:00"
     }
   ]
 }
