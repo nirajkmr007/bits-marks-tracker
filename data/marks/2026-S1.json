@@ -793,28 +793,32 @@
           "assignment1": 10.0,
           "midsem": 11.5,
           "assignment2": 10.0,
-          "quiz2": 5.0
+          "quiz2": 5.0,
+          "endsem": 8.5
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 10.0,
           "midsem": 13.0,
           "quiz2": 4.5,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 19.5
         },
         "ML": {
           "quiz1": 9.0,
           "assignment1": 5.0,
           "midsem": 12.0,
           "quiz2": 10.0,
-          "assignment2": 15.0
+          "assignment2": 15.0,
+          "endsem": 18.5
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 9.0,
           "midsem": 10.5,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 19.5
         }
       },
       "pin_salt": "b07ab0fd968697ef",
@@ -822,7 +826,7 @@
       "anon": true,
       "id_hash": "fcf1c0cb5be110bff013",
       "alias": "Shadow Dolphin 59",
-      "updated_at": "2026-08-30T08:36:58+00:00",
+      "updated_at": "2026-09-27T11:12:02+00:00",
       "name": "Sasanka"
     },
     {
