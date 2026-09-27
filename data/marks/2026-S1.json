@@ -2571,6 +2571,48 @@
       "alias": "Brave Eagle 95",
       "name": "Thala",
       "updated_at": "2026-09-26T16:14:23+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 22.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 14.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 23.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 30.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 5.0,
+          "midsem": 24.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 31.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 22.9,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 32.75
+        }
+      },
+      "pin_salt": "93ac25a988ff39e6",
+      "pin_hash": "b7642b697920cc56df8871f55bea215bff988f51ad3f13dcc910cf1bb6bb8797",
+      "anon": true,
+      "id_hash": "b1da0322b5d234afaed1",
+      "alias": "Cosmic Lynx 23",
+      "updated_at": "2026-09-27T02:35:16+00:00"
     }
   ]
 }
