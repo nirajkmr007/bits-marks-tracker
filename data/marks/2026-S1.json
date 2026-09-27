@@ -1095,12 +1095,17 @@
           "quiz1": 9.5,
           "assignment1": 5.0,
           "midsem": 11.0,
-          "quiz2": 10.0
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 6.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 1.3
+          "midsem": 1.3,
+          "quiz2": 5.0,
+          "assignment2": 9.75,
+          "endsem": 13.25
         }
       },
       "pin_salt": "703a626b08fa7d8e",
@@ -1109,7 +1114,7 @@
       "id_hash": "e4f597269a19e63848d2",
       "alias": "Rapid Cobra 46",
       "name": "SP",
-      "updated_at": "2026-08-02T08:41:34+00:00"
+      "updated_at": "2026-09-27T10:15:42+00:00"
     },
     {
       "marks": {
