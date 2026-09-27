@@ -2525,10 +2525,9 @@
       },
       "pin_salt": "5e6657d8a457a4cb",
       "pin_hash": "0479254b5cb683c907dd09c65cdde06c22b75f5a62042b39e48c91f24289bb66",
-      "anon": true,
-      "id_hash": "43dccfe5d8841320a960",
-      "alias": "Bold Sparrow 64",
-      "updated_at": "2026-09-27T02:29:57+00:00"
+      "updated_at": "2026-09-27T02:32:12+00:00",
+      "bits_id": "2025AC05017",
+      "name": "Badhusha"
     },
     {
       "marks": {
