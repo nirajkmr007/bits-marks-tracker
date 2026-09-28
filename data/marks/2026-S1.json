@@ -74,49 +74,6 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 10.0,
-          "midsem": 16.5,
-          "quiz2": 5.0,
-          "assignment2": 10.0,
-          "endsem": 14.0
-        },
-        "ISM": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 21.5,
-          "quiz2": 5.0,
-          "assignment2": 10.0,
-          "endsem": 26.0
-        },
-        "ML": {
-          "quiz1": 10.0,
-          "assignment1": 5.0,
-          "midsem": 13.5,
-          "quiz2": 10.0,
-          "assignment2": 15.0,
-          "endsem": 21.0
-        },
-        "DNN": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
-          "midsem": 18.5,
-          "quiz2": 5.0,
-          "assignment2": 10.0,
-          "endsem": 22.0
-        }
-      },
-      "pin_salt": "d27fff2173c829ce",
-      "pin_hash": "b221dbcd232cc24429c5d08b301eb8bd62a37a3662addda7358e86b5278c771f",
-      "anon": true,
-      "id_hash": "4efbb1ed413327d39875",
-      "alias": "Swift Tiger 53",
-      "name": "Boom Boom",
-      "updated_at": "2026-09-26T13:48:12+00:00"
-    },
-    {
-      "marks": {
-        "MFML": {
-          "quiz1": 5.0,
-          "assignment1": 10.0,
           "midsem": 14.5
         },
         "ISM": {
