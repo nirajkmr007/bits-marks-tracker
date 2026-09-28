@@ -3088,6 +3088,49 @@
       "alias": "Golden Falcon 52",
       "name": "Young amli",
       "updated_at": "2026-09-28T04:41:24+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 7.0,
+          "midsem": 10.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 3.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 8.0,
+          "midsem": 11.0,
+          "quiz2": 5.0,
+          "assignment2": 9.5,
+          "endsem": 11.0
+        },
+        "ML": {
+          "quiz1": 8.0,
+          "assignment1": 5.0,
+          "midsem": 11.0,
+          "quiz2": 10.0,
+          "assignment2": 5.0,
+          "endsem": 11.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 11.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 21.0
+        }
+      },
+      "pin_salt": "da0c4f8a86d1f33c",
+      "pin_hash": "fe34096b198241be8582050f264becebb65cbfb45d77489a517dc184dcad0ced",
+      "anon": true,
+      "id_hash": "c2a0bb157ee6fbcf3c9c",
+      "alias": "Crimson Phoenix 98",
+      "name": "Pah",
+      "updated_at": "2026-09-28T05:27:22+00:00"
     }
   ]
 }
