@@ -8,7 +8,7 @@
           "midsem": 12.5,
           "assignment2": 10.0,
           "quiz2": 5.0,
-          "endsem": 3.5
+          "endsem": 4.5
         },
         "ISM": {
           "quiz1": 5.0,
@@ -38,7 +38,7 @@
       "pin_salt": "31579af4e3dd0c81",
       "pin_hash": "5aad7afde7cee4ccaf5d6377d365da5de9181ba0915555c97f7465424ec29674",
       "name": "Niraj Kumar",
-      "updated_at": "2026-09-26T13:41:37+00:00",
+      "updated_at": "2026-09-28T14:54:12+00:00",
       "anon": true,
       "id_hash": "382476fbd84df2c613da",
       "alias": "Bold Sparrow 12"
