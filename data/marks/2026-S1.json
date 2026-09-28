@@ -3217,6 +3217,47 @@
       "alias": "Rapid Eagle 96",
       "name": "Aa",
       "updated_at": "2026-09-28T07:16:59+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 15.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 20.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 12.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 34.0
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 19.5,
+          "quiz2": 10.0,
+          "assignment2": 15.0,
+          "endsem": 17.0
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 20.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 25.5
+        }
+      },
+      "pin_salt": "3fd56f332c84ec67",
+      "pin_hash": "c4fdd6da84072ddb09a1c157aacdb331eba99a0db722bacd4d75919374f8bd74",
+      "bits_id": "2025AC050412",
+      "name": "deku",
+      "updated_at": "2026-09-28T10:09:26+00:00"
     }
   ]
 }
