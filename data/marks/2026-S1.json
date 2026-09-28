@@ -3045,6 +3045,49 @@
       "alias": "Cosmic Phoenix 27",
       "name": "Tester",
       "updated_at": "2026-09-27T17:50:58+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 0.0,
+          "assignment1": 10.0,
+          "midsem": 15.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 24.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 25.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 29.5
+        },
+        "ML": {
+          "quiz1": 10.0,
+          "assignment1": 5.0,
+          "midsem": 25.0,
+          "quiz2": 9.5,
+          "assignment2": 15.0,
+          "endsem": 24.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 9.0,
+          "midsem": 25.0,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 33.5
+        }
+      },
+      "pin_salt": "75409c6db06f9efd",
+      "pin_hash": "21604d71f768fd42d3fd712b36a507d77f43edb6147c87925e2a96b36648205a",
+      "anon": true,
+      "id_hash": "0d07a3a20c370a3f748e",
+      "alias": "Golden Falcon 52",
+      "name": "Young amli",
+      "updated_at": "2026-09-28T04:41:24+00:00"
     }
   ]
 }
