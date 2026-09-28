@@ -3174,6 +3174,49 @@
       "alias": "Silent Panda 32",
       "name": "Weak Assassin",
       "updated_at": "2026-09-28T06:54:10+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 4.5,
+          "assignment1": 9.25,
+          "midsem": 11.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 6.0
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 9.5,
+          "midsem": 10.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 19.0
+        },
+        "ML": {
+          "quiz1": 9.5,
+          "assignment1": 4.5,
+          "midsem": 20.0,
+          "quiz2": 10.0,
+          "assignment2": 0.0,
+          "endsem": 10.5
+        },
+        "DNN": {
+          "quiz1": 5.0,
+          "assignment1": 8.5,
+          "midsem": 11.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 22.5
+        }
+      },
+      "pin_salt": "b8693af7942e6479",
+      "pin_hash": "10d9a5ea79c02fdf2575ef8ce5c61d18af359f629a98a450ba5456ec2aecde75",
+      "anon": true,
+      "id_hash": "6c4a7417aa530d7c3d4a",
+      "alias": "Rapid Eagle 96",
+      "name": "Aa",
+      "updated_at": "2026-09-28T07:16:59+00:00"
     }
   ]
 }
