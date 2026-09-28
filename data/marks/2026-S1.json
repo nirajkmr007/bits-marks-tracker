@@ -3215,6 +3215,47 @@
       "bits_id": "2025AC050412",
       "name": "deku",
       "updated_at": "2026-09-28T10:17:48+00:00"
+    },
+    {
+      "marks": {
+        "MFML": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 7.5,
+          "quiz2": 5.0,
+          "assignment2": 10.0,
+          "endsem": 11.5
+        },
+        "ISM": {
+          "quiz1": 5.0,
+          "assignment1": 10.0,
+          "midsem": 16.0,
+          "quiz2": 4.75,
+          "assignment2": 10.0,
+          "endsem": 14.0
+        },
+        "ML": {
+          "quiz1": 8.5,
+          "assignment1": 5.0,
+          "midsem": 22.5,
+          "quiz2": 5.0,
+          "assignment2": 15.0,
+          "endsem": 19.5
+        },
+        "DNN": {
+          "quiz1": 4.5,
+          "assignment1": 7.0,
+          "midsem": 18.2,
+          "quiz2": 4.75,
+          "assignment2": 10.0,
+          "endsem": 24.25
+        }
+      },
+      "pin_salt": "c5716c8170ec9652",
+      "pin_hash": "980f3cb49859c70949274408b07f15078fddc709cc91b7ed7f6d2f02fb9519c1",
+      "bits_id": "2025AC05683",
+      "name": "TN guy",
+      "updated_at": "2026-09-28T15:31:20+00:00"
     }
   ]
 }
