@@ -2562,7 +2562,7 @@
           "midsem": 23.5,
           "quiz2": 10.0,
           "assignment2": 15.0,
-          "endsem": 18.0
+          "endsem": 21.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -2575,7 +2575,7 @@
       },
       "pin_salt": "5e6657d8a457a4cb",
       "pin_hash": "0479254b5cb683c907dd09c65cdde06c22b75f5a62042b39e48c91f24289bb66",
-      "updated_at": "2026-09-27T02:32:12+00:00",
+      "updated_at": "2026-09-29T06:29:59+00:00",
       "bits_id": "2025AC05017",
       "name": "Badhusha"
     },
