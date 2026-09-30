@@ -105,10 +105,10 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 9.75,
-          "midsem": 18.5,
+          "midsem": 19.0,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 7.5
+          "endsem": 9.5
         },
         "ISM": {
           "quiz1": 5.0,
@@ -124,7 +124,7 @@
           "midsem": 18.5,
           "quiz2": 10.0,
           "assignment2": 15.0,
-          "endsem": 17.5
+          "endsem": 19.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -132,7 +132,7 @@
           "midsem": 16.5,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 20.5
+          "endsem": 21.5
         }
       },
       "pin_salt": "287b15b1b8158cd7",
@@ -141,7 +141,7 @@
       "id_hash": "78a7db47c4c715c2af38",
       "alias": "Mellow Orca 78",
       "name": "Sam Altman",
-      "updated_at": "2026-09-27T02:27:03+00:00"
+      "updated_at": "2026-09-30T13:00:51+00:00"
     },
     {
       "marks": {
