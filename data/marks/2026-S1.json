@@ -2636,10 +2636,10 @@
         "MFML": {
           "quiz1": 5.0,
           "assignment1": 9.0,
-          "midsem": 22.0,
+          "midsem": 25.0,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 14.8
+          "endsem": 17.5
         },
         "ISM": {
           "quiz1": 5.0,
@@ -2671,7 +2671,7 @@
       "anon": true,
       "id_hash": "b1da0322b5d234afaed1",
       "alias": "Cosmic Lynx 23",
-      "updated_at": "2026-09-27T02:38:22+00:00"
+      "updated_at": "2026-10-01T10:05:34+00:00"
     },
     {
       "marks": {
