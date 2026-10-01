@@ -2647,7 +2647,7 @@
           "midsem": 23.5,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 30.0
+          "endsem": 31.5
         },
         "ML": {
           "quiz1": 9.5,
@@ -2655,7 +2655,7 @@
           "midsem": 24.5,
           "quiz2": 10.0,
           "assignment2": 15.0,
-          "endsem": 31.5
+          "endsem": 34.0
         },
         "DNN": {
           "quiz1": 5.0,
@@ -2671,7 +2671,7 @@
       "anon": true,
       "id_hash": "b1da0322b5d234afaed1",
       "alias": "Cosmic Lynx 23",
-      "updated_at": "2026-10-01T10:05:34+00:00"
+      "updated_at": "2026-10-01T12:51:15+00:00"
     },
     {
       "marks": {
