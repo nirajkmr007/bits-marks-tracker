@@ -2639,7 +2639,7 @@
           "midsem": 25.0,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 17.5
+          "endsem": 19.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -2663,7 +2663,7 @@
           "midsem": 22.9,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 32.75
+          "endsem": 34.75
         }
       },
       "pin_salt": "93ac25a988ff39e6",
@@ -2671,7 +2671,7 @@
       "anon": true,
       "id_hash": "b1da0322b5d234afaed1",
       "alias": "Cosmic Lynx 23",
-      "updated_at": "2026-10-01T12:51:15+00:00"
+      "updated_at": "2026-10-05T15:38:50+00:00"
     },
     {
       "marks": {
