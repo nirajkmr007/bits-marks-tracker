@@ -3289,7 +3289,7 @@
           "midsem": 16.5,
           "quiz2": 5.0,
           "assignment2": 10.0,
-          "endsem": 16.0
+          "endsem": 19.0
         },
         "ISM": {
           "quiz1": 5.0,
@@ -3320,7 +3320,7 @@
       "pin_hash": "359def3626d21f06b093dc1a42fae6af9531db1775926b1e9d1d7fe53c04c360",
       "bits_id": "2025AC05215",
       "name": "Boom Boom",
-      "updated_at": "2026-09-29T04:53:14+00:00"
+      "updated_at": "2026-10-08T09:27:40+00:00"
     },
     {
       "marks": {
