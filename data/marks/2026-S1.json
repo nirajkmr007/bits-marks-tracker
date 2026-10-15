@@ -2448,28 +2448,32 @@
           "assignment1": 9.0,
           "midsem": 20.25,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 25.5
         },
         "ISM": {
           "quiz1": 5.0,
           "assignment1": 9.5,
           "midsem": 21.0,
           "quiz2": 5.0,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 19.5
         },
         "ML": {
           "quiz1": 10.0,
           "assignment1": 5.0,
           "midsem": 19.0,
           "quiz2": 10.0,
-          "assignment2": 15.0
+          "assignment2": 15.0,
+          "endsem": 30.0
         },
         "DNN": {
           "quiz1": 5.0,
           "assignment1": 9.0,
           "midsem": 13.7,
           "quiz2": 4.5,
-          "assignment2": 10.0
+          "assignment2": 10.0,
+          "endsem": 26.5
         }
       },
       "pin_salt": "67fc5be08704523f",
@@ -2478,7 +2482,7 @@
       "id_hash": "4480da293f9180a6d8e4",
       "alias": "Azure Raven 93",
       "name": "kookie",
-      "updated_at": "2026-09-12T20:13:48+00:00"
+      "updated_at": "2026-10-15T05:56:49+00:00"
     },
     {
       "marks": {
