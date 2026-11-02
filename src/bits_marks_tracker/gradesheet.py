@@ -40,6 +40,10 @@ class GradeSheetError(ValueError):
     """The upload isn't a readable Electronic Grade Sheet."""
 
 
+class GradeSheetUnavailableError(RuntimeError):
+    """The server can't read PDFs (the pypdf dependency isn't installed)."""
+
+
 @dataclass
 class Course:
     course_no: str  # normalised, no spaces: "AIMLCZG511"
@@ -68,7 +72,13 @@ def extract_text(pdf_bytes: bytes) -> str:
         )
     if len(pdf_bytes) > MAX_PDF_BYTES:
         raise GradeSheetError("That PDF is too large to be a grade sheet (max 2 MB).")
-    from pypdf import PdfReader  # imported lazily: only this feature needs it
+    try:
+        from pypdf import PdfReader  # imported lazily: only this feature needs it
+    except ImportError as exc:
+        raise GradeSheetUnavailableError(
+            "Reading grade sheets isn't available on the server right now — "
+            "please enter your grades manually."
+        ) from exc
 
     try:
         reader = PdfReader(io.BytesIO(pdf_bytes))

@@ -190,6 +190,25 @@ def test_upload_rejects_pdf_without_id(client: TestClient) -> None:
     assert resp.status_code == 422
 
 
+def test_upload_without_pypdf_gives_clear_503(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """If the PDF library is missing, return a clear JSON error — not a crash."""
+    import builtins
+
+    real_import = builtins.__import__
+
+    def no_pypdf(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "pypdf" or name.startswith("pypdf."):
+            raise ImportError("No module named 'pypdf'")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", no_pypdf)
+    resp = _upload(client, make_pdf(SHEET_LINES))
+    assert resp.status_code == 503
+    assert "isn't available" in resp.json()["detail"]
+
+
 def test_upload_respects_disabled_grades(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:

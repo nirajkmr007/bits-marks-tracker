@@ -30,7 +30,7 @@ pydantic==2.13.4
     # via fastapi
 pydantic-core==2.46.4
     # via pydantic
-pypdf==6.21.2
+pypdf==6.21.4
     # via bits-marks-tracker
 starlette==1.3.1
     # via fastapi

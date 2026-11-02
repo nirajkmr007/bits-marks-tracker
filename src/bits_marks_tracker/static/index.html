@@ -991,8 +991,16 @@ async function handleGradeSheet() {
     gsShow("ok", "Reading grade sheet…");
     const res = await fetch(`/api/gradesheet?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`,
       { method: "POST", headers: { "Content-Type": "application/pdf" }, body: file });
-    const data = await res.json();
-    if (!res.ok) { gsShow("err", `⚠️ ${esc(data.detail?.[0]?.msg || data.detail || "Couldn't read that file.")}`); return; }
+    // A crash or proxy error can come back as plain text/HTML — don't assume JSON.
+    const raw = await res.text();
+    let data = null;
+    try { data = JSON.parse(raw); } catch { /* not JSON */ }
+    if (!res.ok || !data) {
+      const why = data?.detail?.[0]?.msg || data?.detail
+        || (res.status === 413 ? "That file is too large to upload." : `The server couldn't process the file (error ${res.status}).`);
+      gsShow("err", `⚠️ ${esc(why)}`);
+      return;
+    }
 
     // Fill the form. A subject with no grade on the sheet is left as "—".
     const cfg = termCfg();
@@ -1016,8 +1024,9 @@ async function handleGradeSheet() {
       ${cgpaOn() ? `CGPA: <b>${data.cgpa != null ? esc(data.cgpa) : "-"}</b><br>` : ""}
       ${notes.length ? `<span style="color:var(--muted)">${notes.join("<br>")}</span><br>` : ""}
       Filled into the form below — review, then tap <b>Save</b>.`);
-  } catch {
-    gsShow("err", "Something went wrong while reading the file. Please try again.");
+  } catch (err) {
+    // Only network failures (offline, server unreachable) land here now.
+    gsShow("err", `Couldn't reach the server to read the file (${esc(err?.message || "network error")}). Please try again.`);
   } finally {
     input.value = "";  // allow re-selecting the same file
   }

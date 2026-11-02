@@ -230,6 +230,8 @@ async def api_gradesheet(request: Request, term: str, bits_id: str) -> dict[str,
         sheet = gradesheet.parse_gradesheet(gradesheet.extract_text(body))
     except gradesheet.GradeSheetError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except gradesheet.GradeSheetUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     finally:
         del body  # drop the upload as soon as it has been read
 
