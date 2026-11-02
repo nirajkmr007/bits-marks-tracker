@@ -205,6 +205,7 @@
   .subcard .t .p { font-size: .82rem; font-weight: 800; }
   .grade { display: inline-block; min-width: 22px; text-align: center; font-size: .64rem; font-weight: 800;
     color: #fff; background: var(--grad); border-radius: 7px; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; }
+  .grade.none { background: var(--card-hi); color: var(--muted); border: 1px solid var(--line); }
   .gsel { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); background: var(--card);
     border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px; }
   .vtoggle { display: flex; gap: 4px; margin: 14px 0 4px; padding: 3px; background: var(--card);
@@ -926,8 +927,12 @@ function gradesOn() {
   return !!(cfg.grades_enabled && cfg.grades && cfg.grades.length);
 }
 
+// Always shown when grades are on for the term; "-" marks a subject with no grade yet.
 function gradeBadge(g) {
-  return g ? `<span class="grade" title="Final grade">${esc(g)}</span>` : "";
+  if (!gradesOn()) return "";
+  return g
+    ? `<span class="grade" title="Final grade">${esc(g)}</span>`
+    : `<span class="grade none" title="No grade entered yet">-</span>`;
 }
 
 function getFormBitsId() {
