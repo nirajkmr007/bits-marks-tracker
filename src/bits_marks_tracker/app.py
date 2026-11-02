@@ -6,6 +6,7 @@ import csv
 import hashlib
 import hmac
 import io
+import json
 import os
 import re
 import secrets
@@ -19,7 +20,7 @@ from pydantic import BaseModel, Field
 
 from . import gradesheet
 from .scoring import compute_leaderboard
-from .storage import WriteConflictError, get_storage, load_config
+from .storage import DATA_DIR, WriteConflictError, get_storage, load_config
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 BITS_ID_RE = re.compile(r"^[A-Z0-9]{8,16}$")
@@ -142,6 +143,20 @@ def index() -> FileResponse:
 @app.get("/api/config")
 def api_config() -> dict[str, Any]:
     return load_config()
+
+
+@app.get("/api/changelog")
+def api_changelog() -> dict[str, Any]:
+    """New-feature list for the notification center, newest first.
+
+    Ships with the app (data/changelog.json on main): add an entry when a
+    feature goes out. Entries on the same day keep their file order.
+    """
+    doc = json.loads((DATA_DIR / "changelog.json").read_text(encoding="utf-8"))
+    entries: list[dict[str, Any]] = sorted(
+        doc.get("entries", []), key=lambda e: str(e.get("date", "")), reverse=True
+    )
+    return {"entries": entries, "updated": entries[0]["date"] if entries else None}
 
 
 def _read_flags(term: str) -> dict[str, str]:

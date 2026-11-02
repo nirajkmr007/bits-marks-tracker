@@ -300,6 +300,21 @@
   .rev-row .mini { font: inherit; font-size: .7rem; font-weight: 600; cursor: pointer; border-radius: 9px;
     padding: 6px 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; }
   .rev-row .mini.p { background: var(--grad); border: 0; color: #fff; }
+  .nbtn { position: relative; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .nb-txt { font-size: .7rem; color: var(--muted); font-weight: 600; }
+  .ago-short { display: none; }
+  @media (max-width: 560px) { .ago-long { display: none; } .ago-short { display: inline; } }
+  .ndot { display: none; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--err); box-shadow: 0 0 0 2px var(--bg); }
+  .ndot.on { display: block; }
+  .news-day { font-size: .66rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin: 14px 2px 6px; }
+  .news-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 6px; }
+  .news-item .t { font-size: .84rem; font-weight: 700; }
+  .news-item .d { font-size: .74rem; color: var(--muted); margin-top: 2px; line-height: 1.45; }
+  .news-item.new { border-color: rgba(129,140,248,.55); background: rgba(99,102,241,.08); }
+  .news-item .newtag { font-size: .58rem; font-weight: 800; color: #fff; background: var(--grad);
+    border-radius: 999px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
   .fb-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
     display: flex; gap: 10px; align-items: flex-start; }
   .fb-item .txt { flex: 1; font-size: .82rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
@@ -329,6 +344,7 @@
     </div>
     <div class="spacer"></div>
     <select id="termSelect" aria-label="Semester"></select>
+    <button class="iconbtn nbtn" id="newsBtn" title="What's new">🔔<span class="nb-txt"><span class="ago-long" id="newsAgoLong"></span><span class="ago-short" id="newsAgoShort"></span></span><i class="ndot" id="newsDot"></i></button>
     <button class="iconbtn" id="feedbackBtn" title="Anonymous feedback">💬</button>
     <a class="iconbtn" id="exportBtn" title="Download CSV" href="#">⬇</a>
     <button class="addbtn headbtn" id="openFormBtn">＋ Add marks</button>
@@ -361,6 +377,17 @@
 
 <div class="mypin" id="mypin"></div>
 <button class="fab" id="fabBtn" aria-label="Add my marks">＋</button>
+
+<!-- notification center: new features -->
+<dialog id="newsDialog">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2>🔔 What's new</h2>
+    <button class="xbtn" onclick="newsDialog.close()">✕</button></div>
+  <div class="sheet-body">
+    <div class="hint" id="newsSub" style="margin-top:0"></div>
+    <div id="newsList"></div>
+  </div>
+</dialog>
 
 <!-- feedback popup -->
 <dialog id="feedbackDialog">
@@ -496,6 +523,62 @@ const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70
 const termCfg = () => CONFIG.terms[TERM];
 const pctOf = (e) => TAB === "OVERALL" ? e.overall.pct : e.subjects[TAB].pct;
 
+/* ---------- notification center (what's new) ---------- */
+// Feature list comes from data/changelog.json via /api/changelog. The latest
+// date the visitor has seen is remembered per browser to show an unread dot
+// and "NEW" tags.
+let NEWS = [];
+
+function parseDay(iso) {            // "2026-11-02" -> local midnight (no timezone drift)
+  const [y, m, d] = String(iso).split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+function daysSince(iso) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.round((today - parseDay(iso)) / 86400000));
+}
+function agoText(iso) {
+  const n = daysSince(iso);
+  if (n === 0) return { long: "Updated today", short: "today" };
+  if (n === 1) return { long: "Updated yesterday", short: "1d" };
+  return { long: `Updated ${n} days ago`, short: `${n}d` };
+}
+function prettyDay(iso) {
+  return parseDay(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
+
+async function loadNews() {
+  try {
+    const data = await (await fetch("/api/changelog")).json();
+    NEWS = data.entries || [];
+    if (!NEWS.length) return;
+    const ago = agoText(data.updated);
+    $("newsAgoLong").textContent = ago.long;
+    $("newsAgoShort").textContent = ago.short;
+    $("newsBtn").title = `What's new — last update ${prettyDay(data.updated)}`;
+    const seen = localStorage.getItem("news_seen") || "";
+    $("newsDot").classList.toggle("on", data.updated > seen);
+  } catch { /* the bell just stays quiet if this fails */ }
+}
+
+function openNews() {
+  const seen = localStorage.getItem("news_seen") || "";
+  let lastDay = "";
+  $("newsList").innerHTML = NEWS.map((e) => {
+    const head = e.date !== lastDay ? `<div class="news-day">${esc(prettyDay(e.date))}</div>` : "";
+    lastDay = e.date;
+    const isNew = seen && e.date > seen;
+    return `${head}<div class="news-item${isNew ? " new" : ""}">
+      <div class="t">${esc(e.title)}${isNew ? '<span class="newtag">NEW</span>' : ""}</div>
+      <div class="d">${esc(e.description)}</div></div>`;
+  }).join("") || '<div class="hint">Nothing here yet.</div>';
+  $("newsSub").textContent = NEWS.length
+    ? `${NEWS.length} updates · last on ${prettyDay(NEWS[0].date)}` : "";
+  if (NEWS.length) localStorage.setItem("news_seen", NEWS[0].date);
+  $("newsDot").classList.remove("on");
+  $("newsDialog").showModal();
+}
+
 /* ---------- feedback ---------- */
 let FB_VOTED = JSON.parse(localStorage.getItem("fb_voted") || "[]");
 
@@ -614,6 +697,8 @@ async function init() {
   $("deleteBtn").onclick = deleteRecord;
   $("gsFile").addEventListener("change", handleGradeSheet);
   $("feedbackBtn").onclick = openFeedback;
+  $("newsBtn").onclick = openNews;
+  loadNews();
   $("fbSend").onclick = sendFeedback;
   $("anonChk").addEventListener("change", () => {
     $("anonHint").style.display = $("anonChk").checked ? "" : "none";

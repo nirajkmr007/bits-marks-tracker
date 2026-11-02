@@ -1,0 +1,124 @@
+{
+  "entries": [
+    {
+      "date": "2026-11-02",
+      "title": "What's new",
+      "description": "This notification center — the bell shows when the site was last updated and lists every new feature."
+    },
+    {
+      "date": "2026-11-02",
+      "title": "Upload your Electronic Grade Sheet",
+      "description": "Auto-fill your subject grades and CGPA from the grade sheet PDF — the file is read once and never stored."
+    },
+    {
+      "date": "2026-11-02",
+      "title": "Semester CGPA",
+      "description": "Add your semester CGPA (out of 10) and see it on your student details card."
+    },
+    {
+      "date": "2026-11-02",
+      "title": "Subject grades",
+      "description": "Pick a grade (A to E) for each subject; it shows as a badge in both Simple and Detailed views."
+    },
+    {
+      "date": "2026-11-02",
+      "title": "Edit only your own record",
+      "description": "Other students' detail cards no longer show an Edit button."
+    },
+    {
+      "date": "2026-09-27",
+      "title": "Till end-sem is the default view",
+      "description": "Filters now start with Till end-sem, and the Students card shows how many of the total qualify (e.g. 19/76)."
+    },
+    {
+      "date": "2026-09-27",
+      "title": "Hiding your BITS ID is opt-in",
+      "description": "The \"Hide my BITS ID\" box now starts unticked — tick it if you want to appear under an alias."
+    },
+    {
+      "date": "2026-09-19",
+      "title": "End-sem marks + Till end-sem filter",
+      "description": "You can now enter end-sem marks, and a new filter shows students who have filled everything."
+    },
+    {
+      "date": "2026-09-19",
+      "title": "Explanations on hover",
+      "description": "Hover over stats cards, chips and rows to see exactly how each number is calculated."
+    },
+    {
+      "date": "2026-09-19",
+      "title": "Your own averages",
+      "description": "Student details now show Avg / subject and Avg marks alongside your overall %."
+    },
+    {
+      "date": "2026-09-19",
+      "title": "Replies on feedback",
+      "description": "Reply to feedback comments — official answers carry a ✓ Admin badge."
+    },
+    {
+      "date": "2026-08-29",
+      "title": "Simple view in student details",
+      "description": "See marks so far out of each subject's full total, with a compact Simple / Detailed toggle."
+    },
+    {
+      "date": "2026-08-02",
+      "title": "Under review list",
+      "description": "Entries that look wrong are held out of rankings and listed under ⚠️ Under review until corrected."
+    },
+    {
+      "date": "2026-08-02",
+      "title": "Stats follow the filters",
+      "description": "The top cards (students, topper, averages) recalculate for the filter you pick."
+    },
+    {
+      "date": "2026-08-02",
+      "title": "ML marking scheme updated",
+      "description": "ML Quiz 2 is now out of 10 and Assignment 2 out of 15."
+    },
+    {
+      "date": "2026-07-23",
+      "title": "Anonymous feedback",
+      "description": "Share ideas or report bugs anonymously with 💬 and upvote the ones you agree with."
+    },
+    {
+      "date": "2026-07-20",
+      "title": "Compare with students at your stage",
+      "description": "Till mid-sem and Only end-sem left filters recompute percentile within each group."
+    },
+    {
+      "date": "2026-07-19",
+      "title": "Delete and confirm before save",
+      "description": "Delete your own record with your PIN, and confirm before saving so a typo can't create a new entry."
+    },
+    {
+      "date": "2026-07-19",
+      "title": "Load my saved marks",
+      "description": "Load your saved marks on any device with your BITS ID and PIN, then edit."
+    },
+    {
+      "date": "2026-07-19",
+      "title": "ML has its own marking scheme",
+      "description": "ML Quiz 1 is out of 10 and Assignment 1 out of 5; percentages use each subject's real totals."
+    },
+    {
+      "date": "2026-07-18",
+      "title": "Hide your BITS ID",
+      "description": "Appear on the leaderboard under an alias like \"Silent Falcon 42\" — your ID is never stored."
+    },
+    {
+      "date": "2026-07-18",
+      "title": "PIN-protected entries",
+      "description": "A 4-digit PIN locks your entry so only you can edit or delete it."
+    },
+    {
+      "date": "2026-07-18",
+      "title": "New mobile-first design",
+      "description": "Podium for the top 3, search, and tap any student to see their full breakdown."
+    },
+    {
+      "date": "2026-07-18",
+      "title": "Launch",
+      "description": "Track your marks, percentage, rank and percentile — per subject and overall."
+    }
+  ]
+}

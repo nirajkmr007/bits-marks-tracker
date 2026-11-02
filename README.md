@@ -189,6 +189,21 @@ In the ＋ Add marks form, students can upload their **Electronic Grade Sheet**
 - Parsing lives in `src/bits_marks_tracker/gradesheet.py` (text extraction →
   parse → map to subjects), independent of the web layer.
 
+## What's new (notification center)
+
+The 🔔 button in the header opens a list of new features, newest first, and
+shows how long ago the site was last updated. Visitors see a red dot and
+**NEW** tags for anything added since they last opened it (remembered per
+browser).
+
+**When you ship a feature, add one entry to `data/changelog.json`** (on `main`):
+
+```json
+{ "date": "2026-11-02", "title": "Short title", "description": "One line on what it does for students." }
+```
+
+Keep the description to one line (≤140 characters) — a test enforces this.
+
 ## Roadmap
 
 - **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,
