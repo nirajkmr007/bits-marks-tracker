@@ -405,6 +405,10 @@
         <div class="hint" style="margin-top:0">Submitted before? Fill your BITS ID (and PIN, if your ID is hidden), then load to edit.</div>
       </div>
     </div>
+    <div class="f-grid" id="cgpaRow" style="margin-top:10px; display:none">
+      <div><label for="cgpa">Semester CGPA <span class="opt" id="cgpaMaxLbl"></span></label>
+        <input id="cgpa" type="number" inputmode="decimal" min="0" step="any" placeholder="—"></div>
+    </div>
     <div id="subjectFields"></div>
     <div class="hint">Leave blank anything not announced yet — come back anytime.
       Only filled components count toward your percentage.</div>
@@ -880,6 +884,7 @@ function openDetail(key) {
       <span class="chip" title="Average marks scored per subject, out of the average released so far">Avg marks <b>${avgMarks == null ? "—" : fmt(avgMarks) + "/" + fmt(avgReleased)}</b></span>
       <span class="chip" title="Marks scored so far out of the marks released so far (not the full semester total).">Total <b>${fmt(e.overall.total)}/${fmt(e.overall.max_entered)}</b></span>
       <span class="chip" title="Percentage of ranked students scoring strictly below this student.">Percentile <b>${e.percentile == null ? "—" : fmt(e.percentile)}</b></span>
+      ${cgpaOn() ? `<span class="chip hl" title="Semester CGPA as entered by the student (out of ${cgpaMax()}).">CGPA <b>${e.cgpa == null ? "-" : fmt(e.cgpa)}</b></span>` : ""}
     </div>
     ${subCards}
     ${updated ? `<div class="d-updated">Last updated ${esc(updated)}</div>` : ""}
@@ -919,6 +924,18 @@ function buildForm() {
         </select></div>` : ""}
       </div>
     </details>`).join("");
+  $("cgpaRow").style.display = cgpaOn() ? "" : "none";
+  $("cgpa").value = "";
+  $("cgpa").max = cgpaMax();
+  $("cgpaMaxLbl").textContent = `(optional, out of ${cgpaMax()})`;
+}
+
+// CGPA is per term and switchable in config, like grades.
+function cgpaOn() {
+  return !!termCfg().cgpa_enabled;
+}
+function cgpaMax() {
+  return Number(termCfg().cgpa_max || 10);
 }
 
 // Grades are per term and switchable in config, so future terms can change the scale.
@@ -993,6 +1010,7 @@ async function prefill(verbose = false) {
       const sel = $(`g_${code}`);
       if (sel) sel.value = g;
     }
+    if (res.student.cgpa != null) $("cgpa").value = res.student.cgpa;
     $("formMsg").className = "msg ok";
     $("formMsg").textContent = "Loaded saved marks — edit and save.";
   } catch { /* best-effort */ }
@@ -1065,8 +1083,10 @@ async function submit() {
       if (g) grades[sub.code] = g;
     }
   }
+  const cgpaRaw = cgpaOn() ? $("cgpa").value.trim() : "";
   const body = { term: TERM, bits_id: getFormBitsId(), name: $("studentName").value.trim(),
                  pin: $("pin").value.trim(), hide_id: $("anonChk").checked, marks, grades };
+  if (cgpaRaw !== "") body.cgpa = Number(cgpaRaw);
   const msg = $("formMsg");
   if (body.bits_id.length < 8) {
     msg.className = "msg err"; msg.textContent = "Enter your BITS ID."; return;
@@ -1080,7 +1100,7 @@ async function submit() {
   $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Checking…";
   const exists = await recordExists(body.bits_id, body.pin);
   const filled = Object.values(marks).reduce((a, m) => a + Object.keys(m).length, 0)
-    + Object.keys(grades).length;
+    + Object.keys(grades).length + (body.cgpa != null ? 1 : 0);
   const confirmed = await askConfirm({
     icon: exists ? "💾" : "🆕",
     title: exists ? "Update your marks?" : "Create a new record?",

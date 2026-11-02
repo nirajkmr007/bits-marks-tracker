@@ -385,6 +385,43 @@ def test_grades_disabled_by_config(client: TestClient, monkeypatch: pytest.Monke
     assert _submit(client).status_code == 200  # marks-only still fine
 
 
+def test_cgpa_saved_shown_and_exported(client: TestClient) -> None:
+    assert _submit(client, cgpa=8.756).status_code == 200
+    entry = client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]
+    assert entry["cgpa"] == 8.76  # rounded to 2 dp
+    student = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert student["student"]["cgpa"] == 8.76
+    csv_lines = client.get("/api/export.csv", params={"term": TERM}).text.splitlines()
+    assert "cgpa" in csv_lines[0].split(",") and "8.76" in csv_lines[1]
+
+
+def test_cgpa_optional_and_preserved(client: TestClient) -> None:
+    _submit(client)  # no CGPA
+    assert (
+        client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]["cgpa"] is None
+    )
+    _submit(client, cgpa=9)
+    _submit(client, marks={"MFML": {"midsem": 20}})  # later save without CGPA keeps it
+    assert client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]["cgpa"] == 9
+
+
+def test_cgpa_validation(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    assert _submit(client, cgpa=10.01).status_code == 422
+    assert _submit(client, cgpa=-1).status_code == 422
+    assert _submit(client, cgpa=0).status_code == 200
+    assert _submit(client, cgpa=10).status_code == 200
+
+    from bits_marks_tracker.storage import load_config as real_load_config
+
+    def no_cgpa() -> Any:
+        cfg = real_load_config()
+        cfg["terms"][TERM]["cgpa_enabled"] = False
+        return cfg
+
+    monkeypatch.setattr("bits_marks_tracker.app.load_config", no_cgpa)
+    assert _submit(client, cgpa=8).status_code == 422
+
+
 def test_endsem_is_open(client: TestClient) -> None:
     """End-sem is released, so it can be entered and counts towards the total."""
     assert _submit(client, marks={"MFML": {"endsem": 35}}).status_code == 200

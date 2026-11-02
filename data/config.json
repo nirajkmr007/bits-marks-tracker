@@ -7,6 +7,8 @@
       "locked_components": [],
       "grades_enabled": true,
       "grades": ["A", "A-", "B", "B-", "C", "C-", "D", "E"],
+      "cgpa_enabled": true,
+      "cgpa_max": 10,
       "subjects": [
         { "code": "MFML", "name": "Mathematical Foundations for Machine Learning" },
         { "code": "ISM", "name": "Introduction to Statistical Methods" },

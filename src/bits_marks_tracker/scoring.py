@@ -98,6 +98,7 @@ def compute_leaderboard(
                 "id_hash": student.get("id_hash") if anon else None,
                 "name": student.get("name") or fallback,
                 "updated_at": student.get("updated_at"),
+                "cgpa": student.get("cgpa"),
                 "subjects": per_subject,
                 "overall": {
                     "total": round(total, 2),

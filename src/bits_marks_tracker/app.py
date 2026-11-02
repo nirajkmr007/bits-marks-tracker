@@ -42,6 +42,8 @@ class Submission(BaseModel):
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
     # Final grade per subject (e.g. {"MFML": "A-"}); allowed values come from config.
     grades: dict[str, str] = Field(default_factory=dict)
+    # Self-reported CGPA for this semester; range comes from config (cgpa_max).
+    cgpa: float | None = None
 
 
 class Feedback(BaseModel):
@@ -197,7 +199,7 @@ def api_student(
         return {"found": False, "has_pin": False, "anon": False, "student": None}
     public = {
         key: student[key]
-        for key in ("bits_id", "name", "alias", "marks", "grades", "updated_at")
+        for key in ("bits_id", "name", "alias", "marks", "grades", "cgpa", "updated_at")
         if key in student
     }
     return {
@@ -272,6 +274,16 @@ def api_submit(submission: Submission) -> dict[str, Any]:
                     status_code=422,
                     detail=f"{code}: grade must be one of {', '.join(term_config['grades'])}.",
                 )
+
+    # CGPA: only when switched on for the term, and within 0..cgpa_max.
+    cgpa = submission.cgpa
+    if cgpa is not None:
+        if not term_config.get("cgpa_enabled"):
+            raise HTTPException(status_code=422, detail="CGPA isn't open for this term yet.")
+        cgpa_max = float(term_config.get("cgpa_max", 10))
+        if not 0 <= cgpa <= cgpa_max:
+            raise HTTPException(status_code=422, detail=f"CGPA must be between 0 and {cgpa_max:g}.")
+        cgpa = round(cgpa, 2)
     for code, comps in submission.marks.items():
         if code not in subject_cfg:
             raise HTTPException(status_code=422, detail=f"Unknown subject: {code}")
@@ -349,6 +361,8 @@ def api_submit(submission: Submission) -> dict[str, Any]:
                     subject_marks[key] = value
         if submission.grades:
             student.setdefault("grades", {}).update(submission.grades)
+        if cgpa is not None:
+            student["cgpa"] = cgpa
         student["updated_at"] = datetime.now(timezone.utc).isoformat(  # noqa: UP017
             timespec="seconds"
         )
@@ -395,7 +409,7 @@ def api_export_csv(term: str) -> PlainTextResponse:
             f"{subject['code']}_pct",
             f"{subject['code']}_grade",
         ]
-    header += ["overall_total", "overall_pct", "percentile", "updated_at"]
+    header += ["overall_total", "overall_pct", "percentile", "cgpa", "updated_at"]
     writer.writerow(header)
 
     def safe(value: Any) -> Any:
@@ -415,6 +429,7 @@ def api_export_csv(term: str) -> PlainTextResponse:
             entry["overall"]["total"],
             entry["overall"]["pct"],
             entry["percentile"],
+            entry.get("cgpa"),
             entry["updated_at"],
         ]
         writer.writerow(row)
