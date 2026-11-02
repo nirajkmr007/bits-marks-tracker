@@ -13,10 +13,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
+from . import gradesheet
 from .scoring import compute_leaderboard
 from .storage import WriteConflictError, get_storage, load_config
 
@@ -207,6 +208,55 @@ def api_student(
         "has_pin": bool(student.get("pin_hash")),
         "anon": anon,
         "student": public,
+    }
+
+
+@app.post("/api/gradesheet")
+async def api_gradesheet(request: Request, term: str, bits_id: str) -> dict[str, Any]:
+    """Read grades + CGPA from an uploaded Electronic Grade Sheet PDF.
+
+    The PDF is sent as the raw request body and handled in memory only: it is
+    never written to disk, logged or committed, and this endpoint saves
+    nothing. It just returns what it found so the form can be pre-filled; the
+    student still saves through /api/submit with their PIN.
+    """
+    term_config = _term_config(term)
+    normalized = _normalize_bits_id(bits_id)
+    if not (term_config.get("grades_enabled") or term_config.get("cgpa_enabled")):
+        raise HTTPException(status_code=422, detail="Grades aren't open for this term yet.")
+
+    body = await request.body()
+    try:
+        sheet = gradesheet.parse_gradesheet(gradesheet.extract_text(body))
+    except gradesheet.GradeSheetError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    finally:
+        del body  # drop the upload as soon as it has been read
+
+    if sheet.id_no is None:
+        raise HTTPException(status_code=422, detail="Couldn't find the ID NO on this grade sheet.")
+    if sheet.id_no != normalized:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"This grade sheet belongs to ID {sheet.id_no}, but the form has {normalized}. "
+                "Nothing was filled in — upload your own grade sheet or fix the BITS ID."
+            ),
+        )
+
+    mapped = gradesheet.map_to_subjects(sheet, term_config)
+    cgpa = sheet.cgpa
+    cgpa_max = float(term_config.get("cgpa_max", 10))
+    if cgpa is not None and not 0 <= cgpa <= cgpa_max:
+        cgpa = None
+    return {
+        "ok": True,
+        "id_no": sheet.id_no,
+        "semester": sheet.semester,
+        "grades": mapped["grades"] if term_config.get("grades_enabled") else {},
+        "not_on_scale": mapped["not_on_scale"],
+        "unmatched_courses": mapped["unmatched_courses"],
+        "cgpa": cgpa if term_config.get("cgpa_enabled") else None,
     }
 
 

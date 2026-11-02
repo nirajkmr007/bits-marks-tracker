@@ -171,6 +171,24 @@ the site with the reason, an "Edit & correct" button, and a "Contact admin"
 link. To clear a flag, remove its entry. No admin login exists — flagging and
 un-flagging are just git commits, fully auditable.
 
+## Electronic Grade Sheet auto-fill
+
+In the ＋ Add marks form, students can upload their **Electronic Grade Sheet**
+(PDF) to fill their subject grades and CGPA automatically. To get it: go to
+[elearn.bits-pilani.ac.in/examinations](https://elearn.bits-pilani.ac.in/examinations/)
+→ **Results** → choose the type and semester → download.
+
+- The PDF is read **in memory only** by `POST /api/gradesheet` — never written
+  to disk, logged or committed, and the endpoint saves nothing. It only
+  pre-fills the form; the student reviews and taps Save (with their PIN).
+- PDF only, max 2 MB. The sheet's **ID NO must match** the BITS ID in the form,
+  otherwise nothing is filled in.
+- Courses are matched to subjects by the `course_nos` listed on each subject in
+  `data/config.json` (e.g. ML → `AIMLC ZG565`). For a new semester, add the new
+  course numbers there. A subject not found on the sheet is left as `-`.
+- Parsing lives in `src/bits_marks_tracker/gradesheet.py` (text extraction →
+  parse → map to subjects), independent of the web layer.
+
 ## Roadmap
 
 - **Phase 2 — auth:** Microsoft Entra ID sign-in restricted to the BITS tenant,

@@ -10,11 +10,12 @@
       "cgpa_enabled": true,
       "cgpa_max": 10,
       "subjects": [
-        { "code": "MFML", "name": "Mathematical Foundations for Machine Learning" },
-        { "code": "ISM", "name": "Introduction to Statistical Methods" },
+        { "code": "MFML", "name": "Mathematical Foundations for Machine Learning", "course_nos": ["AIMLC ZC416"] },
+        { "code": "ISM", "name": "Introduction to Statistical Methods", "course_nos": ["AIMLC ZC418"] },
         {
           "code": "ML",
           "name": "Machine Learning",
+          "course_nos": ["AIMLC ZG565"],
           "components": [
             { "key": "quiz1", "label": "Quiz 1", "max": 10 },
             { "key": "assignment1", "label": "Assignment 1", "max": 5 },
@@ -24,7 +25,7 @@
             { "key": "endsem", "label": "End-Semester Exam", "max": 40 }
           ]
         },
-        { "code": "DNN", "name": "Deep Neural Networks" }
+        { "code": "DNN", "name": "Deep Neural Networks", "course_nos": ["AIMLC ZG511"] }
       ],
       "components": [
         { "key": "quiz1", "label": "Quiz 1", "max": 5 },

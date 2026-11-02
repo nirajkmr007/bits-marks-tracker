@@ -205,6 +205,22 @@
   .subcard .t .p { font-size: .82rem; font-weight: 800; }
   .grade { display: inline-block; min-width: 22px; text-align: center; font-size: .64rem; font-weight: 800;
     color: #fff; background: var(--grad); border-radius: 7px; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; }
+  .gs { background: var(--card); border: 1px dashed rgba(129,140,248,.45); border-radius: 14px;
+    padding: 12px 14px; margin-top: 12px; }
+  .gs-head { font-size: .8rem; font-weight: 700; margin-bottom: 8px; }
+  .gs-pick { display: inline-flex; align-items: center; cursor: pointer; margin: 0; text-transform: none; letter-spacing: 0; }
+  .gs-pick input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .gs-pick span { font-size: .8rem; font-weight: 700; color: #fff; background: var(--grad);
+    border-radius: 10px; padding: 8px 14px; }
+  .gs-how { margin-top: 8px; font-size: .72rem; color: var(--muted); }
+  .gs-how summary { cursor: pointer; color: var(--indigo); font-weight: 600; }
+  .gs-how ol { margin: 6px 0 0; padding-left: 18px; line-height: 1.7; }
+  .gs-how a { color: var(--indigo); }
+  .gs-res { margin-top: 10px; border-radius: 11px; padding: 10px 12px; font-size: .76rem; line-height: 1.55; }
+  .gs-res.ok { background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.35); }
+  .gs-res.err { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.4); color: var(--err); }
+  .gs-res table { border-collapse: collapse; margin: 6px 0; }
+  .gs-res td { padding: 2px 14px 2px 0; }
   .grade.none { background: var(--card-hi); color: var(--muted); border: 1px solid var(--line); }
   .gsel { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); background: var(--card);
     border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px; }
@@ -409,6 +425,25 @@
       <div><label for="cgpa">Semester CGPA <span class="opt" id="cgpaMaxLbl"></span></label>
         <input id="cgpa" type="number" inputmode="decimal" min="0" step="any" placeholder="—"></div>
     </div>
+    <div class="gs" id="gsRow" style="display:none">
+      <div class="gs-head">📄 Auto-fill grades &amp; CGPA from your Electronic Grade Sheet</div>
+      <label class="gs-pick" for="gsFile">
+        <input id="gsFile" type="file" accept=".pdf,application/pdf">
+        <span>Choose PDF…</span>
+      </label>
+      <div class="hint" style="margin-top:6px">Enter your BITS ID first — it must match the ID NO on the sheet.
+        The PDF is only read to fill the form and is <b>never stored</b>. Review the result, then tap Save.</div>
+      <details class="gs-how">
+        <summary>How do I get my Electronic Grade Sheet?</summary>
+        <ol>
+          <li>Go to <a href="https://elearn.bits-pilani.ac.in/examinations/" target="_blank" rel="noopener">elearn.bits-pilani.ac.in/examinations</a></li>
+          <li>Open the <b>Results</b> section</li>
+          <li>Choose the result <b>type</b> and the <b>semester</b></li>
+          <li>Download the Electronic Grade Sheet (PDF) and upload it here</li>
+        </ol>
+      </details>
+      <div id="gsResult"></div>
+    </div>
     <div id="subjectFields"></div>
     <div class="hint">Leave blank anything not announced yet — come back anytime.
       Only filled components count toward your percentage.</div>
@@ -577,6 +612,7 @@ async function init() {
   $("pin").addEventListener("change", () => prefill());
   $("loadBtn").onclick = () => prefill(true);
   $("deleteBtn").onclick = deleteRecord;
+  $("gsFile").addEventListener("change", handleGradeSheet);
   $("feedbackBtn").onclick = openFeedback;
   $("fbSend").onclick = sendFeedback;
   $("anonChk").addEventListener("change", () => {
@@ -925,9 +961,66 @@ function buildForm() {
       </div>
     </details>`).join("");
   $("cgpaRow").style.display = cgpaOn() ? "" : "none";
+  $("gsRow").style.display = gradesOn() || cgpaOn() ? "" : "none";
+  $("gsResult").innerHTML = "";
+  $("gsFile").value = "";
   $("cgpa").value = "";
   $("cgpa").max = cgpaMax();
   $("cgpaMaxLbl").textContent = `(optional, out of ${cgpaMax()})`;
+}
+
+/* ---------- Electronic Grade Sheet upload ---------- */
+// Sends the PDF to /api/gradesheet (parsed in memory, never stored), then
+// fills the grade pickers and CGPA field. Nothing is saved until the student
+// taps Save with their PIN.
+function gsShow(kind, html) {
+  $("gsResult").innerHTML = `<div class="gs-res ${kind}">${html}</div>`;
+}
+
+async function handleGradeSheet() {
+  const input = $("gsFile");
+  const file = input.files && input.files[0];
+  if (!file) return;
+  try {
+    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!isPdf) { gsShow("err", "Only PDF files are accepted. Please upload your Electronic Grade Sheet PDF."); return; }
+    if (file.size > 2 * 1024 * 1024) { gsShow("err", "That file is too large to be a grade sheet (max 2 MB)."); return; }
+    const id = getFormBitsId();
+    if (id.length < 8) { gsShow("err", "Enter your BITS ID above first — it's checked against the ID NO on the sheet."); return; }
+
+    gsShow("ok", "Reading grade sheet…");
+    const res = await fetch(`/api/gradesheet?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`,
+      { method: "POST", headers: { "Content-Type": "application/pdf" }, body: file });
+    const data = await res.json();
+    if (!res.ok) { gsShow("err", `⚠️ ${esc(data.detail?.[0]?.msg || data.detail || "Couldn't read that file.")}`); return; }
+
+    // Fill the form. A subject with no grade on the sheet is left as "—".
+    const cfg = termCfg();
+    for (const sub of cfg.subjects) {
+      const sel = $(`g_${sub.code}`);
+      if (sel && data.grades && sub.code in data.grades) sel.value = data.grades[sub.code] || "";
+    }
+    if (cgpaOn() && data.cgpa != null) $("cgpa").value = data.cgpa;
+
+    const rows = gradesOn() ? cfg.subjects.map((sub) => {
+      const g = data.grades?.[sub.code];
+      return `<tr><td><b>${esc(sub.code)}</b></td><td>${g ? esc(g) : "-"}</td></tr>`;
+    }).join("") : "";
+    const notes = [];
+    for (const [code, g] of Object.entries(data.not_on_scale || {}))
+      notes.push(`${esc(code)}: grade “${esc(g)}” isn't on the A–E scale, left as -`);
+    if ((data.unmatched_courses || []).length)
+      notes.push(`Not matched to any subject: ${data.unmatched_courses.map((c) => esc(c.title)).join(", ")}`);
+    gsShow("ok", `✅ Read <b>${esc(data.semester || "grade sheet")}</b> for ${esc(data.id_no)}:
+      ${rows ? `<table>${rows}</table>` : ""}
+      ${cgpaOn() ? `CGPA: <b>${data.cgpa != null ? esc(data.cgpa) : "-"}</b><br>` : ""}
+      ${notes.length ? `<span style="color:var(--muted)">${notes.join("<br>")}</span><br>` : ""}
+      Filled into the form below — review, then tap <b>Save</b>.`);
+  } catch {
+    gsShow("err", "Something went wrong while reading the file. Please try again.");
+  } finally {
+    input.value = "";  // allow re-selecting the same file
+  }
 }
 
 // CGPA is per term and switchable in config, like grades.
