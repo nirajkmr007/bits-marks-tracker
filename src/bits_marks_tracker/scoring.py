@@ -84,6 +84,7 @@ def compute_leaderboard(
             per_subject[code] = {
                 **score,
                 "components": student.get("marks", {}).get(code, {}),
+                "grade": student.get("grades", {}).get(code),
             }
             total += score["total"]
             max_entered += score["max_entered"]

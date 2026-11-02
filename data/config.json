@@ -5,6 +5,8 @@
       "label": "Semester 1 · 2026",
       "id_prefix": "2025AC",
       "locked_components": [],
+      "grades_enabled": true,
+      "grades": ["A", "A-", "B", "B-", "C", "C-", "D", "E"],
       "subjects": [
         { "code": "MFML", "name": "Mathematical Foundations for Machine Learning" },
         { "code": "ISM", "name": "Introduction to Statistical Methods" },

@@ -339,6 +339,52 @@ def test_feedback_top_10_by_votes(client: TestClient) -> None:
     assert data["items"][0]["id"] == ids[-1]
 
 
+def test_grades_saved_and_shown(client: TestClient) -> None:
+    assert _submit(client, grades={"MFML": "A-", "ML": "B"}).status_code == 200
+    entry = client.get("/api/leaderboard", params={"term": TERM}).json()["students"][0]
+    assert entry["subjects"]["MFML"]["grade"] == "A-"
+    assert entry["subjects"]["ML"]["grade"] == "B"
+    assert entry["subjects"]["ISM"]["grade"] is None
+    # grades come back for form pre-fill
+    student = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert student["student"]["grades"] == {"MFML": "A-", "ML": "B"}
+    # CSV carries a grade column per subject
+    csv_text = client.get("/api/export.csv", params={"term": TERM}).text
+    assert "MFML_grade" in csv_text.splitlines()[0] and "A-" in csv_text
+
+
+def test_grades_merge_and_dont_disturb_marks(client: TestClient) -> None:
+    _submit(client, grades={"MFML": "A"})
+    _submit(client, marks={}, grades={"ISM": "C-"})  # grade-only update
+    student = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert student["student"]["grades"] == {"MFML": "A", "ISM": "C-"}
+    assert student["student"]["marks"]["MFML"] == {"quiz1": 4.5, "assignment1": 9}
+    _submit(client, grades={"MFML": "B-"})  # change one grade
+    student = client.get("/api/student", params={"term": TERM, "bits_id": "2025AA05123"}).json()
+    assert student["student"]["grades"]["MFML"] == "B-"
+
+
+def test_grades_validation(client: TestClient) -> None:
+    assert _submit(client, grades={"MFML": "A+"}).status_code == 422  # not in the scale
+    assert _submit(client, grades={"MFML": "F"}).status_code == 422
+    assert _submit(client, grades={"NOPE": "A"}).status_code == 422  # unknown subject
+    for g in ["A", "A-", "B", "B-", "C", "C-", "D", "E"]:
+        assert _submit(client, grades={"DNN": g}).status_code == 200
+
+
+def test_grades_disabled_by_config(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    from bits_marks_tracker.storage import load_config as real_load_config
+
+    def no_grades() -> Any:
+        cfg = real_load_config()
+        cfg["terms"][TERM]["grades_enabled"] = False
+        return cfg
+
+    monkeypatch.setattr("bits_marks_tracker.app.load_config", no_grades)
+    assert _submit(client, grades={"MFML": "A"}).status_code == 422
+    assert _submit(client).status_code == 200  # marks-only still fine
+
+
 def test_endsem_is_open(client: TestClient) -> None:
     """End-sem is released, so it can be entered and counts towards the total."""
     assert _submit(client, marks={"MFML": {"endsem": 35}}).status_code == 200

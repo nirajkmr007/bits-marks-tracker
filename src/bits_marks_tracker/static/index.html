@@ -203,6 +203,10 @@
   .subcard .t .c { font-size: .82rem; font-weight: 700; }
   .subcard .t .n { flex: 1; font-size: .66rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .subcard .t .p { font-size: .82rem; font-weight: 800; }
+  .grade { display: inline-block; min-width: 22px; text-align: center; font-size: .64rem; font-weight: 800;
+    color: #fff; background: var(--grad); border-radius: 7px; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; }
+  .gsel { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); background: var(--card);
+    border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px; }
   .vtoggle { display: flex; gap: 4px; margin: 14px 0 4px; padding: 3px; background: var(--card);
     border: 1px solid var(--line); border-radius: 11px; }
   .vtoggle button { flex: 1; font: inherit; font-size: .72rem; font-weight: 600; color: var(--muted);
@@ -808,7 +812,7 @@ function detailSubjects(e) {
       const sc = e.subjects[sub.code];
       const possible = subjectMax(sub);
       return `<div class="srow" title="${esc(sub.name)} — ${fmt(sc.total)} marks so far out of ${fmt(possible)} for the whole subject. The % is ${fmt(sc.total)}/${fmt(sc.max_entered)} (only what's been released).">
-        <span class="c">${esc(sub.code)}</span>
+        <span class="c">${esc(sub.code)} ${gradeBadge(sc.grade)}</span>
         <span class="mk">${fmt(sc.total)}<span class="of"> / ${fmt(possible)}</span></span>
         <span class="p">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span>
       </div>`;
@@ -833,7 +837,7 @@ function detailSubjects(e) {
         <div class="v">${v == null ? "—" : fmt(v)} <span>/ ${c.max}</span></div></div>`;
     }).join("");
     return `<div class="subcard">
-      <div class="t"><span class="c">${esc(sub.code)}</span><span class="n">${esc(sub.name)}</span>
+      <div class="t"><span class="c">${esc(sub.code)} ${gradeBadge(sc.grade)}</span><span class="n">${esc(sub.name)}</span>
         <span class="p" title="Marks scored ÷ marks released so far in ${esc(sub.code)}.">${sc.pct == null ? "—" : fmt(sc.pct) + "%"}</span></div>
       <div class="sub-tot" title="Left: progress towards the full ${fmt(possible)}-mark subject. Right: what the % above is calculated from.">${fmt(sc.total)} / ${fmt(possible)} marks so far
         <span class="dim">(scored out of ${fmt(sc.max_entered)} released)</span></div>
@@ -907,8 +911,23 @@ function buildForm() {
         <input id="m_${sub.code}_${c.key}" type="number" inputmode="decimal" min="0" max="${c.max}" step="any"
           placeholder="${isLocked ? "not out yet" : "—"}"${isLocked ? " disabled title='Not released yet'" : ""}></div>`;
       }).join("")}
+      ${gradesOn() ? `<div><label for="g_${sub.code}">Grade</label>
+        <select id="g_${sub.code}" class="gsel" title="Final grade for ${esc(sub.code)}">
+          <option value="">—</option>
+          ${cfg.grades.map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join("")}
+        </select></div>` : ""}
       </div>
     </details>`).join("");
+}
+
+// Grades are per term and switchable in config, so future terms can change the scale.
+function gradesOn() {
+  const cfg = termCfg();
+  return !!(cfg.grades_enabled && cfg.grades && cfg.grades.length);
+}
+
+function gradeBadge(g) {
+  return g ? `<span class="grade" title="Final grade">${esc(g)}</span>` : "";
 }
 
 function getFormBitsId() {
@@ -964,6 +983,10 @@ async function prefill(verbose = false) {
       }
       const st = $(`st_${code}`);
       if (st && any) st.textContent = "saved ✓";
+    }
+    for (const [code, g] of Object.entries(res.student.grades || {})) {
+      const sel = $(`g_${code}`);
+      if (sel) sel.value = g;
     }
     $("formMsg").className = "msg ok";
     $("formMsg").textContent = "Loaded saved marks — edit and save.";
@@ -1030,8 +1053,15 @@ async function submit() {
     }
     if (Object.keys(entry).length) marks[sub.code] = entry;
   }
+  const grades = {};
+  if (gradesOn()) {
+    for (const sub of cfg.subjects) {
+      const g = $(`g_${sub.code}`)?.value;
+      if (g) grades[sub.code] = g;
+    }
+  }
   const body = { term: TERM, bits_id: getFormBitsId(), name: $("studentName").value.trim(),
-                 pin: $("pin").value.trim(), hide_id: $("anonChk").checked, marks };
+                 pin: $("pin").value.trim(), hide_id: $("anonChk").checked, marks, grades };
   const msg = $("formMsg");
   if (body.bits_id.length < 8) {
     msg.className = "msg err"; msg.textContent = "Enter your BITS ID."; return;
@@ -1044,7 +1074,8 @@ async function submit() {
   // since a mistyped BITS ID is how junk rows get created.
   $("submitBtn").disabled = true; msg.className = "msg"; msg.textContent = "Checking…";
   const exists = await recordExists(body.bits_id, body.pin);
-  const filled = Object.values(marks).reduce((a, m) => a + Object.keys(m).length, 0);
+  const filled = Object.values(marks).reduce((a, m) => a + Object.keys(m).length, 0)
+    + Object.keys(grades).length;
   const confirmed = await askConfirm({
     icon: exists ? "💾" : "🆕",
     title: exists ? "Update your marks?" : "Create a new record?",

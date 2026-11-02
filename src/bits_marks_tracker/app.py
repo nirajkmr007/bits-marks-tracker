@@ -40,6 +40,8 @@ class Submission(BaseModel):
     pin: str = Field(pattern=r"^\d{4}$")
     hide_id: bool = False
     marks: dict[str, dict[str, float | None]] = Field(default_factory=dict)
+    # Final grade per subject (e.g. {"MFML": "A-"}); allowed values come from config.
+    grades: dict[str, str] = Field(default_factory=dict)
 
 
 class Feedback(BaseModel):
@@ -195,7 +197,7 @@ def api_student(
         return {"found": False, "has_pin": False, "anon": False, "student": None}
     public = {
         key: student[key]
-        for key in ("bits_id", "name", "alias", "marks", "updated_at")
+        for key in ("bits_id", "name", "alias", "marks", "grades", "updated_at")
         if key in student
     }
     return {
@@ -256,6 +258,20 @@ def api_submit(submission: Submission) -> dict[str, Any]:
 
     locked = set(term_config.get("locked_components", []))
     subject_cfg = {s["code"]: s for s in term_config["subjects"]}
+
+    # Grades: only when the term has them switched on, and only allowed values.
+    if submission.grades:
+        if not term_config.get("grades_enabled"):
+            raise HTTPException(status_code=422, detail="Grades aren't open for this term yet.")
+        allowed = set(term_config.get("grades", []))
+        for code, grade in submission.grades.items():
+            if code not in subject_cfg:
+                raise HTTPException(status_code=422, detail=f"Unknown subject: {code}")
+            if grade not in allowed:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"{code}: grade must be one of {', '.join(term_config['grades'])}.",
+                )
     for code, comps in submission.marks.items():
         if code not in subject_cfg:
             raise HTTPException(status_code=422, detail=f"Unknown subject: {code}")
@@ -331,6 +347,8 @@ def api_submit(submission: Submission) -> dict[str, Any]:
                     subject_marks.pop(key, None)
                 else:
                     subject_marks[key] = value
+        if submission.grades:
+            student.setdefault("grades", {}).update(submission.grades)
         student["updated_at"] = datetime.now(timezone.utc).isoformat(  # noqa: UP017
             timespec="seconds"
         )
@@ -372,7 +390,11 @@ def api_export_csv(term: str) -> PlainTextResponse:
     header = ["rank", "bits_id", "name"]
     for subject in term_config["subjects"]:
         header += [f"{subject['code']}_{key}" for key in subject_keys[subject["code"]]]
-        header += [f"{subject['code']}_total", f"{subject['code']}_pct"]
+        header += [
+            f"{subject['code']}_total",
+            f"{subject['code']}_pct",
+            f"{subject['code']}_grade",
+        ]
     header += ["overall_total", "overall_pct", "percentile", "updated_at"]
     writer.writerow(header)
 
@@ -388,7 +410,7 @@ def api_export_csv(term: str) -> PlainTextResponse:
         for subject in term_config["subjects"]:
             subject_entry = entry["subjects"][subject["code"]]
             row += [subject_entry["components"].get(key) for key in subject_keys[subject["code"]]]
-            row += [subject_entry["total"], subject_entry["pct"]]
+            row += [subject_entry["total"], subject_entry["pct"], subject_entry.get("grade")]
         row += [
             entry["overall"]["total"],
             entry["overall"]["pct"],
