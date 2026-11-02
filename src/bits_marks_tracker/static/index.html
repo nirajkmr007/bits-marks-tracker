@@ -55,6 +55,24 @@
     box-shadow: 0 4px 18px rgba(139,92,246,.35);
   }
   @media (max-width: 560px) { .addbtn.headbtn { display: none; } }
+  /* Phone header: everything must fit in one row at 375px. */
+  .mob-only { display: none; }
+  @media (max-width: 560px) {
+    .desk-only { display: none !important; }
+    .mob-only { display: inline-flex; }
+    header { gap: 6px; }
+    .logo { font-size: .95rem; }
+    .logo small { display: none; }
+    #termSelect { max-width: 112px; font-size: .74rem; padding: 7px 6px; text-overflow: ellipsis; }
+    .iconbtn { padding: 7px 9px; }
+  }
+  .loadcol { padding-top: 22px; }   /* lines up with the PIN box on desktop */
+  @media (max-width: 460px) { .loadcol { padding-top: 0; } }
+  .menu-list { display: flex; flex-direction: column; gap: 8px; }
+  .menu-item { display: flex; align-items: center; gap: 10px; font: inherit; font-size: .9rem; font-weight: 600;
+    color: var(--ink); text-decoration: none; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 13px 14px; cursor: pointer; text-align: left; }
+  .menu-item .sub { display: block; font-size: .7rem; font-weight: 400; color: var(--muted); margin-top: 2px; }
 
   /* ---------- stats ---------- */
   .stats { display: flex; gap: 10px; overflow-x: auto; padding: 14px 2px 4px; scrollbar-width: none; }
@@ -87,7 +105,11 @@
     font-size: .68rem; color: var(--muted); line-height: 1.5;
     margin: -4px 2px 10px; min-height: 3em;
   }
-  @media (max-width: 560px) { .tabnote { min-height: 4.5em; } }
+  /* Phones: one fixed line (no layout jump); tap to read the full explanation. */
+  @media (max-width: 560px) {
+    .tabnote { min-height: 1.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+    .tabnote.open { white-space: normal; }
+  }
   .search {
     width: 100%; font: inherit; font-size: .85rem; color: var(--ink);
     background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; margin-bottom: 12px;
@@ -165,6 +187,15 @@
     width: 54px; height: 54px; border-radius: 50%; border: 0; cursor: pointer;
     background: var(--grad); color: #fff; font-size: 1.6rem; line-height: 1; font-weight: 400;
     box-shadow: 0 8px 26px rgba(139,92,246,.5);
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  /* Slides away while scrolling down so it doesn't cover row percentages; back on scroll up. */
+  .fab.away { transform: translateY(90px); opacity: 0; pointer-events: none; }
+  .lbl-short { display: none; }
+  @media (max-width: 560px) {
+    .lbl-long { display: none; }
+    .lbl-short { display: inline; }
+    #filterTabs button { padding: 8px 10px; }
   }
   @media (min-width: 561px) { .fab { display: none; } .mypin { width: min(728px, calc(100% - 32px)); } }
 
@@ -174,6 +205,10 @@
     width: min(560px, 100%); max-height: 88dvh; padding: 0;
     border-radius: 22px; margin: auto;
   }
+  /* Header and footer stay put; only the body scrolls — keeps Save always visible. */
+  dialog[open] { display: flex; flex-direction: column; overflow: hidden; }
+  dialog > .grab, dialog > .sheet-head, dialog > .sheet-foot { flex: 0 0 auto; }
+  dialog > .sheet-body { flex: 1 1 auto; min-height: 0; }
   dialog::backdrop { background: rgba(4,6,14,.66); backdrop-filter: blur(3px); }
   @media (max-width: 560px) {
     dialog { margin: auto 0 0; width: 100%; max-height: 92dvh; border-radius: 22px 22px 0 0; border-bottom: 0; }
@@ -287,6 +322,11 @@
     background: rgba(251,191,36,.06); border: 1px solid rgba(251,191,36,.25); border-radius: 12px;
   }
   .notice strong { color: var(--gold); }
+  .notice summary { cursor: pointer; list-style: none; }
+  .notice summary::-webkit-details-marker { display: none; }
+  .notice summary .more { color: var(--indigo); }
+  .notice[open] summary .more { display: none; }
+  .notice-body { margin-top: 4px; }
   .notice b { color: var(--ink); }
   .notice a { color: var(--indigo); }
   .review-head { margin: 22px 2px 0; font-size: .82rem; font-weight: 800; color: var(--gold); }
@@ -345,19 +385,24 @@
     <div class="spacer"></div>
     <select id="termSelect" aria-label="Semester"></select>
     <button class="iconbtn nbtn" id="newsBtn" title="What's new">🔔<span class="nb-txt"><span class="ago-long" id="newsAgoLong"></span><span class="ago-short" id="newsAgoShort"></span></span><i class="ndot" id="newsDot"></i></button>
-    <button class="iconbtn" id="feedbackBtn" title="Anonymous feedback">💬</button>
-    <a class="iconbtn" id="exportBtn" title="Download CSV" href="#">⬇</a>
+    <button class="iconbtn desk-only" id="feedbackBtn" title="Feedback (anonymous)" aria-label="Feedback">💬</button>
+    <a class="iconbtn desk-only" id="exportBtn" title="Download all marks as CSV" aria-label="Download CSV" href="#">⬇</a>
+    <button class="iconbtn mob-only" id="moreBtn" title="More" aria-label="More options">⋯</button>
     <button class="addbtn headbtn" id="openFormBtn">＋ Add marks</button>
   </header>
 
-  <div class="notice">
-    <strong>Disclaimer:</strong> Unofficial, student-run site — not affiliated with BITS Pilani.
-    Marks are self-reported and unverified, stored in a public
-    <a id="repoLink" href="#" target="_blank" rel="noopener">open-source repository</a>.
-    Want privacy? You can <b>hide your BITS ID</b> and leave the name blank to appear
-    as an anonymous alias. Please add real marks — wrong or premature entries may be
-    flagged and moved to the <b>Under review</b> list until you correct them.
-  </div>
+  <!-- Shown in full on a first visit, then collapsed to one line (remembered per browser). -->
+  <details class="notice" id="notice">
+    <summary><strong>Disclaimer:</strong> unofficial &amp; self-reported <span class="more">· details</span></summary>
+    <div class="notice-body">
+      Unofficial, student-run site — not affiliated with BITS Pilani.
+      Marks are self-reported and unverified, stored in a public
+      <a id="repoLink" href="#" target="_blank" rel="noopener">open-source repository</a>.
+      Want privacy? You can <b>hide your BITS ID</b> and leave the name blank to appear
+      as an anonymous alias. Please add real marks — wrong or premature entries may be
+      flagged and moved to the <b>Under review</b> list until you correct them.
+    </div>
+  </details>
 
   <section class="stats" id="statsCards"></section>
   <nav class="tabs" id="tabs"></nav>
@@ -377,6 +422,19 @@
 
 <div class="mypin" id="mypin"></div>
 <button class="fab" id="fabBtn" aria-label="Add my marks">＋</button>
+
+<!-- phone "more" menu: items that don't fit in the phone header -->
+<dialog id="moreDialog">
+  <div class="grab"></div>
+  <div class="sheet-head"><h2>More</h2>
+    <button class="xbtn" onclick="moreDialog.close()">✕</button></div>
+  <div class="sheet-body">
+    <div class="menu-list">
+      <button class="menu-item" id="moreFeedback">💬<span>Feedback<span class="sub">Suggest a feature or report a bug — anonymous</span></span></button>
+      <a class="menu-item" id="moreExport" href="#">⬇<span>Download CSV<span class="sub">All marks for this semester</span></span></a>
+    </div>
+  </div>
+</dialog>
 
 <!-- notification center: new features -->
 <dialog id="newsDialog">
@@ -439,11 +497,11 @@
     </div>
     <div class="f-grid" style="margin-top:10px">
       <div><label for="pin"><span id="pinLabel">Create a 4-digit PIN</span> <span class="req">*</span></label>
-        <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+        <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="4 digits" autocomplete="off">
         <div class="hint" style="margin-top:5px">You'll need this PIN to edit your marks later.<br>
           <a id="forgotPin" href="#" style="color:var(--indigo)">Forgot PIN? Contact the admin for a reset</a></div>
       </div>
-      <div style="display:flex; flex-direction:column; justify-content:flex-start; gap:5px; padding-top:22px">
+      <div class="loadcol" style="display:flex; flex-direction:column; justify-content:flex-start; gap:5px">
         <button class="iconbtn" id="loadBtn" style="padding:10px 12px; font-size:.82rem; font-weight:600">↺ Load my saved marks</button>
         <div class="hint" style="margin-top:0">Submitted before? Fill your BITS ID (and PIN, if your ID is hidden), then load to edit.</div>
       </div>
@@ -516,7 +574,14 @@ const keyOf = (e) => e.bits_id || e.id_hash || "";
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (v) => v == null ? "—" : (Number.isInteger(v) ? String(v) : String(+v.toFixed(2)));
-const initials = (name) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+// Up to two initials from the name/alias ("Cosmic Lynx 23" -> "CL"). Uses whole characters so
+// names starting with an emoji don't produce broken half-characters.
+const initials = (name) => {
+  const clean = String(name || "").trim() || "?";
+  const words = clean.split(/[\s._-]+/).filter((w) => /\p{L}/u.test(w));
+  const picked = (words.length ? words : [clean]).slice(0, 2);
+  return picked.map((w) => (Array.from(w).find((ch) => /\p{L}|\p{N}/u.test(ch)) || Array.from(w)[0] || "?").toUpperCase()).join("");
+};
 const hue = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
 const avatarStyle = (id) => `background:linear-gradient(135deg,hsl(${hue(id)} 70% 55%),hsl(${(hue(id)+50)%360} 75% 45%))`;
 
@@ -684,8 +749,11 @@ async function init() {
   CONFIG = await (await fetch("/api/config")).json();
   TERM = CONFIG.current_term;
   const sel = $("termSelect");
+  // Phones get a shorter label so the header fits on one row ("Semester 1 · 2026" -> "Sem 1 · 2026").
+  const isPhone = window.matchMedia("(max-width: 560px)").matches;
+  const termLabel = (t) => isPhone ? (t.short_label || t.label.replace(/Semester/i, "Sem")) : t.label;
   sel.innerHTML = Object.entries(CONFIG.terms)
-    .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(t.label)}</option>`).join("");
+    .map(([id, t]) => `<option value="${id}" ${id === TERM ? "selected" : ""}>${esc(termLabel(t))}</option>`).join("");
   sel.onchange = () => { TERM = sel.value; TAB = "OVERALL"; FILTER = DEFAULT_FILTER; refresh(); };
   $("openFormBtn").onclick = () => openForm();
   $("fabBtn").onclick = () => openForm();
@@ -698,6 +766,19 @@ async function init() {
   $("gsFile").addEventListener("change", handleGradeSheet);
   $("feedbackBtn").onclick = openFeedback;
   $("newsBtn").onclick = openNews;
+  $("moreBtn").onclick = () => $("moreDialog").showModal();
+  $("tabNote").onclick = () => $("tabNote").classList.toggle("open");
+  if (!localStorage.getItem("notice_seen")) {   // full disclaimer on the first visit only
+    $("notice").open = true;
+    localStorage.setItem("notice_seen", "1");
+  }
+  // Hide the floating "+" while scrolling down (it covers row %), show it again on scroll up.
+  let lastY = window.scrollY;
+  window.addEventListener("scroll", () => {
+    const y = window.scrollY;
+    if (Math.abs(y - lastY) > 6) { $("fabBtn").classList.toggle("away", y > lastY && y > 200); lastY = y; }
+  }, { passive: true });
+  $("moreFeedback").onclick = () => { $("moreDialog").close(); openFeedback(); };
   loadNews();
   $("fbSend").onclick = sendFeedback;
   $("anonChk").addEventListener("change", () => {
@@ -708,7 +789,7 @@ async function init() {
 }
 
 async function refresh() {
-  $("exportBtn").href = `/api/export.csv?term=${encodeURIComponent(TERM)}`;
+  $("exportBtn").href = $("moreExport").href = `/api/export.csv?term=${encodeURIComponent(TERM)}`;
   BOARD = await (await fetch(`/api/leaderboard?term=${encodeURIComponent(TERM)}`)).json();
   render();
 }
@@ -733,13 +814,14 @@ function cohortComplete(e, filter) {
 
 function renderFilterTabs() {
   const tabs = [
-    { id: "till_endsem", label: "Till end-sem", title: "Students who filled everything including the end-sem — the final picture, percentile recomputed within this group" },
-    { id: "pre_endsem", label: "Only end-sem left", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
-    { id: "till_midsem", label: "Till mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
-    { id: "", label: "All", title: "Everyone with at least one mark entered" },
+    { id: "till_endsem", label: "Till end-sem", short: "End-sem", title: "Students who filled everything including the end-sem — the final picture, percentile recomputed within this group" },
+    { id: "pre_endsem", label: "Only end-sem left", short: "Pre end-sem", title: "Students who filled every quiz, assignment and midsem — percentile recomputed within this group" },
+    { id: "till_midsem", label: "Till mid-sem", short: "Mid-sem", title: "Students who filled Quiz 1, Assignment 1 and Midsem in all subjects — percentile recomputed within this group" },
+    { id: "", label: "All", short: "All", title: "Everyone with at least one mark entered" },
   ];
+  // Short labels on phones so all four filters fit without hidden scrolling.
   $("filterTabs").innerHTML = tabs.map((t) =>
-    `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}">${esc(t.label)}</button>`).join("");
+    `<button class="${FILTER === t.id ? "active" : ""}" data-f="${t.id}" title="${esc(t.title || "")}"><span class="lbl-long">${esc(t.label)}</span><span class="lbl-short">${esc(t.short)}</span></button>`).join("");
   [...$("filterTabs").children].forEach((b) => b.onclick = () => { FILTER = b.dataset.f; renderFilterTabs(); renderStats(); renderBoard(); });
 }
 
@@ -849,7 +931,7 @@ function renderBoard() {
     const pod = (e, cls, medal, crown) => e ? `
       <div class="pod ${cls}" data-id="${esc(keyOf(e))}">
         ${crown ? '<div class="crown">👑</div>' : ""}
-        <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+        <div class="avatar" style="${avatarStyle(keyOf(e))}">${esc(initials(e.name))}</div>
         <div class="medal">${medal}</div>
         <div class="nm">${esc(e.name)}</div>
         <div class="pc">${fmt(pctOf(e))}%</div>
@@ -867,9 +949,13 @@ function renderBoard() {
       : FILTER
         ? `<div class="empty"><div class="big">🎯</div>Nobody qualifies for this view yet.<br>${FILTER === "till_midsem" ? "Quiz 1, Assignment 1 and Midsem" : FILTER === "till_endsem" ? "Every component, including the end-sem," : "Every quiz, assignment and midsem"} must be entered in all subjects to appear here.</div>`
         : `<div class="empty"><div class="big">🚀</div>No marks yet — be the first!<br>Tap <b>＋ Add marks</b> to get on the board.</div>`;
+    renderReview();   // the Under review list must still show when this view is empty
     return;
   }
-  host.innerHTML = visible.map((e) => {
+  // Phones: the podium already shows ranks 1–3, so the list starts at #4 instead of repeating them.
+  const isPhone = window.matchMedia("(max-width: 560px)").matches;
+  const onPodium = isPhone && podium.style.display !== "none" ? new Set(scored.slice(0, 3)) : new Set();
+  host.innerHTML = visible.filter((e) => !onPodium.has(e)).map((e) => {
     const pct = pctOf(e);
     const rank = pct == null ? null : scored.indexOf(e) + 1;
     const medal = rank != null && rank <= 3 ? ` m${rank}` : "";
@@ -879,10 +965,10 @@ function renderBoard() {
     return `
     <div class="row${isMe(e) ? " me" : ""}" data-id="${esc(keyOf(e))}">
       <div class="rk${medal}">${rank ?? "—"}</div>
-      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${esc(initials(e.name))}</div>
       <div class="who">
         <div class="nm">${esc(e.name)}${isMe(e) ? " · you" : ""}</div>
-        <div class="id">${e.anon ? "ID hidden" : esc(e.bits_id)}</div>
+        ${e.anon ? "" : `<div class="id">${esc(e.bits_id)}</div>`}
         <div class="bar"><i style="width:${pct ?? 0}%"></i></div>
       </div>
       <div class="num" title="${TAB === "OVERALL" ? "Overall % (marks scored ÷ marks released so far)" : TAB + " % (marks scored ÷ marks released in " + TAB + ")"}${pctl != null ? " · percentile = % of students below" : ""}"><div class="pc">${pct == null ? "—" : fmt(pct) + "%"}</div><div class="sub">${esc(sub)}</div></div>
@@ -902,7 +988,7 @@ function renderReview() {
     const mailto = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent("BITS Marks Tracker: review request")}`
       + `&body=${encodeURIComponent(`Hi, my entry is under review (reason: ${e.reason}).\nBITS ID: ${e.bits_id || "(hidden — alias " + e.name + ")"}\nExplanation: `)}`;
     return `<div class="rev-row">
-      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${esc(initials(e.name))}</div>
       <div><div class="nm">${esc(e.name)}${isMe(e) ? " · you" : ""}</div><div class="rsn">⚠️ ${esc(e.reason)}</div></div>
       <div class="acts">
         <button class="mini p" data-edit="${esc(e.bits_id || "")}">Edit &amp; correct</button>
@@ -995,7 +1081,7 @@ function openDetail(key) {
 
   $("detailBody").innerHTML = `
     <div class="d-top">
-      <div class="avatar" style="${avatarStyle(keyOf(e))}">${e.anon ? "🕶" : esc(initials(e.name))}</div>
+      <div class="avatar" style="${avatarStyle(keyOf(e))}">${esc(initials(e.name))}</div>
       <div><div class="nm">${esc(e.name)}</div><div class="id">${e.anon ? "BITS ID hidden by student" : esc(e.bits_id)}</div></div>
     </div>
     <div class="chips">
