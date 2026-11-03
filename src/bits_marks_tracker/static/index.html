@@ -255,7 +255,15 @@
   .gs-res.ok { background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.35); }
   .gs-res.err { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.4); color: var(--err); }
   .gs-res table { border-collapse: collapse; margin: 6px 0; }
-  .gs-res td { padding: 2px 14px 2px 0; }
+  .gs-res td { padding: 3px 12px 3px 0; vertical-align: top; }
+  .gs-res .dim { color: var(--muted); }
+  .gs-res .chg { color: #fbbf24; }
+  .gs-res .warn { color: #fbbf24; }
+  .gs-res .new { font-size: .62rem; font-weight: 700; color: #34d399; border: 1px solid rgba(52,211,153,.5);
+    border-radius: 6px; padding: 0 4px; }
+  input.pdf-new, select.pdf-new { border-color: rgba(52,211,153,.9) !important; box-shadow: 0 0 0 2px rgba(52,211,153,.25); }
+  input.pdf-chg, select.pdf-chg { border-color: rgba(251,191,36,.95) !important; box-shadow: 0 0 0 2px rgba(251,191,36,.28); }
+  .pdf-was { display: block; font-size: .62rem; color: #fbbf24; margin-top: 2px; }
   .grade.none { background: var(--card-hi); color: var(--muted); border: 1px solid var(--line); }
   .gsel { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); background: var(--card);
     border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px; }
@@ -510,21 +518,26 @@
       <div><label for="cgpa">Semester CGPA <span class="opt" id="cgpaMaxLbl"></span></label>
         <input id="cgpa" type="number" inputmode="decimal" min="0" step="any" placeholder="—"></div>
     </div>
-    <div class="gs" id="gsRow" style="display:none">
-      <div class="gs-head">📄 Auto-fill grades &amp; CGPA from your Electronic Grade Sheet</div>
+    <div class="gs" id="gsRow">
+      <div class="gs-head">📄 Auto-fill from a BITS PDF</div>
       <label class="gs-pick" for="gsFile">
         <input id="gsFile" type="file" accept=".pdf,application/pdf">
         <span>Choose PDF…</span>
       </label>
-      <div class="hint" style="margin-top:6px">Enter your BITS ID first — it must match the ID NO on the sheet.
-        The PDF is only read to fill the form and is <b>never stored</b>. Review the result, then tap Save.</div>
+      <div class="hint" style="margin-top:6px">Works with the <b>Semester Marks Statement</b> (mid-sem, end-sem, grades),
+        the <b>Electronic Grade Sheet</b> and the <b>Performance Sheet</b> (grades, CGPA).
+        Enter your BITS ID first — it must match the ID on the PDF. The PDF is only read to fill the form and is
+        <b>never stored</b>. Changed fields are highlighted — review them, then tap Save.</div>
       <details class="gs-how">
-        <summary>How do I get my Electronic Grade Sheet?</summary>
+        <summary>Where do I download these PDFs?</summary>
         <ol>
-          <li>Go to <a href="https://elearn.bits-pilani.ac.in/examinations/" target="_blank" rel="noopener">elearn.bits-pilani.ac.in/examinations</a></li>
-          <li>Open the <b>Results</b> section</li>
-          <li>Choose the result <b>type</b> and the <b>semester</b></li>
-          <li>Download the Electronic Grade Sheet (PDF) and upload it here</li>
+          <li><b>Semester Marks Statement</b> — on eLearn open
+            <a href="https://elearn.bits-pilani.ac.in/studentservices/semester-marks/" target="_blank" rel="noopener">Student Services → Semester Marks</a>,
+            pick the semester, then print the page and choose <b>Save as PDF</b></li>
+          <li><b>Electronic Grade Sheet</b> — on eLearn open
+            <a href="https://elearn.bits-pilani.ac.in/examinations/" target="_blank" rel="noopener">Examinations</a> →
+            <b>Results</b>, choose the result type and semester, and download the PDF</li>
+          <li><b>Performance Sheet</b> — download it from the BITS ERP student portal</li>
         </ol>
       </details>
       <div id="gsResult"></div>
@@ -1012,9 +1025,34 @@ function renderMyPin() {
 
 /* ---------- detail popup ---------- */
 // Full marks possible for a subject (sum of every component max).
+// Mirrors scoring.component_factors: a group (e.g. EC-1 = quizzes + assignments)
+// counts out of `scale_to`, so ML's 40 raw marks count as 30.
+function compFactors(sub) {
+  const cfg = termCfg();
+  const comps = sub.components || cfg.components;
+  const byKey = Object.fromEntries(comps.map((c) => [c.key, Number(c.max)]));
+  const factors = Object.fromEntries(comps.map((c) => [c.key, 1]));
+  for (const g of (sub.component_groups || cfg.component_groups || [])) {
+    const keys = (g.keys || []).filter((k) => k in byKey);
+    const raw = keys.reduce((a, k) => a + byKey[k], 0);
+    if (keys.length && raw > 0 && g.scale_to) keys.forEach((k) => { factors[k] = g.scale_to / raw; });
+  }
+  return factors;
+}
+// Groups whose raw marks get scaled for this subject (for an explanatory note).
+function scaledGroups(sub) {
+  const cfg = termCfg();
+  const comps = sub.components || cfg.components;
+  const byKey = Object.fromEntries(comps.map((c) => [c.key, Number(c.max)]));
+  return (sub.component_groups || cfg.component_groups || []).map((g) => {
+    const raw = (g.keys || []).filter((k) => k in byKey).reduce((a, k) => a + byKey[k], 0);
+    return { ...g, raw };
+  }).filter((g) => g.scale_to && g.raw && Math.abs(g.raw - g.scale_to) > 1e-9);
+}
 function subjectMax(sub) {
   const cfg = termCfg();
-  return (sub.components || cfg.components).reduce((a, c) => a + Number(c.max), 0);
+  const f = compFactors(sub);
+  return Math.round((sub.components || cfg.components).reduce((a, c) => a + Number(c.max) * f[c.key], 0) * 100) / 100;
 }
 
 function detailSubjects(e) {
@@ -1055,6 +1093,7 @@ function detailSubjects(e) {
         <span class="dim">(scored out of ${fmt(sc.max_entered)} released)</span></div>
       <div class="bar"><i style="width:${sc.pct ?? 0}%"></i></div>
       <div class="comps">${comps}</div>
+      ${scaledGroups(sub).map((g) => `<div class="hint" style="margin-top:6px">${esc(g.label || g.name)} are entered out of ${fmt(g.raw)} but count out of ${fmt(g.scale_to)} (as on the official ${esc(g.name)}).</div>`).join("")}
     </div>`;
   }).join("");
 }
@@ -1132,7 +1171,6 @@ function buildForm() {
       </div>
     </details>`).join("");
   $("cgpaRow").style.display = cgpaOn() ? "" : "none";
-  $("gsRow").style.display = gradesOn() || cgpaOn() ? "" : "none";
   $("gsResult").innerHTML = "";
   $("gsFile").value = "";
   $("cgpa").value = "";
@@ -1140,12 +1178,53 @@ function buildForm() {
   $("cgpaMaxLbl").textContent = `(optional, out of ${cgpaMax()})`;
 }
 
-/* ---------- Electronic Grade Sheet upload ---------- */
-// Sends the PDF to /api/gradesheet (parsed in memory, never stored), then
-// fills the grade pickers and CGPA field. Nothing is saved until the student
-// taps Save with their PIN.
+/* ---------- BITS PDF upload (marks statement / grade sheet / performance sheet) ---------- */
+// Sends the PDF to /api/import-pdf (parsed in memory, never stored), fills the
+// form and highlights what changed. Nothing is saved until the student taps
+// Save with their PIN.
 function gsShow(kind, html) {
   $("gsResult").innerHTML = `<div class="gs-res ${kind}">${html}</div>`;
+}
+
+function clearPdfMarks() {
+  document.querySelectorAll(".pdf-new, .pdf-chg").forEach((el) => el.classList.remove("pdf-new", "pdf-chg"));
+  document.querySelectorAll(".pdf-was").forEach((el) => el.remove());
+}
+
+// Set one field and highlight it: green = newly filled, amber = changed (shows the old value).
+function pdfSet(el, value) {
+  if (!el || el.disabled) return null;
+  const before = el.value;
+  const after = String(value);
+  if (before !== "" && Number(before) === Number(after) && el.tagName !== "SELECT") return { kind: "same" };
+  if (before === after) return { kind: "same" };
+  el.value = after;
+  el.classList.add(before === "" ? "pdf-new" : "pdf-chg");
+  if (before !== "") {
+    const was = document.createElement("span");
+    was.className = "pdf-was";
+    was.textContent = `was ${before}`;
+    el.insertAdjacentElement("afterend", was);
+  }
+  const unmark = () => {
+    el.classList.remove("pdf-new", "pdf-chg");
+    el.nextElementSibling?.classList.contains("pdf-was") && el.nextElementSibling.remove();
+  };
+  el.addEventListener(el.tagName === "SELECT" ? "change" : "input", unmark, { once: true });
+  return { kind: before === "" ? "new" : "changed", before };
+}
+
+// Official EC-1 vs what the student entered for quizzes + assignments (scaled).
+function ec1Check(sub, check) {
+  const f = compFactors(sub);
+  const vals = check.keys.map((k) => $(`m_${sub.code}_${k}`)?.value ?? "");
+  const off = `${fmt(check.official)}/${fmt(check.max)}`;
+  if (vals.some((v) => v === "")) {
+    return { ok: null, text: `official ${esc(check.name)} is <b>${off}</b> — fill all ${esc(check.label.toLowerCase())} to compare` };
+  }
+  const mine = Math.round(check.keys.reduce((a, k, i) => a + Number(vals[i]) * f[k], 0) * 100) / 100;
+  if (Math.abs(mine - check.official) < 0.01) return { ok: true, text: `${esc(check.name)} ${off} matches your entries ✓` };
+  return { ok: false, text: `⚠️ your ${esc(check.label.toLowerCase())} add up to <b>${fmt(mine)}/${fmt(check.max)}</b>, but the official ${esc(check.name)} is <b>${off}</b> — please re-check them` };
 }
 
 async function handleGradeSheet() {
@@ -1154,13 +1233,13 @@ async function handleGradeSheet() {
   if (!file) return;
   try {
     const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-    if (!isPdf) { gsShow("err", "Only PDF files are accepted. Please upload your Electronic Grade Sheet PDF."); return; }
-    if (file.size > 2 * 1024 * 1024) { gsShow("err", "That file is too large to be a grade sheet (max 2 MB)."); return; }
+    if (!isPdf) { gsShow("err", "Only PDF files are accepted."); return; }
+    if (file.size > 2 * 1024 * 1024) { gsShow("err", "That PDF is too large (max 2 MB)."); return; }
     const id = getFormBitsId();
-    if (id.length < 8) { gsShow("err", "Enter your BITS ID above first — it's checked against the ID NO on the sheet."); return; }
+    if (id.length < 8) { gsShow("err", "Enter your BITS ID above first — it's checked against the ID on the PDF."); return; }
 
-    gsShow("ok", "Reading grade sheet…");
-    const res = await fetch(`/api/gradesheet?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`,
+    gsShow("ok", "Reading PDF…");
+    const res = await fetch(`/api/import-pdf?term=${encodeURIComponent(TERM)}&bits_id=${encodeURIComponent(id)}`,
       { method: "POST", headers: { "Content-Type": "application/pdf" }, body: file });
     // A crash or proxy error can come back as plain text/HTML — don't assume JSON.
     const raw = await res.text();
@@ -1173,28 +1252,64 @@ async function handleGradeSheet() {
       return;
     }
 
-    // Fill the form. A subject with no grade on the sheet is left as "—".
+    clearPdfMarks();
     const cfg = termCfg();
-    for (const sub of cfg.subjects) {
-      const sel = $(`g_${sub.code}`);
-      if (sel && data.grades && sub.code in data.grades) sel.value = data.grades[sub.code] || "";
-    }
-    if (cgpaOn() && data.cgpa != null) $("cgpa").value = data.cgpa;
-
-    const rows = gradesOn() ? cfg.subjects.map((sub) => {
-      const g = data.grades?.[sub.code];
-      return `<tr><td><b>${esc(sub.code)}</b></td><td>${g ? esc(g) : "-"}</td></tr>`;
-    }).join("") : "";
+    const rows = [];
     const notes = [];
-    for (const [code, g] of Object.entries(data.not_on_scale || {}))
-      notes.push(`${esc(code)}: grade “${esc(g)}” isn't on the A–E scale, left as -`);
+    let filled = 0;
+    let changed = 0;
+    const count = (r) => { if (r && r.kind !== "same") { filled++; if (r.kind === "changed") changed++; } };
+    const fv = (v) => (typeof v === "number" ? fmt(v) : String(v));
+    const show = (label, value, r) => r && r.kind === "changed"
+      ? `${label} <b class="chg">${esc(fv(value))}</b> <span class="dim">(was ${esc(r.before)})</span>`
+      : `${label} <b>${esc(fv(value))}</b>${r && r.kind === "new" ? ' <span class="new">new</span>' : ""}`;
+
+    for (const sub of cfg.subjects) {
+      const found = data.subjects?.[sub.code];
+      if (!found) continue;
+      const comps = sub.components || cfg.components;
+      const bits = [];
+      for (const c of comps) {
+        if (!(c.key in (found.components || {}))) continue;
+        const r = pdfSet($(`m_${sub.code}_${c.key}`), found.components[c.key]);
+        count(r);
+        bits.push(show(esc(c.label), found.components[c.key], r));
+      }
+      if (found.grade && gradesOn()) {
+        const r = pdfSet($(`g_${sub.code}`), found.grade);
+        count(r);
+        bits.push(show("Grade", found.grade, r));
+      }
+      for (const [name, chk] of Object.entries(found.checks || {})) {
+        const c = ec1Check(sub, { ...chk, name });
+        bits.push(`<span class="${c.ok === false ? "warn" : "dim"}">${c.text}</span>`);
+      }
+      for (const s of found.skipped || []) bits.push(`<span class="dim">${esc(s.label)}: ${esc(s.reason)}</span>`);
+      if (bits.length) {
+        rows.push(`<tr><td><b>${esc(sub.code)}</b></td><td>${bits.join(" · ")}</td></tr>`);
+        const det = $(`st_${sub.code}`)?.closest("details");
+        if (det) det.open = true;
+      }
+    }
+    if (data.cgpa != null && cgpaOn()) {
+      const r = pdfSet($("cgpa"), data.cgpa);
+      count(r);
+      rows.push(`<tr><td><b>CGPA</b></td><td>${show("CGPA", data.cgpa, r)}</td></tr>`);
+    }
+    if (data.cgpa_note) notes.push(esc(data.cgpa_note));
     if ((data.unmatched_courses || []).length)
-      notes.push(`Not matched to any subject: ${data.unmatched_courses.map((c) => esc(c.title)).join(", ")}`);
-    gsShow("ok", `✅ Read <b>${esc(data.semester || "grade sheet")}</b> for ${esc(data.id_no)}:
-      ${rows ? `<table>${rows}</table>` : ""}
-      ${cgpaOn() ? `CGPA: <b>${data.cgpa != null ? esc(data.cgpa) : "-"}</b><br>` : ""}
-      ${notes.length ? `<span style="color:var(--muted)">${notes.join("<br>")}</span><br>` : ""}
-      Filled into the form below — review, then tap <b>Save</b>.`);
+      notes.push(`Not one of this semester's subjects: ${data.unmatched_courses.map((c) => esc(c.title || c.course_no)).join(", ")}`);
+
+    const sem = data.semester ? ` · ${esc(data.semester.toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase()))}` : "";
+    const head = !data.found_anything
+      ? `ℹ️ Nothing found to fill from this <b>${esc(data.doc_label)}</b>${sem}.`
+      : filled
+        ? `✅ <b>${esc(data.doc_label)}</b>${sem}: filled ${filled} field${filled === 1 ? "" : "s"}${changed ? `, <b class="chg">${changed} changed</b>` : ""}.`
+        : `✅ <b>${esc(data.doc_label)}</b>${sem}: your form already matches this PDF.`;
+    gsShow("ok", `${head}
+      ${rows.length ? `<table>${rows.join("")}</table>` : ""}
+      ${notes.length ? `<span class="dim">${notes.join("<br>")}</span><br>` : ""}
+      ${filled ? 'Highlighted fields were filled from the PDF — review them, then tap <b>Save</b>.' : ""}`);
   } catch (err) {
     // Only network failures (offline, server unreachable) land here now.
     gsShow("err", `Couldn't reach the server to read the file (${esc(err?.message || "network error")}). Please try again.`);

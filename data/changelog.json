@@ -1,6 +1,16 @@
 {
   "entries": [
     {
+      "date": "2026-11-03",
+      "title": "Upload any BITS PDF",
+      "description": "Auto-fill from your Marks Statement, Grade Sheet or Performance Sheet PDF. Changed fields are highlighted; EC-1 is cross-checked."
+    },
+    {
+      "date": "2026-11-03",
+      "title": "ML is now out of 100",
+      "description": "ML quizzes + assignments (out of 40) now count out of 30 like the official EC-1, so every subject is out of 100."
+    },
+    {
       "date": "2026-11-02",
       "title": "Better on phones",
       "description": "Header, filters and the Save button now fit phone screens; the board starts higher up and avatars show initials."

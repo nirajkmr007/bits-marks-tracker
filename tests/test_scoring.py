@@ -67,3 +67,41 @@ def test_stats() -> None:
     assert stats["subjects"]["ML"]["top_pct"] == 85.71
     assert stats["subjects"]["ISM"]["filled"] == 0
     assert stats["overall"]["top_pct"] == 85.71
+
+
+def test_component_group_scales_to_official_weight() -> None:
+    """ML's quizzes + assignments are entered out of 40 but count out of 30 (EC-1)."""
+    from bits_marks_tracker.storage import load_config
+
+    term = load_config()["terms"]["2026-S1"]
+    full = {
+        "quiz1": 10,
+        "assignment1": 5,
+        "quiz2": 10,
+        "assignment2": 15,
+        "midsem": 30,
+        "endsem": 40,
+    }
+    partial = {"quiz1": 8, "assignment1": 4.5, "midsem": 24, "quiz2": 10}  # 46.5 / 55 raw
+    doc = {
+        "students": [
+            _student("2025AA05001", "Full", {"ML": full}),
+            _student("2025AA05002", "Part", {"ML": partial}),
+        ]
+    }
+    by_name = {e["name"]: e for e in compute_leaderboard(term, doc)["students"]}
+    ml_full = by_name["Full"]["subjects"]["ML"]
+    assert (ml_full["total"], ml_full["max_entered"], ml_full["pct"]) == (100, 100, 100.0)
+    ml_part = by_name["Part"]["subjects"]["ML"]
+    # (8 + 4.5 + 10) * 0.75 + 24 = 40.875 of (10 + 5 + 10) * 0.75 + 30 = 48.75
+    assert ml_part["max_entered"] == 48.75
+    assert ml_part["pct"] == round(40.875 / 48.75 * 100, 2)
+
+
+def test_component_factors_default_to_one() -> None:
+    from bits_marks_tracker.scoring import component_factors
+
+    comps = [{"key": "quiz1", "max": 5}, {"key": "midsem", "max": 30}]
+    assert component_factors(comps, []) == {"quiz1": 1.0, "midsem": 1.0}
+    groups = [{"keys": ["quiz1", "missing"], "scale_to": 10}]
+    assert component_factors(comps, groups) == {"quiz1": 2.0, "midsem": 1.0}

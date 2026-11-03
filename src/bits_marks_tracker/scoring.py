@@ -13,17 +13,66 @@ from __future__ import annotations
 from typing import Any
 
 
-def _subject_score(marks: dict[str, Any], components: list[dict[str, Any]]) -> dict[str, Any]:
+def subject_components(
+    subject: dict[str, Any], term_config: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """A subject's components (its own override, else the term-wide list)."""
+    comps: list[dict[str, Any]] = subject.get("components", term_config["components"])
+    return comps
+
+
+def component_groups(subject: dict[str, Any], term_config: dict[str, Any]) -> list[dict[str, Any]]:
+    """Groups of components that count together towards a fixed total (e.g. EC-1)."""
+    groups: list[dict[str, Any]] = subject.get(
+        "component_groups", term_config.get("component_groups", [])
+    )
+    return groups
+
+
+def component_factors(
+    components: list[dict[str, Any]], groups: list[dict[str, Any]]
+) -> dict[str, float]:
+    """Weight applied to each component's marks.
+
+    A group such as ``{"keys": [quiz1, assignment1, quiz2, assignment2], "scale_to": 30}``
+    makes those components count out of 30 in total. If their raw maxima already
+    add up to 30 the factor is 1; for ML (10+5+10+15 = 40) it is 30/40 = 0.75.
+    Components outside any group count as entered (factor 1). The factor is
+    linear, so partially entered groups stay fair.
+    """
+    by_key = {c["key"]: float(c["max"]) for c in components}
+    factors = dict.fromkeys(by_key, 1.0)
+    for group in groups:
+        keys = [k for k in group.get("keys", []) if k in by_key]
+        raw_max = sum(by_key[k] for k in keys)
+        scale_to = group.get("scale_to")
+        if keys and raw_max > 0 and scale_to:
+            for k in keys:
+                factors[k] = float(scale_to) / raw_max
+    return factors
+
+
+def subject_full_max(subject: dict[str, Any], term_config: dict[str, Any]) -> float:
+    """Total marks a subject is out of, after group scaling (e.g. 100)."""
+    comps = subject_components(subject, term_config)
+    factors = component_factors(comps, component_groups(subject, term_config))
+    return round(sum(float(c["max"]) * factors[c["key"]] for c in comps), 4)
+
+
+def _subject_score(
+    marks: dict[str, Any], components: list[dict[str, Any]], factors: dict[str, float]
+) -> dict[str, Any]:
     total = 0.0
     max_entered = 0.0
     for comp in components:
         value = marks.get(comp["key"])
         if value is None:
             continue
-        total += float(value)
-        max_entered += float(comp["max"])
+        f = factors.get(comp["key"], 1.0)
+        total += float(value) * f
+        max_entered += float(comp["max"]) * f
     pct = round(total / max_entered * 100, 2) if max_entered > 0 else None
-    return {"total": round(total, 2), "max_entered": max_entered, "pct": pct}
+    return {"total": round(total, 2), "max_entered": round(max_entered, 2), "pct": pct}
 
 
 def compute_leaderboard(
@@ -40,7 +89,14 @@ def compute_leaderboard(
     """
     flags = flags or {}
     subjects: list[dict[str, Any]] = term_config["subjects"]
-    components: list[dict[str, Any]] = term_config["components"]
+    # Per subject: its components and the weight of each (group scaling, e.g. EC-1 → 30).
+    plan = {
+        s["code"]: (
+            subject_components(s, term_config),
+            component_factors(subject_components(s, term_config), component_groups(s, term_config)),
+        )
+        for s in subjects
+    }
 
     entries: list[dict[str, Any]] = []
     under_review: list[dict[str, Any]] = []
@@ -78,9 +134,9 @@ def compute_leaderboard(
         for subject in subjects:
             code = subject["code"]
             # A subject may override the term-wide component structure
-            # (e.g. ML: Quiz 1 = 10, Assignment 1 = 5).
-            subject_components: list[dict[str, Any]] = subject.get("components", components)
-            score = _subject_score(student.get("marks", {}).get(code, {}), subject_components)
+            # (e.g. ML: Quiz 1 = 10, Assignment 1 = 5) and group scaling applies.
+            comps, factors = plan[code]
+            score = _subject_score(student.get("marks", {}).get(code, {}), comps, factors)
             per_subject[code] = {
                 **score,
                 "components": student.get("marks", {}).get(code, {}),

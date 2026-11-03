@@ -24,13 +24,16 @@ No database. The GitHub repo **is** the database:
 
 Marks per subject: Quiz 1 (5) + Assignment 1 (10) + Midsem (30) + Quiz 2 (5) +
 Assignment 2 (10) + End-sem (40) = **100**. Exception: **ML** has Quiz 1 = 10,
-Assignment 1 = 5, Quiz 2 = 10, Assignment 2 = 15 (total **110**) — any subject
-can override the component structure via a `components` array on its entry in
-`data/config.json`. Percentages are always computed against the actual sum of a
-subject's component maxes, so a non-100 total is handled correctly. Partial
-entry is fine — percentages use the max of the components you've filled in, so
-mid-semester comparisons stay fair. Percentile = % of students strictly below
-you overall. Concurrent submissions are conflict-safe: a clashing write is
+Assignment 1 = 5, Quiz 2 = 10, Assignment 2 = 15 — any subject can override the
+component structure via a `components` array on its entry in `data/config.json`.
+
+Quizzes + assignments together are the official **EC-1 (out of 30)**. A term's
+`component_groups` entry scales that group to its official weight, so ML's
+quizzes + assignments are entered out of 40 but count ×0.75 (out of 30) and
+every subject is out of 100. The scaling is linear, so partial entry stays fair.
+Partial entry is fine — percentages use the max of the components you've filled
+in, so mid-semester comparisons stay fair. Percentile = % of students strictly
+below you overall. Concurrent submissions are conflict-safe: a clashing write is
 retried on fresh data, never overwritten.
 
 ## Local development
@@ -65,6 +68,7 @@ edit or reset that file freely while developing. API docs: http://127.0.0.1:8000
 | GET    | `/api/leaderboard?term=`    | Ranked leaderboard + stats           |
 | GET    | `/api/student?term=&bits_id=` | One student's saved marks (form pre-fill). Hidden-ID rows require the PIN via `X-Pin` header |
 | POST   | `/api/submit`               | Upsert marks (merge per component). Body: `term`, `bits_id`, `pin`, optional `name`, `hide_id`, `marks` |
+| POST   | `/api/import-pdf?term=&bits_id=` | Read a BITS PDF (raw body) and return what can be filled — saves nothing |
 | DELETE | `/api/student?term=&bits_id=` | Delete own record — PIN via `X-Pin` header; claimed records only |
 | GET    | `/api/export.csv?term=`     | Full dataset as CSV                  |
 | GET    | `/api/feedback`             | Top 10 anonymous feedback by upvotes |
@@ -95,7 +99,13 @@ from: `uv export --no-dev --no-hashes --no-emit-project -o requirements.txt`.
 Add a term to `data/config.json` (subjects + components + `id_prefix` for the
 new batch), set `current_term`, and push to `main` (config ships with the app,
 so this needs a deploy). Create an empty `data/marks/<term>.json`
-(`{"students": []}`) on the `data` branch.
+(`{"students": []}`) on the `data` branch. For PDF auto-fill, also set:
+
+- `course_nos` on each subject (e.g. `["AIMLC ZG557"]`) — how PDF rows are matched
+- `source_semester` — the semester name as printed on BITS PDFs, e.g.
+  `"FIRST SEMESTER 2026-2027"`; PDFs for any other semester are rejected
+- `component_groups` / `pdf_components` if the evaluation pattern changes
+  (defaults: EC-1 = quizzes + assignments, EC-2 → midsem, EC-3 → endsem)
 
 ## PIN protection
 
@@ -150,7 +160,7 @@ friction nudge rather than hard security — fine for a class tool).
 Two layers keep bad or premature marks out of the rankings:
 
 **Prevention — locked components.** `data/config.json` has a term-level
-`locked_components` list (currently `["endsem"]`). Those inputs are disabled in
+`locked_components` list (e.g. `["endsem"]`). Those inputs are disabled in
 the form ("not out yet 🔒") and rejected by the API, so nobody can enter marks
 for an assessment that hasn't happened. When the end-sem is done, remove it from
 the list and redeploy.
@@ -171,23 +181,38 @@ the site with the reason, an "Edit & correct" button, and a "Contact admin"
 link. To clear a flag, remove its entry. No admin login exists — flagging and
 un-flagging are just git commits, fully auditable.
 
-## Electronic Grade Sheet auto-fill
+## PDF auto-fill
 
-In the ＋ Add marks form, students can upload their **Electronic Grade Sheet**
-(PDF) to fill their subject grades and CGPA automatically. To get it: go to
-[elearn.bits-pilani.ac.in/examinations](https://elearn.bits-pilani.ac.in/examinations/)
-→ **Results** → choose the type and semester → download.
+In the ＋ Add marks form, students can upload a BITS PDF and the form is filled
+from it. Three documents are understood:
 
-- The PDF is read **in memory only** by `POST /api/gradesheet` — never written
+| PDF | Where to get it | Fills |
+| --- | --- | --- |
+| **Semester Marks Statement** | eLearn → [Student Services → Semester Marks](https://elearn.bits-pilani.ac.in/studentservices/semester-marks/) → print → Save as PDF | Mid-sem (EC-2), end-sem (EC-3), grade; checks EC-1 |
+| **Electronic Grade Sheet** | eLearn → [Examinations](https://elearn.bits-pilani.ac.in/examinations/) → Results | Grades, CGPA |
+| **Performance Sheet** | BITS ERP student portal | Grades, CGPA (this semester's section only) |
+
+Any other PDF goes through a cautious generic reader (ID, semester, a labelled
+CGPA, lines ending in a grade). If nothing relevant is found the student sees
+"Nothing found".
+
+- The PDF is read **in memory only** by `POST /api/import-pdf` — never written
   to disk, logged or committed, and the endpoint saves nothing. It only
   pre-fills the form; the student reviews and taps Save (with their PIN).
-- PDF only, max 2 MB. The sheet's **ID NO must match** the BITS ID in the form,
-  otherwise nothing is filled in.
-- Courses are matched to subjects by the `course_nos` listed on each subject in
-  `data/config.json` (e.g. ML → `AIMLC ZG565`). For a new semester, add the new
-  course numbers there. A subject not found on the sheet is left as `-`.
-- Parsing lives in `src/bits_marks_tracker/gradesheet.py` (text extraction →
-  parse → map to subjects), independent of the web layer.
+- PDF only, max 2 MB, first 10 pages. The **ID on the PDF must match** the BITS
+  ID in the form, and the PDF must be for this term's `source_semester`,
+  otherwise nothing is filled in. The PDF's ID is never echoed back.
+- Filled fields are highlighted: green = newly filled, amber = changed (with the
+  old value shown). `NA` (not appeared), `UE` (under evaluation), locked
+  components and out-of-range values are skipped with a reason.
+- **EC-1** (quizzes + assignments) is not split into fields; instead the
+  official EC-1 is compared with the student's scaled entries and a warning is
+  shown if they differ.
+- On a Performance Sheet, the CGPA is only used if no later semester has grades
+  yet (it is cumulative).
+- Code lives in `src/bits_marks_tracker/pdfimport/`: `extract.py` (PDF → text),
+  `readers.py` (detect + parse each layout), `mapping.py` (match to this term's
+  subjects via config). Tests use synthetic PDFs — never commit real ones.
 
 ## What's new (notification center)
 

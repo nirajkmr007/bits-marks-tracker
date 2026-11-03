@@ -9,6 +9,11 @@
       "grades": ["A", "A-", "B", "B-", "C", "C-", "D", "E"],
       "cgpa_enabled": true,
       "cgpa_max": 10,
+      "source_semester": "SECOND SEMESTER 2025-2026",
+      "component_groups": [
+        { "name": "EC-1", "label": "Quizzes + assignments", "keys": ["quiz1", "assignment1", "quiz2", "assignment2"], "scale_to": 30 }
+      ],
+      "pdf_components": { "EC-2": "midsem", "EC-3": "endsem" },
       "subjects": [
         { "code": "MFML", "name": "Mathematical Foundations for Machine Learning", "course_nos": ["AIMLC ZC416"] },
         { "code": "ISM", "name": "Introduction to Statistical Methods", "course_nos": ["AIMLC ZC418"] },
