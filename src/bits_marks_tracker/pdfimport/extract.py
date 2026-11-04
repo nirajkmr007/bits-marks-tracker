@@ -39,19 +39,12 @@ def _unlock(reader: Any) -> None:
 
     The ERP Performance Sheet is AES-encrypted with no open password: it opens
     in any viewer, but pypdf needs the ``cryptography`` package to decrypt it.
+    Without it, decrypt() still "succeeds" and the failure (DependencyError)
+    only surfaces later, while extracting text — see read_pdf.
     """
     if not reader.is_encrypted:
         return
-    from pypdf.errors import DependencyError
-
-    try:
-        ok = reader.decrypt("")
-    except DependencyError as exc:
-        raise PdfUnavailableError(
-            "This PDF is encrypted and the server can't decrypt it right now — "
-            "please enter your marks manually."
-        ) from exc
-    if not ok:
+    if not reader.decrypt(""):
         raise PdfImportError(
             "This PDF is password-protected. Upload the PDF exactly as downloaded from BITS."
         )
@@ -64,6 +57,7 @@ def read_pdf(pdf_bytes: bytes) -> PdfText:
         raise PdfImportError("That PDF is too large (max 2 MB).")
     try:
         from pypdf import PdfReader  # imported lazily: only this feature needs it
+        from pypdf.errors import DependencyError
     except ImportError as exc:
         raise PdfUnavailableError(
             "Reading PDFs isn't available on the server right now — "
@@ -77,11 +71,18 @@ def read_pdf(pdf_bytes: bytes) -> PdfText:
         plain = "\n".join(p.extract_text() or "" for p in pages)
         try:
             layout = "\n".join(p.extract_text(extraction_mode="layout") or "" for p in pages)
+        except DependencyError:
+            raise
         except Exception:  # layout mode is best-effort; plain text still works
             layout = ""
         return PdfText(plain=plain, layout=layout, pages=len(reader.pages))
     except (PdfImportError, PdfUnavailableError):
         raise
+    except DependencyError as exc:  # e.g. AES-encrypted PDF without `cryptography`
+        raise PdfUnavailableError(
+            "This PDF is encrypted and the server can't decrypt it right now — "
+            "please enter your marks manually."
+        ) from exc
     except Exception as exc:  # pypdf raises many error types for damaged files
         raise PdfImportError(
             "Couldn't read that PDF. Is it the original file you downloaded?"

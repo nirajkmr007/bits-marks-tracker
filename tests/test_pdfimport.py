@@ -392,13 +392,14 @@ def test_password_protected_pdf_is_rejected_clearly(client: TestClient) -> None:
 def test_encrypted_pdf_without_crypto_library_gives_clear_503(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pypdf import PdfReader
+    """Without `cryptography`, pypdf's decrypt() passes and text extraction fails."""
+    from pypdf import PageObject
     from pypdf.errors import DependencyError
 
-    def no_crypto(self: Any, password: str) -> Any:
-        raise DependencyError("cryptography is required for AES algorithm")
+    def no_crypto(self: Any, *args: Any, **kwargs: Any) -> Any:
+        raise DependencyError("cryptography>=3.1 is required for AES algorithm")
 
-    monkeypatch.setattr(PdfReader, "decrypt", no_crypto)
+    monkeypatch.setattr(PageObject, "extract_text", no_crypto)
     resp = _upload(client, encrypt(make_pdf(PERFORMANCE_SHEET)))
     assert resp.status_code == 503 and "encrypted" in resp.json()["detail"]
 
