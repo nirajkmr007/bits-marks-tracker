@@ -365,6 +365,44 @@ def test_upload_rejects_pdf_without_id(client: TestClient) -> None:
     assert resp.status_code == 422 and "Nothing found" in resp.json()["detail"]
 
 
+def encrypt(pdf: bytes, user_password: str = "") -> bytes:
+    """AES-encrypt a PDF the way the ERP does (opens without a password)."""
+    import io
+
+    from pypdf import PdfReader, PdfWriter
+
+    writer = PdfWriter(clone_from=PdfReader(io.BytesIO(pdf)))
+    writer.encrypt(user_password=user_password, owner_password="owner", algorithm="AES-128")
+    out = io.BytesIO()
+    writer.write(out)
+    return out.getvalue()
+
+
+def test_encrypted_pdf_with_empty_password_is_read(client: TestClient) -> None:
+    resp = _upload(client, encrypt(make_pdf(PERFORMANCE_SHEET)))
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["subjects"]["ML"]["grade"] == "A"
+
+
+def test_password_protected_pdf_is_rejected_clearly(client: TestClient) -> None:
+    resp = _upload(client, encrypt(make_pdf(PERFORMANCE_SHEET), user_password="secret"))
+    assert resp.status_code == 422 and "password-protected" in resp.json()["detail"]
+
+
+def test_encrypted_pdf_without_crypto_library_gives_clear_503(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pypdf import PdfReader
+    from pypdf.errors import DependencyError
+
+    def no_crypto(self: Any, password: str) -> Any:
+        raise DependencyError("cryptography is required for AES algorithm")
+
+    monkeypatch.setattr(PdfReader, "decrypt", no_crypto)
+    resp = _upload(client, encrypt(make_pdf(PERFORMANCE_SHEET)))
+    assert resp.status_code == 503 and "encrypted" in resp.json()["detail"]
+
+
 def test_upload_without_pypdf_gives_clear_503(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:

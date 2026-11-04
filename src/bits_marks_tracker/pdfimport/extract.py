@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import io
 from dataclasses import dataclass
+from typing import Any
 
 from .errors import PdfImportError, PdfUnavailableError
 
@@ -33,6 +34,29 @@ class PdfText:
         return [self.layout, self.plain]
 
 
+def _unlock(reader: Any) -> None:
+    """Open PDFs that are encrypted with an empty password.
+
+    The ERP Performance Sheet is AES-encrypted with no open password: it opens
+    in any viewer, but pypdf needs the ``cryptography`` package to decrypt it.
+    """
+    if not reader.is_encrypted:
+        return
+    from pypdf.errors import DependencyError
+
+    try:
+        ok = reader.decrypt("")
+    except DependencyError as exc:
+        raise PdfUnavailableError(
+            "This PDF is encrypted and the server can't decrypt it right now — "
+            "please enter your marks manually."
+        ) from exc
+    if not ok:
+        raise PdfImportError(
+            "This PDF is password-protected. Upload the PDF exactly as downloaded from BITS."
+        )
+
+
 def read_pdf(pdf_bytes: bytes) -> PdfText:
     if not pdf_bytes.startswith(b"%PDF-"):
         raise PdfImportError("That file isn't a PDF. Please upload a PDF downloaded from BITS.")
@@ -48,6 +72,7 @@ def read_pdf(pdf_bytes: bytes) -> PdfText:
 
     try:
         reader = PdfReader(io.BytesIO(pdf_bytes))
+        _unlock(reader)
         pages = list(reader.pages)[:MAX_PAGES]
         plain = "\n".join(p.extract_text() or "" for p in pages)
         try:
@@ -55,7 +80,7 @@ def read_pdf(pdf_bytes: bytes) -> PdfText:
         except Exception:  # layout mode is best-effort; plain text still works
             layout = ""
         return PdfText(plain=plain, layout=layout, pages=len(reader.pages))
-    except PdfImportError:
+    except (PdfImportError, PdfUnavailableError):
         raise
     except Exception as exc:  # pypdf raises many error types for damaged files
         raise PdfImportError(
